@@ -9,8 +9,9 @@ import {
   Database, Shuffle, BarChart2, FileUp, FileDown,
   Check, AlertCircle,
 } from 'lucide-react'
-import { mockQuizzes } from '../data/mockQuizzes'
-import { QUESTION_TYPES, DIFFICULTY_LEVELS, TOPICS, mockQuestionBank, sampleEditorQuestions } from '../data/mockQuestions'
+import { QUESTION_TYPES, DIFFICULTY_LEVELS, TOPICS, mockQuestionBank } from '../data/mockQuestions'
+import { useQuiz } from '../hooks/useQuizzes'
+import { supabase } from '../lib/supabase'
 
 /* ── Shared Tabs ─────────────────────────────────────────────────────── */
 const EDITOR_TABS = [
@@ -727,15 +728,28 @@ let qCounter = 100
 export default function QuizEditor() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const quiz = mockQuizzes.find(q => q.id === +id) || { id, title: 'New Quiz', instructor: 'Alice Johnson' }
+  const { quiz, questions: dbQuestions, loading: quizLoading, saveQuestions } = useQuiz(id)
 
-  const [questions, setQuestions] = useState(sampleEditorQuestions)
+  const [questions, setQuestions] = useState([])
   const [activeTab, setActiveTab] = useState('questions')
-  const [selectedQ, setSelectedQ] = useState(questions[0]?.id)
+  const [selectedQ, setSelectedQ] = useState(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [saveError, setSaveError] = useState(null)
   const [showBank, setShowBank] = useState(false)
-  const [quizTitle, setQuizTitle] = useState(quiz.title)
+  const [quizTitle, setQuizTitle] = useState('Loading…')
+
+  // Populate local state once DB data loads
+  useEffect(() => {
+    if (quiz) setQuizTitle(quiz.title)
+  }, [quiz])
+
+  useEffect(() => {
+    if (dbQuestions.length > 0) {
+      setQuestions(dbQuestions)
+      setSelectedQ(dbQuestions[0]?.id)
+    }
+  }, [dbQuestions])
 
   const selected = questions.find(q => q.id === selectedQ)
 
@@ -756,12 +770,58 @@ export default function QuizEditor() {
   }
 
   async function save() {
-    setSaving(true); await new Promise(r => setTimeout(r, 700))
-    setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2500)
+    setSaving(true)
+    setSaveError(null)
+    try {
+      // Save questions to DB
+      const { error: qErr } = await saveQuestions(questions)
+      if (qErr) throw qErr
+      // Update quiz title
+      const { error: tErr } = await supabase
+        .from('quizzes')
+        .update({ title: quizTitle })
+        .eq('id', id)
+      if (tErr) throw tErr
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch (err) {
+      setSaveError(err.message || 'Save failed')
+      setTimeout(() => setSaveError(null), 4000)
+    } finally {
+      setSaving(false)
+    }
   }
+
+  if (quizLoading) return (
+    <div className="flex h-screen items-center justify-center bg-slate-50">
+      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
 
   return (
     <div className="flex flex-col h-screen bg-slate-50">
+      {/* Toast notifications */}
+      {saved && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-emerald-600 text-white px-5 py-3.5 rounded-2xl shadow-xl animate-in slide-in-from-bottom-4 duration-300">
+          <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <Check className="w-3.5 h-3.5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold">Questions saved!</p>
+            <p className="text-xs text-emerald-100">All changes have been saved to the database.</p>
+          </div>
+        </div>
+      )}
+      {saveError && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-red-600 text-white px-5 py-3.5 rounded-2xl shadow-xl">
+          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-semibold">Save failed</p>
+            <p className="text-xs text-red-100">{saveError}</p>
+          </div>
+        </div>
+      )}
+
       {/* Top bar */}
       <header className="bg-white/90 backdrop-blur-sm border-b border-slate-200 px-6 h-14 flex items-center gap-4 flex-shrink-0 shadow-sm">
         <Link to="/" className="flex items-center gap-1 text-slate-400 hover:text-slate-700 text-sm transition-colors">

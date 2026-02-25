@@ -115,12 +115,13 @@ export function useQuiz(id) {
   }, [id])
 
   async function saveQuestions(qs) {
-    // Upsert all questions for this quiz
+    // UUID regex — any temp ID (like 'q101') is treated as a new row (no id → DB auto-generates)
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
     const payload = qs.map((q, i) => ({
       ...q,
       quiz_id:  id,
       position: i,
-      id:       q.id?.startsWith('new-') ? undefined : q.id,
+      id:       uuidRe.test(q.id) ? q.id : undefined,
     }))
     const { data, error } = await supabase
       .from('questions')

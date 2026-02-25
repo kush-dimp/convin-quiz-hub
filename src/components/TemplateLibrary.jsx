@@ -5,7 +5,7 @@ import {
   Zap, BookOpen, Briefcase, Award, ClipboardList, BarChart2, Plus,
 } from 'lucide-react'
 import { mockTemplates, TEMPLATE_CATEGORIES } from '../data/mockTemplates'
-import { mockQuizzes } from '../data/mockQuizzes'
+import { useQuizzes } from '../hooks/useQuizzes'
 
 const CATEGORY_ICONS = {
   Education: BookOpen, 'Corporate Training': Briefcase,
@@ -234,6 +234,8 @@ export default function TemplateLibrary() {
   const [category, setCategory] = useState('All')
   const [preview, setPreview] = useState(null)
   const [saveAsSource, setSaveAsSource] = useState(null)
+  const [creating, setCreating] = useState(false)
+  const { createQuiz } = useQuizzes()
 
   const filtered = mockTemplates.filter(t =>
     (category === 'All' || t.category === category) &&
@@ -242,13 +244,31 @@ export default function TemplateLibrary() {
   const official   = filtered.filter(t => !t.isCommunity)
   const community  = filtered.filter(t => t.isCommunity)
 
-  function handleUse(template) {
-    // Instantiate as a new draft quiz and navigate to editor
-    navigate(`/quizzes/new-${template.id}/editor?template=${template.id}`)
+  async function handleUse(template) {
+    setCreating(true)
+    const { data, error } = await createQuiz({
+      title: template.name,
+      description: template.description,
+      category: template.category,
+      status: 'draft',
+      tags: template.tags ?? [],
+    })
+    setCreating(false)
+    if (!error && data?.id) {
+      navigate(`/quizzes/${data.id}/editor`)
+    }
   }
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {creating && (
+        <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl px-8 py-6 shadow-xl flex items-center gap-4">
+            <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm font-medium text-slate-700">Creating quiz from template…</span>
+          </div>
+        </div>
+      )}
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70 bg-white/80 backdrop-blur">
         <div className="max-w-6xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
@@ -256,7 +276,7 @@ export default function TemplateLibrary() {
             <p className="text-[11px] text-slate-400 mt-0.5">Start with a proven quiz structure</p>
           </div>
           <button
-            onClick={() => setSaveAsSource(mockQuizzes[0])}
+            onClick={() => setSaveAsSource({ title: 'My Quiz' })}
             className="flex items-center gap-2 border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-colors"
           >
             <Plus className="w-4 h-4" /> Save as Template

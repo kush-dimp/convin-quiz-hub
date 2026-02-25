@@ -9,7 +9,6 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis,
   Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts'
-import { mockAuditLogs } from '../data/mockAssignments'
 import {
   useAdminStats,
   useScoreDistribution,
@@ -17,6 +16,7 @@ import {
   useSignupOverTime,
   usePopularQuizzes,
 } from '../hooks/useAnalytics'
+import { useAuditLogs } from '../hooks/useAuditLogs'
 
 const SYSTEM = [
   { label: 'Database',     value: '2.4 GB',  pct: 48, status: 'ok',   icon: Database     },
@@ -89,9 +89,10 @@ export default function AdminDashboard() {
   const { stats, loading: statsLoading } = useAdminStats()
   const { data: signupData }             = useSignupOverTime()
   const { data: popularQuizzes }         = usePopularQuizzes(5)
+  const { logs: auditLogs }              = useAuditLogs({ live: false })
 
   const show = Object.fromEntries(widgets.map(w => [w.id, w.visible]))
-  const activity = [...mockAuditLogs].reverse().slice(0, 8)
+  const activity = (auditLogs ?? []).slice(0, 8)
 
   const SEV_DOT = {
     critical: 'bg-red-600', error: 'bg-red-400',
@@ -290,11 +291,11 @@ export default function AdminDashboard() {
               {activity.map(log => (
                 <div key={log.id} className="flex items-center gap-3 px-5 py-3 hover:bg-slate-50/60 transition-colors">
                   <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${SEV_DOT[log.severity] || 'bg-slate-300'}`} />
-                  <span className="text-[12px] font-semibold text-slate-700 w-28 flex-shrink-0 truncate">{log.user}</span>
+                  <span className="text-[12px] font-semibold text-slate-700 w-28 flex-shrink-0 truncate">{log.user_name}</span>
                   <span className="text-[12px] text-indigo-600 font-medium w-36 flex-shrink-0 truncate">{log.action}</span>
                   <span className="text-[12px] text-slate-400 flex-1 truncate hidden md:block">{log.resource}</span>
                   <span className="text-[10px] text-slate-400 font-mono flex-shrink-0">
-                    {new Date(log.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
               ))}
