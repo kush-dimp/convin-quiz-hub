@@ -39,9 +39,13 @@ export default function NotificationCenter() {
   const { notifications, loading, unreadCount, markRead, markAllRead, dismiss, dismissAllRead } = useNotifications(profile?.id)
   const [filter, setFilter]       = useState('all')
   const [showPrefs, setShowPrefs] = useState(false)
-  const [prefs, setPrefs] = useState(
-    Object.fromEntries(ALL_TYPES.map(t => [t, { inApp: true, email: t !== 'system' }]))
-  )
+  const [prefs, setPrefs] = useState(() => {
+    try {
+      const stored = localStorage.getItem('notif_prefs')
+      if (stored) return JSON.parse(stored)
+    } catch {}
+    return Object.fromEntries(ALL_TYPES.map(t => [t, { inApp: true, email: t !== 'system' }]))
+  })
 
   const displayed = notifications.filter(n => {
     if (filter === 'unread') return !n.read
@@ -210,7 +214,9 @@ export default function NotificationCenter() {
               </div>
             </div>
             <div className="px-5 py-4 border-t border-slate-100">
-              <button onClick={() => setShowPrefs(false)} className="w-full bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all">
+              <button
+                onClick={() => { localStorage.setItem('notif_prefs', JSON.stringify(prefs)); setShowPrefs(false) }}
+                className="w-full bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all">
                 Save Preferences
               </button>
             </div>

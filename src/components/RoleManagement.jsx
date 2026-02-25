@@ -1,6 +1,17 @@
 import { useState } from 'react'
 import { Key, Plus, Edit2, Trash2, Check, X, Shield } from 'lucide-react'
 import { useUsers } from '../hooks/useUsers'
+import { supabase } from '../lib/supabase'
+
+// Maps display names → DB enum values
+const ROLE_DB_MAP = {
+  'Super Admin': 'super_admin',
+  'Admin':       'admin',
+  'Instructor':  'instructor',
+  'Reviewer':    'reviewer',
+  'Student':     'student',
+  'Guest':       'guest',
+}
 
 const PERMISSIONS = [
   { id: 'quiz_create',    label: 'Create quizzes'       },
@@ -39,6 +50,8 @@ export default function RoleManagement() {
   const [newRoleName, setNewRoleName] = useState('')
   const [showNew, setShowNew]     = useState(false)
   const [saved, setSaved]         = useState(false)
+  const [saving, setSaving]       = useState(false)
+  const [saveError, setSaveError] = useState(null)
 
   function togglePerm(roleId, permId) {
     setRoles(prev => prev.map(r => {
@@ -66,7 +79,32 @@ export default function RoleManagement() {
     if (selected?.id === id) setSelected(roles[0])
   }
 
-  function saveChanges() { setSaved(true); setTimeout(() => setSaved(false), 2000) }
+  async function saveChanges() {
+    setSaving(true); setSaveError(null)
+    try {
+      // Ensure all permission definitions exist in the permissions table
+      await supabase.from('permissions').upsert(
+        PERMISSIONS.map(p => ({ id: p.id, label: p.label })),
+        { onConflict: 'id' }
+      )
+      // Build rows for all system roles
+      const rows = []
+      for (const role of roles) {
+        const dbRole = ROLE_DB_MAP[role.name]
+        if (!dbRole) continue
+        for (const permId of role.permissions) rows.push({ role: dbRole, permission: permId })
+      }
+      // Replace existing role_permissions for system roles
+      await supabase.from('role_permissions').delete().in('role', Object.values(ROLE_DB_MAP))
+      if (rows.length > 0) await supabase.from('role_permissions').insert(rows)
+      setSaved(true); setTimeout(() => setSaved(false), 2000)
+    } catch (err) {
+      setSaveError(err.message)
+      setTimeout(() => setSaveError(null), 4000)
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -81,8 +119,8 @@ export default function RoleManagement() {
           </div>
           <div className="flex gap-2">
             <button onClick={() => setShowNew(true)} className="flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-colors"><Plus className="w-4 h-4" /> Custom Role</button>
-            <button onClick={saveChanges} className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all">
-              {saved ? <><Check className="w-4 h-4" /> Saved!</> : 'Save Changes'}
+            <button onClick={saveChanges} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all disabled:opacity-60">
+              {saving ? 'Saving…' : saved ? <><Check className="w-4 h-4" /> Saved!</> : saveError ? '⚠ Error' : 'Save Changes'}
             </button>
           </div>
         </div>
@@ -174,7 +212,9 @@ export default function RoleManagement() {
                     onChange={e => updateUser(u.id, { role: e.target.value })}
                     className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                   >
-                    {defaultRoles.map(r => <option key={r.name} value={r.name}>{r.name}</option>)}
+                    {Object.entries(ROLE_DB_MAP).map(([label, val]) => (
+                      <option key={val} value={val}>{label}</option>
+                    ))}
                   </select>
                 </div>
               ))}

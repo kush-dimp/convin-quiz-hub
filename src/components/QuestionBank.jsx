@@ -18,6 +18,8 @@ export default function QuestionBank() {
   const [filterDiff, setFilterDiff] = useState('all')
   const [filterTopic, setFilterTopic] = useState('all')
   const [selected, setSelected] = useState(new Set())
+  const [editingId, setEditingId] = useState(null)
+  const [editText, setEditText] = useState('')
 
   useEffect(() => {
     async function load() {
@@ -56,6 +58,14 @@ export default function QuestionBank() {
       .select()
       .single()
     if (!error && data) setQuestions(prev => [data, ...prev])
+  }
+
+  function startEdit(q) { setEditingId(q.id); setEditText(q.text) }
+
+  async function saveEdit(id) {
+    const { error } = await supabase.from('questions').update({ text: editText }).eq('id', id)
+    if (!error) setQuestions(prev => prev.map(q => q.id === id ? { ...q, text: editText } : q))
+    setEditingId(null)
   }
 
   async function deleteQuestion(id) {
@@ -180,7 +190,21 @@ export default function QuestionBank() {
               >
                 <input type="checkbox" checked={selected.has(q.id)} onChange={() => toggle(q.id)} className="rounded accent-indigo-600" />
                 <div className="min-w-0">
-                  <p className="text-[13px] font-semibold text-slate-800 truncate md:max-w-xs">{q.text}</p>
+                  {editingId === q.id ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        autoFocus
+                        value={editText}
+                        onChange={e => setEditText(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') saveEdit(q.id); if (e.key === 'Escape') setEditingId(null) }}
+                        className="flex-1 bg-white border border-indigo-300 rounded-lg text-[13px] px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      />
+                      <button onClick={() => saveEdit(q.id)} className="text-[11px] font-semibold text-white bg-indigo-600 rounded-lg px-2 py-1 hover:bg-indigo-700">Save</button>
+                      <button onClick={() => setEditingId(null)} className="text-[11px] text-slate-500 hover:text-slate-700">✕</button>
+                    </div>
+                  ) : (
+                    <p className="text-[13px] font-semibold text-slate-800 truncate md:max-w-xs">{q.text}</p>
+                  )}
                   <div className="flex gap-2 mt-0.5 md:hidden">
                     <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-medium">{QUESTION_TYPES.find(t=>t.id===q.type)?.short}</span>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${diffColor[q.difficulty] ?? 'bg-slate-50 text-slate-500'}`}>{q.difficulty}</span>
@@ -192,7 +216,7 @@ export default function QuestionBank() {
                 <span className="hidden md:block text-[13px] font-semibold text-slate-800 text-right">{q.points} pts</span>
                 <span className="hidden md:block text-[12px] text-slate-400 text-right" />
                 <div className="hidden md:flex items-center justify-end gap-1">
-                  <button className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => startEdit(q)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
                   <button className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><Copy className="w-3.5 h-3.5" /></button>
                   <button
                     onClick={() => deleteQuestion(q.id)}

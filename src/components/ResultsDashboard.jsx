@@ -5,6 +5,7 @@ import {
   Mail, Eye, Search, ChevronDown, ChevronUp, AlertTriangle,
 } from 'lucide-react'
 import { useResults, useResultStats } from '../hooks/useResults'
+import { supabase } from '../lib/supabase'
 
 function StatCard({ icon: Icon, label, value, sub, iconBg, iconColor }) {
   return (
@@ -41,8 +42,20 @@ export default function ResultsDashboard() {
   const [page,       setPage]       = useState(1)
   const [selected,   setSelected]   = useState(new Set())
 
-  const { results, loading: resultsLoading } = useResults()
+  const { results, loading: resultsLoading, refetch } = useResults()
   const { stats } = useResultStats(null)
+
+  async function deleteAttempt(id) {
+    await supabase.from('quiz_attempts').delete().eq('id', id)
+    refetch()
+  }
+
+  async function deleteSelected() {
+    if (!selected.size) return
+    await supabase.from('quiz_attempts').delete().in('id', [...selected])
+    setSelected(new Set())
+    refetch()
+  }
 
   const avgScore = stats?.avgScore ?? 0
   const passRate = stats?.passRate ?? 0
@@ -143,10 +156,15 @@ export default function ResultsDashboard() {
           {selected.size > 0 && (
             <div className="flex items-center gap-2 ml-auto">
               <span className="text-[12px] text-slate-500 font-medium">{selected.size} selected</span>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+              <button
+                onClick={() => {
+                  const emails = results.filter(r => selected.has(r.id)).map(r => r.email).join(',')
+                  window.open(`mailto:${emails}`)
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
                 <Mail className="w-3.5 h-3.5" /> Email
               </button>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+              <button onClick={deleteSelected} className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
                 <Trash2 className="w-3.5 h-3.5" /> Delete
               </button>
             </div>
@@ -225,10 +243,10 @@ export default function ResultsDashboard() {
                           className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
                           <Eye className="w-3.5 h-3.5" />
                         </button>
-                        <button className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <button onClick={() => window.open(`mailto:${r.email}`)} className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
                           <Mail className="w-3.5 h-3.5" />
                         </button>
-                        <button className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                        <button onClick={() => deleteAttempt(r.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>

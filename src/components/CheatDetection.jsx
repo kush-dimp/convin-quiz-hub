@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Shield, AlertTriangle, Eye, Flag, Check, X, Filter } from 'lucide-react'
 import { useResults } from '../hooks/useResults'
+import { supabase } from '../lib/supabase'
 
 const sevColor = { high: 'text-red-600 bg-red-50', medium: 'text-amber-700 bg-amber-50', low: 'text-blue-600 bg-blue-50' }
 
@@ -30,6 +31,12 @@ export default function CheatDetection() {
   const [filter, setFilter] = useState('all')
   const [reviewed, setReviewed] = useState(new Set())
   const [dismissed, setDismissed] = useState(new Set())
+
+  async function clearAttempt(id) {
+    // Mark as not flagged in DB and dismiss locally
+    await supabase.from('quiz_attempts').update({ flagged: false }).eq('id', id)
+    setDismissed(p => { const n = new Set(p); n.add(id); return n })
+  }
 
   // Build suspicious attempts: flagged results + high tab-switchers from all results
   const suspiciousAttempts = useMemo(() => {
@@ -165,7 +172,7 @@ export default function CheatDetection() {
                     {reviewed.has(attempt.id) ? 'Unmark' : 'Mark Reviewed'}
                   </button>
                   <button
-                    onClick={() => setDismissed(p => { const n = new Set(p); n.add(attempt.id); return n })}
+                    onClick={() => clearAttempt(attempt.id)}
                     className="text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1.5"
                   >
                     <Check className="w-3.5 h-3.5" /> Clear (False +)
