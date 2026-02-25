@@ -93,6 +93,27 @@ export function useQuizzes(filters = {}) {
 }
 
 /** Fetch a single quiz by ID (with questions). */
+// DB columns that exist on the questions table
+const Q_COLUMNS = new Set(['id','quiz_id','position','type','text','rich_text','points','difficulty','topic','explanation','time_limit_s','payload','created_by'])
+
+// Flatten payload back into the question object for the editor
+function deserializeQuestion(q) {
+  return { ...q, ...(q.payload ?? {}) }
+}
+
+// Strip non-column fields into payload before saving to DB
+function serializeQuestion(q, idx, quizId) {
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  const row = { quiz_id: quizId, position: idx, payload: {} }
+  if (uuidRe.test(q.id)) row.id = q.id
+  for (const [k, v] of Object.entries(q)) {
+    if (k === 'id' || k === 'payload') continue
+    if (Q_COLUMNS.has(k)) row[k] = v
+    else row.payload[k] = v
+  }
+  return row
+}
+
 export function useQuiz(id) {
   const [quiz,      setQuiz]      = useState(null)
   const [questions, setQuestions] = useState([])
@@ -108,26 +129,23 @@ export function useQuiz(id) {
         supabase.from('questions').select('*').eq('quiz_id', id).order('position'),
       ])
       if (quizRes.error) setError(quizRes.error.message)
-      else { setQuiz(quizRes.data); setQuestions(qRes.data ?? []) }
+      else {
+        setQuiz(quizRes.data)
+        // Flatten payload fields into question objects for the editor
+        setQuestions((qRes.data ?? []).map(deserializeQuestion))
+      }
       setLoading(false)
     }
     load()
   }, [id])
 
   async function saveQuestions(qs) {
-    // UUID regex — any temp ID (like 'q101') is treated as a new row (no id → DB auto-generates)
-    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    const payload = qs.map((q, i) => ({
-      ...q,
-      quiz_id:  id,
-      position: i,
-      id:       uuidRe.test(q.id) ? q.id : undefined,
-    }))
+    const rows = qs.map((q, i) => serializeQuestion(q, i, id))
     const { data, error } = await supabase
       .from('questions')
-      .upsert(payload, { onConflict: 'id' })
+      .upsert(rows, { onConflict: 'id' })
       .select()
-    if (!error) setQuestions(data ?? [])
+    if (!error) setQuestions((data ?? []).map(deserializeQuestion))
     return { data, error }
   }
 
