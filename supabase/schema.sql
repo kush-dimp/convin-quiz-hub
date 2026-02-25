@@ -356,7 +356,7 @@ create index idx_certs_user on certificates(user_id);
 
 -- 1. Auto-update updated_at columns
 create or replace function set_updated_at()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
   new.updated_at = now();
   return new;
@@ -400,7 +400,7 @@ create trigger trg_on_auth_user_created
 
 -- 3. Auto-create quiz_stats row on new quiz
 create or replace function handle_new_quiz()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
   insert into quiz_stats(quiz_id) values (new.id)
   on conflict (quiz_id) do nothing;
@@ -415,7 +415,7 @@ create trigger trg_on_quiz_created
 
 -- 4. Update profile_stats after attempt is submitted
 create or replace function update_profile_stats_on_submit()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
   if new.status = 'submitted' and old.status = 'in_progress' then
     update profile_stats
@@ -440,7 +440,7 @@ create trigger trg_attempt_submitted
 
 -- 5. Bump assignment completed_count on submit
 create or replace function update_assignment_progress()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
   if new.status = 'submitted' and old.status = 'in_progress'
      and new.assignment_id is not null then
