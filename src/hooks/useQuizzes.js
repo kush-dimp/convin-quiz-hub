@@ -140,13 +140,32 @@ export function useQuiz(id) {
   }, [id])
 
   async function saveQuestions(qs) {
-    const rows = qs.map((q, i) => serializeQuestion(q, i, id))
-    const { data, error } = await supabase
-      .from('questions')
-      .upsert(rows, { onConflict: 'id' })
-      .select()
-    if (!error) setQuestions((data ?? []).map(deserializeQuestion))
-    return { data, error }
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const existing = []
+    const brand_new = []
+    qs.forEach((q, i) => {
+      const row = serializeQuestion(q, i, id)
+      if (uuidRe.test(q.id)) existing.push(row)
+      else brand_new.push(row)
+    })
+
+    const saved = []
+    if (existing.length) {
+      const { data, error } = await supabase
+        .from('questions').upsert(existing, { onConflict: 'id' }).select()
+      if (error) return { data: null, error }
+      saved.push(...(data ?? []))
+    }
+    if (brand_new.length) {
+      const { data, error } = await supabase
+        .from('questions').insert(brand_new).select()
+      if (error) return { data: null, error }
+      saved.push(...(data ?? []))
+    }
+
+    const sorted = saved.sort((a, b) => a.position - b.position)
+    setQuestions(sorted.map(deserializeQuestion))
+    return { data: sorted, error: null }
   }
 
   return { quiz, questions, loading, error, setQuiz, setQuestions, saveQuestions }
