@@ -390,7 +390,7 @@ export default function CertificatesPage() {
                   cert={viewCert}
                   quizTitle={viewCert.quiz_title}
                   userName={viewCert.user_name}
-                  scorePct={null}
+                  scorePct={viewCert.score_pct != null ? Math.round(Number(viewCert.score_pct)) : null}
                   template={tpl.template}
                   primaryColor={tpl.primaryColor}
                 />

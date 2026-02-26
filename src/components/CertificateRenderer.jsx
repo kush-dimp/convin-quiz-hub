@@ -88,7 +88,7 @@ function ClassicTemplate({ cert, quizTitle, userName, scorePct, instructorName, 
           {quizTitle || 'Quiz Title'}
         </p>
         <p style={{ fontSize: 15, color: '#57534e', marginBottom: 0 }}>
-          with a score of <strong style={{ color: '#1c1917' }}>{scorePct ?? 0}%</strong>
+          with a score of <strong style={{ color: '#1c1917' }}>{scorePct != null ? `${scorePct}%` : '—'}</strong>
         </p>
       </div>
 
@@ -152,7 +152,7 @@ function ModernTemplate({ cert, quizTitle, userName, scorePct, instructorName, p
 
         <div style={{ marginTop: 'auto', textAlign: 'center' }}>
           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10, marginBottom: 2 }}>Score Achieved</p>
-          <p style={{ color: 'white', fontSize: 36, fontWeight: 800, margin: 0, lineHeight: 1 }}>{scorePct ?? 0}%</p>
+          <p style={{ color: 'white', fontSize: 36, fontWeight: 800, margin: 0, lineHeight: 1 }}>{scorePct != null ? `${scorePct}%` : '—'}</p>
         </div>
       </div>
 
@@ -261,7 +261,7 @@ function MinimalistTemplate({ cert, quizTitle, userName, scorePct, instructorNam
           {quizTitle || 'Quiz Title'}
         </p>
         <p style={{ fontSize: 14, color: '#a1a1aa' }}>
-          with a score of {scorePct ?? 0}%
+          with a score of {scorePct != null ? `${scorePct}%` : '—'}
         </p>
       </div>
 
@@ -348,7 +348,7 @@ function CorporateTemplate({ cert, quizTitle, userName, scorePct, instructorName
         {/* Stats grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 36 }}>
           {[
-            { label: 'Score Achieved', value: `${scorePct ?? 0}%`, accent: true },
+            { label: 'Score Achieved', value: scorePct != null ? `${scorePct}%` : '—', accent: true },
             { label: 'Status', value: 'Passed', accent: false },
             { label: 'Date Issued', value: formatDate(cert?.issued_at), accent: false },
           ].map(({ label, value, accent }) => (

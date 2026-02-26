@@ -20,10 +20,12 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const rows = await sql`
         SELECT c.*, p.name AS user_name, p.email AS user_email,
-               q.title AS quiz_title, q.certificate_template
+               q.title AS quiz_title, q.certificate_template,
+               a.score_pct
         FROM certificates c
         JOIN profiles p ON c.user_id = p.id
         JOIN quizzes  q ON c.quiz_id  = q.id
+        LEFT JOIN quiz_attempts a ON a.id = c.attempt_id
         WHERE c.id = ${certId}
       `
       if (!rows.length) return res.status(404).json({ error: 'Not found' })
@@ -45,10 +47,12 @@ export default async function handler(req, res) {
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
     const query = `
       SELECT c.*, p.name AS user_name, p.email AS user_email,
-             q.title AS quiz_title, q.certificate_template
+             q.title AS quiz_title, q.certificate_template,
+             a.score_pct
       FROM certificates c
       JOIN profiles p ON c.user_id = p.id
       JOIN quizzes  q ON c.quiz_id  = q.id
+      LEFT JOIN quiz_attempts a ON a.id = c.attempt_id
       ${where}
       ORDER BY c.issued_at DESC
     `
