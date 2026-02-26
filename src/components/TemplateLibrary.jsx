@@ -313,7 +313,7 @@ export default function TemplateLibrary() {
           <section className="mb-8">
             <div className="flex items-center gap-2 mb-3">
               <h2 className="text-sm font-bold text-slate-900">Official Templates</h2>
-              <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-medium">ProProfs Team</span>
+              <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-medium">Convin Team</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {official.map(t => <TemplateCard key={t.id} template={t} onPreview={setPreview} onUse={handleUse} />)}

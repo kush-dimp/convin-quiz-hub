@@ -4,7 +4,7 @@ export const mockTemplates = [
     name: 'General Knowledge Quiz',
     description: 'A broad-based quiz covering science, history, geography, and current events. Perfect for classroom ice-breakers or end-of-term reviews.',
     questionCount: 20, estimatedMinutes: 15, rating: 4.7, ratingCount: 234,
-    uses: 1842, author: 'ProProfs Team', isOfficial: true, isCommunity: false,
+    uses: 1842, author: 'Convin Team', isOfficial: true, isCommunity: false,
     thumbnail: null, tags: ['general knowledge', 'classroom', 'trivia'],
     questions: [
       { id: 1, type: 'mcq', text: 'What is the capital of France?', options: ['London', 'Berlin', 'Paris', 'Madrid'], answer: 2 },
@@ -19,7 +19,7 @@ export const mockTemplates = [
     name: 'Workplace Safety Fundamentals',
     description: 'Essential workplace safety training covering hazard identification, emergency procedures, PPE requirements, and reporting obligations.',
     questionCount: 25, estimatedMinutes: 20, rating: 4.5, ratingCount: 189,
-    uses: 3201, author: 'ProProfs Team', isOfficial: true, isCommunity: false,
+    uses: 3201, author: 'Convin Team', isOfficial: true, isCommunity: false,
     thumbnail: null, tags: ['safety', 'compliance', 'OSHA', 'HR'],
     questions: [
       { id: 1, type: 'mcq', text: 'What does PPE stand for?', options: ['Personal Protective Equipment', 'Professional Performance Evaluation', 'Primary Prevention Exercise', 'Personnel Process Efficiency'], answer: 0 },
@@ -57,7 +57,7 @@ export const mockTemplates = [
     name: 'Employee Satisfaction Survey',
     description: 'Measure employee engagement, satisfaction, and well-being. Includes questions on management, culture, workload, and growth opportunities.',
     questionCount: 15, estimatedMinutes: 10, rating: 4.6, ratingCount: 143,
-    uses: 4521, author: 'ProProfs Team', isOfficial: true, isCommunity: false,
+    uses: 4521, author: 'Convin Team', isOfficial: true, isCommunity: false,
     thumbnail: null, tags: ['survey', 'HR', 'engagement', 'feedback'],
     questions: [
       { id: 1, type: 'rating', text: 'Overall, how satisfied are you with your job?', scale: 10 },
