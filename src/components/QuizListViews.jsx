@@ -146,9 +146,15 @@ export function QuizListCard({
   onHistory,
   onDelete,
 }) {
-  const { title, instructor, category, status, rating, updatedAt, thumbnail, isPrivate, stats } = quiz
+  const {
+    title, category, status, thumbnail,
+    updated_at, is_private: isPrivate,
+    quiz_stats: stats, profiles,
+  } = quiz
+  const instructor = profiles?.name
+  const stats_ = stats ?? {}
 
-  const date = new Date(updatedAt).toLocaleDateString('en-US', {
+  const date = new Date(updated_at).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
   })
 
@@ -187,10 +193,9 @@ export function QuizListCard({
           {instructor} · <span className="text-gray-400">{category}</span>
         </p>
         <div className="flex items-center gap-3 mt-1.5">
-          <Stat icon={Eye}       value={stats.views}    />
-          <Stat icon={Play}      value={stats.previews} />
-          <Stat icon={BarChart2} value={stats.reports}  />
-          <Rating value={rating} />
+          <Stat icon={Eye}       value={stats_?.views    ?? 0} />
+          <Stat icon={Play}      value={stats_?.previews ?? 0} />
+          <Stat icon={BarChart2} value={stats_?.reports  ?? 0} />
           <span className="ml-auto text-xs text-gray-400 hidden sm:block whitespace-nowrap">
             Edited {date}
           </span>
@@ -250,8 +255,14 @@ export function QuizCompactView({
 }
 
 function CompactRow({ quiz, isLast, isSelected, onToggleSelect, isDisabled, isSelectionMode, onDuplicate, isHighlighted, onHistory, onDelete }) {
-  const { title, instructor, category, status, rating, updatedAt, isPrivate, stats } = quiz
-  const date = new Date(updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
+  const {
+    title, category, status,
+    updated_at, is_private: isPrivate,
+    quiz_stats: stats, profiles,
+  } = quiz
+  const instructor = profiles?.name
+  const stats_ = stats ?? {}
+  const date = new Date(updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
 
   return (
     <div
@@ -288,7 +299,7 @@ function CompactRow({ quiz, isLast, isSelected, onToggleSelect, isDisabled, isSe
 
       {/* Views */}
       <span className="w-20 text-right text-xs text-gray-600 font-medium flex-shrink-0">
-        {stats.views >= 1000 ? `${(stats.views / 1000).toFixed(1)}k` : stats.views}
+        {(stats_?.views ?? 0) >= 1000 ? `${((stats_?.views ?? 0) / 1000).toFixed(1)}k` : (stats_?.views ?? 0)}
       </span>
 
       {/* Date */}
@@ -296,9 +307,9 @@ function CompactRow({ quiz, isLast, isSelected, onToggleSelect, isDisabled, isSe
         {date}
       </span>
 
-      {/* Rating */}
+      {/* Plays */}
       <div className="w-16 flex justify-end flex-shrink-0">
-        <Rating value={rating} />
+        <Stat icon={Play} value={stats_?.previews ?? 0} />
       </div>
 
       <ThreeDotMenu disabled={isSelectionMode || isDisabled} onDuplicate={() => onDuplicate?.(quiz)} quizId={quiz.id} onHistory={() => onHistory?.(quiz)} onDelete={() => onDelete?.(quiz)} />
