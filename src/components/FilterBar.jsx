@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import {
-  Search, X, ChevronDown, Calendar, Tag,
+  Search, X, ChevronDown, Calendar,
   LayoutGrid, List, AlignJustify, ArrowUp, ArrowDown,
 } from 'lucide-react'
 
@@ -435,36 +435,6 @@ export default function FilterBar({
         </div>
       </div>
 
-      {/* ── Row 2: tag chips ── */}
-      {tags.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="flex items-center gap-1 text-xs text-gray-400 font-medium mr-0.5 flex-shrink-0">
-            <Tag className="w-3 h-3" />
-            Tags:
-          </span>
-          {tags.map((tag) => {
-            const active = filters.tags.includes(tag)
-            return (
-              <button
-                key={tag}
-                onClick={() =>
-                  onFilterChange(
-                    'tags',
-                    active ? filters.tags.filter((t) => t !== tag) : [...filters.tags, tag]
-                  )
-                }
-                className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-all duration-150 ${
-                  active
-                    ? 'bg-[#E63E6D] text-white shadow-sm scale-105'
-                    : 'bg-gray-100 text-gray-600 hover:bg-[#FFF5F7] hover:text-[#E63E6D]'
-                }`}
-              >
-                {tag}
-              </button>
-            )
-          })}
-        </div>
-      )}
 
       {/* ── Row 3: active chips + count ── */}
       {(activeChips.length > 0 || !isLoading) && (
