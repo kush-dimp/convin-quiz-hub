@@ -22,6 +22,7 @@ import NotificationCenter from './components/NotificationCenter'
 import AuditLogs from './components/AuditLogs'
 import AdminDashboard from './components/AdminDashboard'
 import QuizTaker from './components/QuizTaker'
+import CertificatesPage from './components/CertificatesPage'
 
 // Redirects to /login if not authenticated; shows a loading state while checking
 function ProtectedRoute({ children }) {
@@ -86,6 +87,7 @@ function AppRoutes() {
         <Route path="roles" element={<RoleManagement />} />
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="audit-logs" element={<AuditLogs />} />
+        <Route path="certificates" element={<CertificatesPage />} />
       </Route>
 
       {/* Full-screen quiz taking — outside Layout, still protected */}

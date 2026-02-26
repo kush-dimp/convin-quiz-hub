@@ -1,4 +1,13 @@
 import { sql } from './_db.js'
+import { sendCertificateEmail } from './_email.js'
+
+function calcExpiry(expiry) {
+  if (!expiry || expiry === 'never') return null
+  const d = new Date()
+  if (expiry === '1y') { d.setFullYear(d.getFullYear() + 1); return d.toISOString() }
+  if (expiry === '2y') { d.setFullYear(d.getFullYear() + 2); return d.toISOString() }
+  return null
+}
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -41,7 +50,56 @@ export default async function handler(req, res) {
       q += sets.map((k, i) => `${k} = $${i + 1}`).join(', ')
       q += ` WHERE id = $${sets.length + 1} RETURNING *`
       const rows = await sql(q, [...vals, attemptId])
-      return res.status(200).json(rows[0])
+      const updatedAttempt = rows[0]
+
+      // Issue certificate if quiz passed and certificate is enabled
+      let certificate = null
+      if (updatedAttempt && updatedAttempt.status === 'submitted' && updatedAttempt.passed) {
+        const quizRows = await sql`
+          SELECT certificate_enabled, certificate_template, title
+          FROM quizzes WHERE id = ${updatedAttempt.quiz_id}
+        `
+        const quiz = quizRows[0]
+        if (quiz?.certificate_enabled) {
+          let tpl = {}
+          try { tpl = JSON.parse(quiz.certificate_template || '{}') } catch {}
+          const expiresAt = calcExpiry(tpl.expiry)
+
+          await sql`
+            INSERT INTO certificates (user_id, quiz_id, attempt_id, expires_at)
+            VALUES (${updatedAttempt.user_id}, ${updatedAttempt.quiz_id},
+                    ${updatedAttempt.id}, ${expiresAt})
+            ON CONFLICT (user_id, quiz_id) DO NOTHING
+          `
+          const certRows = await sql`
+            SELECT * FROM certificates
+            WHERE user_id = ${updatedAttempt.user_id}
+              AND quiz_id  = ${updatedAttempt.quiz_id}
+          `
+          certificate = certRows[0] ?? null
+
+          // Send certificate email (fire-and-forget; never blocks the response)
+          if (certificate && tpl.autoEmail !== false) {
+            const profileRows = await sql`
+              SELECT email, name FROM profiles WHERE id = ${updatedAttempt.user_id}
+            `
+            const profile = profileRows[0]
+            if (profile?.email) {
+              sendCertificateEmail({
+                to:           profile.email,
+                name:         profile.name  || 'Participant',
+                quizTitle:    quiz.title    || 'Quiz',
+                scorePct:     Math.round(Number(updatedAttempt.score_pct) || 0),
+                certId:       certificate.id,
+                issuedAt:     certificate.issued_at,
+                primaryColor: tpl.primaryColor,
+              }).catch(err => console.error('[email] cert email failed (non-fatal):', err))
+            }
+          }
+        }
+      }
+
+      return res.status(200).json({ ...updatedAttempt, certificate })
     }
   }
 

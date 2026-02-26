@@ -2,7 +2,7 @@ import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutGrid, Layers, Database, BarChart2, TrendingUp,
   BookOpen, Award, FileText, Shield, Users, Calendar,
-  Bell, Key, LogOut, Activity, LayoutDashboard, ClipboardList, Zap,
+  Bell, Key, LogOut, Activity, LayoutDashboard, ClipboardList, Zap, GraduationCap,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -23,7 +23,8 @@ const NAV = [
       { to: '/question-analysis', icon: FileText,      label: 'Question Analysis' },
       { to: '/grade-book',        icon: BookOpen,      label: 'Grade Book'        },
       { to: '/user-progress',     icon: Award,         label: 'User Progress'     },
-      { to: '/reports',           icon: ClipboardList, label: 'Reports'           },
+      { to: '/reports',           icon: ClipboardList,  label: 'Reports'           },
+      { to: '/certificates',      icon: GraduationCap,  label: 'Certificates'      },
     ],
   },
   {

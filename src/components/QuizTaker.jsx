@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import CertificateRenderer, { CERT_W, CERT_H } from './CertificateRenderer'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -326,6 +327,8 @@ export default function QuizTaker() {
 
   // Results
   const [results, setResults] = useState(null) // shown after submit
+  const [certificate, setCertificate] = useState(null)
+  const [showCertModal, setShowCertModal] = useState(false)
 
   // ── Visibility / cheat detection ────────────────────────────────────────
   useEffect(() => {
@@ -449,6 +452,8 @@ export default function QuizTaker() {
       })
       if (!updRes.ok) throw new Error('Failed to update attempt')
 
+      const updData = await updRes.json()
+      if (updData.certificate) setCertificate(updData.certificate)
       setResults({ scorePct, passed, totalSeconds, pointsEarned, totalPoints })
     } catch (err) {
       console.error('submitQuiz error:', err)
@@ -529,6 +534,7 @@ export default function QuizTaker() {
     const timeStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`
 
     return (
+      <>
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-sm p-10 max-w-lg w-full text-center">
           {/* Score circle */}
@@ -578,8 +584,53 @@ export default function QuizTaker() {
             </div>
           </div>
 
+          {/* Certificate section */}
+          {certificate && (() => {
+            let tpl = {}
+            try { tpl = JSON.parse(quiz?.certificate_template || '{}') } catch {}
+            const thumbScale = 370 / CERT_W
+            const thumbH = Math.round(CERT_H * thumbScale)
+            return (
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422A12 12 0 0112 21.5a12 12 0 01-6.16-10.922L12 14z" />
+                  </svg>
+                  <span className="font-semibold text-slate-900">Certificate Earned!</span>
+                </div>
+                {/* Thumbnail preview */}
+                <div className="relative mx-auto rounded-xl overflow-hidden border border-slate-200 shadow-sm"
+                     style={{ width: 370, height: thumbH }}>
+                  <div style={{
+                    transform: `scale(${thumbScale})`,
+                    transformOrigin: 'top left',
+                    width: CERT_W,
+                    height: CERT_H,
+                    pointerEvents: 'none',
+                  }}>
+                    <CertificateRenderer
+                      cert={certificate}
+                      quizTitle={quiz?.title}
+                      userName={profile?.name}
+                      scorePct={Math.round(scorePct)}
+                      template={tpl.template}
+                      primaryColor={tpl.primaryColor}
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowCertModal(true)}
+                  className="mt-4 w-full px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-sm hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm"
+                >
+                  View &amp; Download Certificate
+                </button>
+              </div>
+            )
+          })()}
+
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 mt-6">
             <button
               onClick={() => navigate(`/results/${attempt?.id}`)}
               className="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-semibold hover:from-indigo-700 hover:to-violet-700 transition-all shadow-sm"
@@ -595,6 +646,53 @@ export default function QuizTaker() {
           </div>
         </div>
       </div>
+
+      {/* Full-screen certificate modal */}
+      {showCertModal && certificate && (() => {
+        let tpl = {}
+        try { tpl = JSON.parse(quiz?.certificate_template || '{}') } catch {}
+        const scale = Math.min(
+          (window.innerWidth * 0.9) / CERT_W,
+          (window.innerHeight * 0.85) / CERT_H,
+        )
+        return (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            <div className="flex items-center gap-4 mb-4">
+              <button
+                onClick={() => window.print()}
+                className="px-5 py-2.5 rounded-xl bg-white text-slate-800 text-sm font-semibold hover:bg-slate-100 transition-colors shadow"
+              >
+                Print / Save as PDF
+              </button>
+              <button
+                onClick={() => setShowCertModal(false)}
+                className="px-5 py-2.5 rounded-xl bg-white/20 text-white text-sm font-semibold hover:bg-white/30 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+            <div style={{
+              transform: `scale(${scale})`,
+              transformOrigin: 'top center',
+              width: CERT_W,
+              height: CERT_H,
+              boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
+              borderRadius: 8,
+              overflow: 'hidden',
+            }}>
+              <CertificateRenderer
+                cert={certificate}
+                quizTitle={quiz?.title}
+                userName={profile?.name}
+                scorePct={Math.round(scorePct)}
+                template={tpl.template}
+                primaryColor={tpl.primaryColor}
+              />
+            </div>
+          </div>
+        )
+      })()}
+      </>
     )
   }
 

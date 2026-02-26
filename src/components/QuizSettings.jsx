@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   ChevronLeft, Timer, RefreshCw, Layout, BarChart2, Shield,
   MessageSquare, Award, Link as LinkIcon, Save, Check,
   Clock, AlertTriangle, Eye, EyeOff, Globe, Lock, Smartphone,
-  Monitor, Key, Calendar, Zap, FileText, Copy, ExternalLink,
+  Monitor, Key, Calendar, Zap, FileText, Copy, ExternalLink, X,
 } from 'lucide-react'
 import { useQuiz, useQuizzes } from '../hooks/useQuizzes'
+import CertificateRenderer, { CERT_W, CERT_H } from './CertificateRenderer'
 
 const TABS = [
   { id: 'timing',      label: 'Timing',        icon: Timer         },
@@ -472,23 +473,52 @@ function FeedbackSettings({ settings, onSettingChange }) {
 }
 
 /* ── Prompt 23: Certificate ──────────────────────────────────── */
-function CertificateSettings({ settings, onSettingChange }) {
+function CertificateSettings({ settings, onSettingChange, quizTitle }) {
   const enabled = settings.certificate_enabled
-  const [template, setTemplate]     = useState('classic')
-  const [criterion, setCriterion]   = useState('pass')
-  const [expiry, setExpiry]         = useState('never')
-  const [qrCode, setQrCode]         = useState(true)
-  const [autoEmail, setAutoEmail]   = useState(true)
-  const [primaryColor, setPrimaryColor] = useState('#4F46E5')
+
+  // Parse stored JSON on mount / when settings.certificate_template changes
+  const tpl = useMemo(() => {
+    try { return JSON.parse(settings.certificate_template || '{}') } catch { return {} }
+  }, [settings.certificate_template])
+
+  const [template, setTemplate]         = useState(tpl.template     ?? 'classic')
+  const [primaryColor, setPrimaryColor] = useState(tpl.primaryColor ?? '#4F46E5')
+  const [criterion, setCriterion]       = useState(tpl.criterion    ?? 'pass')
+  const [expiry, setExpiry]             = useState(tpl.expiry        ?? 'never')
+  const [qrCode, setQrCode]             = useState(tpl.qrCode        ?? true)
+  const [autoEmail, setAutoEmail]       = useState(tpl.autoEmail      ?? true)
+  const [showPreview, setShowPreview]   = useState(false)
+
+  // Re-sync local state when the quiz first loads (tpl object reference changes once)
+  useEffect(() => {
+    setTemplate(tpl.template     ?? 'classic')
+    setPrimaryColor(tpl.primaryColor ?? '#4F46E5')
+    setCriterion(tpl.criterion    ?? 'pass')
+    setExpiry(tpl.expiry           ?? 'never')
+    setQrCode(tpl.qrCode           ?? true)
+    setAutoEmail(tpl.autoEmail     ?? true)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.certificate_template]) // intentionally deps on the raw string
+
+  function updateTpl(patch) {
+    const next = { template, primaryColor, criterion, expiry, qrCode, autoEmail, ...patch }
+    onSettingChange('certificate_template', JSON.stringify(next))
+  }
 
   const templates = [
-    { id: 'classic',      label: 'Classic',    preview: 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-300'    },
-    { id: 'modern',       label: 'Modern',     preview: 'bg-gradient-to-br from-indigo-50 to-blue-100 border-indigo-300'   },
-    { id: 'minimalist',   label: 'Minimalist', preview: 'bg-white border-slate-300'                                         },
-    { id: 'corporate',    label: 'Corporate',  preview: 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-300'    },
+    { id: 'classic',    label: 'Classic',    preview: 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-300'  },
+    { id: 'modern',     label: 'Modern',     preview: 'bg-gradient-to-br from-indigo-50 to-blue-100 border-indigo-300' },
+    { id: 'minimalist', label: 'Minimalist', preview: 'bg-white border-slate-300'                                       },
+    { id: 'corporate',  label: 'Corporate',  preview: 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-300'  },
   ]
 
   const dynamicFields = ['{name}', '{quiz_title}', '{score}', '{date}', '{certificate_id}', '{instructor}']
+
+  // Scale factor for the preview modal (fit within 80vw × 80vh)
+  const previewScale = Math.min(
+    (typeof window !== 'undefined' ? window.innerWidth * 0.8 : 800) / CERT_W,
+    (typeof window !== 'undefined' ? window.innerHeight * 0.8 : 600) / CERT_H,
+  )
 
   return (
     <div className="space-y-6">
@@ -500,7 +530,8 @@ function CertificateSettings({ settings, onSettingChange }) {
           <Section title="Certificate Template">
             <div className="grid grid-cols-2 gap-2">
               {templates.map(t => (
-                <button key={t.id} onClick={() => setTemplate(t.id)} className={`p-3 rounded-xl border-2 transition-all ${template === t.id ? 'border-indigo-500' : 'border-transparent hover:border-slate-200'}`}>
+                <button key={t.id} onClick={() => { setTemplate(t.id); updateTpl({ template: t.id }) }}
+                  className={`p-3 rounded-xl border-2 transition-all ${template === t.id ? 'border-indigo-500' : 'border-transparent hover:border-slate-200'}`}>
                   <div className={`h-16 rounded-lg border-2 flex items-center justify-center ${t.preview}`}>
                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Certificate</span>
                   </div>
@@ -511,35 +542,81 @@ function CertificateSettings({ settings, onSettingChange }) {
           </Section>
           <Section title="Customization">
             <Row label="Primary color">
-              <input type="color" value={primaryColor} onChange={e => setPrimaryColor(e.target.value)} className="w-10 h-8 rounded-lg border border-slate-200 cursor-pointer" />
+              <input type="color" value={primaryColor}
+                onChange={e => { setPrimaryColor(e.target.value); updateTpl({ primaryColor: e.target.value }) }}
+                className="w-10 h-8 rounded-lg border border-slate-200 cursor-pointer" />
             </Row>
             <Row label="Issue certificate when">
-              <select value={criterion} onChange={e => setCriterion(e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm bg-slate-50 focus:outline-none">
+              <select value={criterion}
+                onChange={e => { setCriterion(e.target.value); updateTpl({ criterion: e.target.value }) }}
+                className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm bg-slate-50 focus:outline-none">
                 <option value="pass">Quiz passed (above passing score)</option>
                 <option value="complete">Any completion</option>
                 <option value="perfect">Perfect score only</option>
               </select>
             </Row>
             <Row label="Certificate expiry">
-              <select value={expiry} onChange={e => setExpiry(e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm bg-slate-50 focus:outline-none">
+              <select value={expiry}
+                onChange={e => { setExpiry(e.target.value); updateTpl({ expiry: e.target.value }) }}
+                className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm bg-slate-50 focus:outline-none">
                 <option value="never">Never expires</option>
                 <option value="1y">1 year</option>
                 <option value="2y">2 years</option>
-                <option value="custom">Custom</option>
               </select>
             </Row>
-            <Row label="Include QR verification code"><Toggle checked={qrCode} onChange={setQrCode} /></Row>
-            <Row label="Email certificate automatically" description="Send PDF to user's email on issuance"><Toggle checked={autoEmail} onChange={setAutoEmail} /></Row>
+            <Row label="Include QR verification code">
+              <Toggle checked={qrCode} onChange={v => { setQrCode(v); updateTpl({ qrCode: v }) }} />
+            </Row>
+            <Row label="Email certificate automatically" description="Send certificate email to user on issuance">
+              <Toggle checked={autoEmail} onChange={v => { setAutoEmail(v); updateTpl({ autoEmail: v }) }} />
+            </Row>
           </Section>
           <Section title="Dynamic Fields">
-            <p className="text-xs text-slate-500">Use these placeholders in your certificate text:</p>
+            <p className="text-xs text-slate-500">Available placeholders in certificate text:</p>
             <div className="flex flex-wrap gap-2 mt-2">
               {dynamicFields.map(f => (
-                <code key={f} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg border border-indigo-100 font-mono cursor-pointer hover:bg-indigo-100 transition-colors">{f}</code>
+                <code key={f} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg border border-indigo-100 font-mono">{f}</code>
               ))}
             </div>
           </Section>
+          <button
+            onClick={() => setShowPreview(true)}
+            className="w-full py-2.5 rounded-xl border-2 border-dashed border-indigo-300 text-indigo-600 text-sm font-semibold hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2"
+          >
+            <Eye className="w-4 h-4" /> Preview Certificate
+          </button>
         </>
+      )}
+
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+             onClick={() => setShowPreview(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
+            <button onClick={() => setShowPreview(false)}
+              className="absolute -top-10 right-0 text-white/80 hover:text-white flex items-center gap-1 text-sm">
+              <X className="w-4 h-4" /> Close
+            </button>
+            <div style={{
+              transform: `scale(${previewScale})`,
+              transformOrigin: 'top left',
+              width: CERT_W,
+              height: CERT_H,
+              boxShadow: '0 25px 60px rgba(0,0,0,0.4)',
+              borderRadius: 8,
+              overflow: 'hidden',
+            }}>
+              <CertificateRenderer
+                cert={{ id: 'preview-preview', issued_at: new Date().toISOString() }}
+                quizTitle={quizTitle || 'Sample Quiz'}
+                userName="Jane Smith"
+                scorePct={95}
+                template={template}
+                primaryColor={primaryColor}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
@@ -662,6 +739,7 @@ export default function QuizSettings() {
     show_correct_answers:    true,
     allow_review:            true,
     certificate_enabled:     false,
+    certificate_template:    '{}',
     password_protected:      false,
     access_password:         '',
     require_proctoring:      false,
@@ -681,6 +759,7 @@ export default function QuizSettings() {
       show_correct_answers:     quiz.show_correct_answers     ?? true,
       allow_review:             quiz.allow_review             ?? true,
       certificate_enabled:      quiz.certificate_enabled      ?? false,
+      certificate_template:     quiz.certificate_template     ?? '{}',
       password_protected:       quiz.password_protected       ?? false,
       access_password:          quiz.access_password          ?? '',
       require_proctoring:       quiz.require_proctoring       ?? false,
@@ -707,6 +786,7 @@ export default function QuizSettings() {
         show_correct_answers:     settings.show_correct_answers,
         allow_review:             settings.allow_review,
         certificate_enabled:      settings.certificate_enabled,
+        certificate_template:     settings.certificate_template,
         password_protected:       settings.password_protected,
         access_password:          settings.access_password,
         require_proctoring:       settings.require_proctoring,
@@ -742,6 +822,7 @@ export default function QuizSettings() {
 
   const PANELS = { timing: TimingSettings, attempts: AttemptSettings, presentation: PresentationSettings, scoring: ScoringRules, security: SecuritySettings, feedback: FeedbackSettings, certificate: CertificateSettings, integration: IntegrationSettings }
   const Panel = PANELS[activeTab]
+  const panelProps = activeTab === 'certificate' ? { settings, onSettingChange: setSetting, quizTitle } : { settings, onSettingChange: setSetting }
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
@@ -781,7 +862,7 @@ export default function QuizSettings() {
           <h1 className="text-base font-bold text-slate-900 mb-5 flex items-center gap-2">
             {(() => { const t = TABS.find(t => t.id === activeTab); return t ? <><t.icon className="w-5 h-5 text-indigo-500" />{t.label}</> : null })()}
           </h1>
-          <Panel settings={settings} onSettingChange={setSetting} />
+          <Panel {...panelProps} />
         </div>
       </main>
 
