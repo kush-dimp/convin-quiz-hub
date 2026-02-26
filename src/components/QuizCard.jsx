@@ -140,7 +140,7 @@ export default function QuizCard({
     <div
       onClick={handleCardClick}
       className={`
-        bg-white rounded-2xl overflow-hidden group
+        bg-white rounded-2xl group
         transition-all duration-200 cursor-pointer
         ${isHighlighted
           ? 'shadow-lg shadow-indigo-100 ring-2 ring-indigo-400 ring-offset-2'
