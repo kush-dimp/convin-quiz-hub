@@ -6,12 +6,13 @@
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(135deg, #1A0B13 0%, #0B1A0F 58%, #1A0B13 100%);
+    background: linear-gradient(135deg, #2E1422 0%, #14221C 58%, #2E1422 100%);
     background-attachment: fixed;
     color: #0f172a;
     font-family: 'Manrope', system-ui, sans-serif;
   }
   h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', system-ui, sans-serif; }
+  .glass-card, .glass-panel, .glass { --tw-text-opacity: 1; color: #0f172a; }
   *::-webkit-scrollbar { width: 5px; height: 5px; }
   *::-webkit-scrollbar-track { background: transparent; }
   *::-webkit-scrollbar-thumb { background: #FFB3C6; border-radius: 999px; }
@@ -43,25 +44,25 @@
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   .glass {
-    backdrop-filter: blur(12px);
-    background: rgba(255, 245, 247, 0.88);
-    border-bottom: 1px solid rgba(255, 107, 157, 0.12);
+    backdrop-filter: blur(16px);
+    background: rgba(255, 245, 247, 0.96);
+    border-bottom: 1px solid rgba(255, 107, 157, 0.15);
   }
 
   /* Frosted glass cards */
   .glass-card {
     backdrop-filter: blur(16px) saturate(180%);
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.60);
-    box-shadow: 0 4px 24px rgba(255, 107, 157, 0.08), 0 1px 3px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.80);
+    box-shadow: 0 4px 24px rgba(255, 107, 157, 0.10), 0 1px 3px rgba(0,0,0,0.06);
   }
 
   /* Lighter panel (FilterBar, toolbars) */
   .glass-panel {
     backdrop-filter: blur(12px) saturate(160%);
-    background: rgba(255, 255, 255, 0.60);
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    box-shadow: 0 2px 16px rgba(255, 107, 157, 0.06);
+    background: rgba(255, 255, 255, 0.90);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow: 0 2px 16px rgba(255, 107, 157, 0.08);
   }
 
   /* Dark sidebar glass */
