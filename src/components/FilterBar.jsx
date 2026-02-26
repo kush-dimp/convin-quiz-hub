@@ -398,7 +398,7 @@ export default function FilterBar({
         <button
           onClick={() => onSortDirChange(sortDir === 'desc' ? 'asc' : 'desc')}
           title={sortDir === 'desc' ? 'Descending — click to sort ascending' : 'Ascending — click to sort descending'}
-          className="p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:border-[#FF6B9D] hover:text-[#E63E6D] transition-colors shadow-sm"
+          className="relative z-[35] p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:border-[#FF6B9D] hover:text-[#E63E6D] transition-colors shadow-sm"
         >
           {sortDir === 'desc'
             ? <ArrowDown className="w-4 h-4" />
@@ -417,7 +417,7 @@ export default function FilterBar({
         <div className="w-px h-7 bg-gray-200 mx-0.5" />
 
         {/* View toggle */}
-        <div className="flex items-center gap-0.5 bg-gray-100 rounded-lg p-0.5">
+        <div className="relative z-[35] flex items-center gap-0.5 bg-gray-100 rounded-lg p-0.5">
           {VIEW_OPTIONS.map(({ value, Icon, title }) => (
             <button
               key={value}
