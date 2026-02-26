@@ -38,7 +38,7 @@ function QuestionRow({ q, i, answer }) {
   )
 
   return (
-    <div className={`bg-white rounded-2xl shadow-sm overflow-hidden border ${isCorrect ? 'border-emerald-200' : 'border-red-200'}`}>
+    <div className={`glass-card rounded-2xl overflow-hidden border ${isCorrect ? 'border-emerald-200' : 'border-red-200'}`}>
       <div className={`flex items-center gap-3 px-4 py-2.5 ${isCorrect ? 'bg-emerald-50' : 'bg-red-50'}`}>
         <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${isCorrect ? 'bg-emerald-500' : 'bg-red-500'}`}>
           {isCorrect ? <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} /> : <X className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
@@ -134,7 +134,7 @@ export default function IndividualResult() {
           </button>
           <div className="flex-1">
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Result Detail</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Result Detail</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Detailed attempt review</p>
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function IndividualResult() {
       <main className="max-w-4xl mx-auto px-6 py-6 space-y-6">
         {/* User + overview */}
         <div className="grid md:grid-cols-2 gap-5">
-          <div className="bg-white rounded-2xl shadow-sm p-5">
+          <div className="glass-card rounded-2xl p-5">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-[#FFE5EC] flex items-center justify-center text-base font-bold text-[#E63E6D] flex-shrink-0">{initials}</div>
               <div>
@@ -167,7 +167,7 @@ export default function IndividualResult() {
               ))}
             </div>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm p-5 flex flex-col items-center justify-center">
+          <div className="glass-card rounded-2xl p-5 flex flex-col items-center justify-center">
             <ScoreGauge score={score} />
             <div className="flex gap-4 mt-4 text-center">
               <div><p className="text-xs text-slate-400">Correct</p><p className="text-lg font-bold text-green-600">{correctCount}</p></div>
@@ -181,8 +181,8 @@ export default function IndividualResult() {
         </div>
 
         {/* Comparison */}
-        <div className="bg-white rounded-2xl shadow-sm p-5">
-          <h3 className="text-sm font-bold text-slate-900 mb-3">Score Comparison</h3>
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-heading text-sm font-bold text-slate-900 mb-3">Score Comparison</h3>
           <div className="space-y-2">
             {[['This attempt', score, 'bg-[#FF6B9D]'], ['Class average', 74, 'bg-slate-300'], ['Top score', 97, 'bg-emerald-500']].map(([label, val, color]) => (
               <div key={label} className="flex items-center gap-3">
@@ -198,7 +198,7 @@ export default function IndividualResult() {
 
         {/* Question review */}
         <div>
-          <h3 className="text-sm font-bold text-slate-900 mb-3">Question-by-Question Review</h3>
+          <h3 className="font-heading text-sm font-bold text-slate-900 mb-3">Question-by-Question Review</h3>
           <div className="space-y-3">
             {answers.map((a, i) => (
               <QuestionRow key={a.question_id ?? i} q={a.questions} i={i} answer={a} />
@@ -207,8 +207,8 @@ export default function IndividualResult() {
         </div>
 
         {/* Instructor notes */}
-        <div className="bg-white rounded-2xl shadow-sm p-5">
-          <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#FF6B9D]" /> Instructor Notes</h3>
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-heading text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#FF6B9D]" /> Instructor Notes</h3>
           <textarea value={note} onChange={e => setNote(e.target.value)} rows={3} placeholder="Add private notes or comments for this submission…" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 resize-none" />
           <button onClick={saveNote} className="mt-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] flex items-center gap-1.5">
             {noteSaved ? <><Check className="w-3.5 h-3.5" /> Saved!</> : 'Save Note'}

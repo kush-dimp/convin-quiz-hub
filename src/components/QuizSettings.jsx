@@ -844,7 +844,7 @@ export default function QuizSettings() {
           <Link to={`/quizzes/${id}/editor`} className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors mb-2">
             <ChevronLeft className="w-3.5 h-3.5" /> Back to Editor
           </Link>
-          <h2 className="text-sm font-bold text-slate-900 truncate">{quizTitle}</h2>
+          <h2 className="font-heading text-sm font-bold text-slate-900 truncate">{quizTitle}</h2>
           <p className="text-xs text-slate-400">Settings</p>
         </div>
         <nav className="flex-1 overflow-y-auto py-2 px-2">
@@ -871,7 +871,7 @@ export default function QuizSettings() {
       {/* Main panel */}
       <main className="flex-1 overflow-y-auto p-6">
         <div className="max-w-xl mx-auto">
-          <h1 className="text-base font-bold text-slate-900 mb-5 flex items-center gap-2">
+          <h1 className="font-heading text-xl font-bold text-slate-900 mb-5 flex items-center gap-2">
             {(() => { const t = TABS.find(t => t.id === activeTab); return t ? <><t.icon className="w-5 h-5 text-[#FF6B9D]" />{t.label}</> : null })()}
           </h1>
           <Panel {...panelProps} />

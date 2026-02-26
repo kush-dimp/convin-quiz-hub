@@ -158,7 +158,7 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
                 <Copy className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-base font-bold text-gray-900">Duplicate Quiz</h2>
+                <h2 className="font-heading text-base font-bold text-gray-900">Duplicate Quiz</h2>
                 <p className="text-xs text-gray-500 mt-0.5 truncate">"{quiz.title}"</p>
               </div>
               <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">

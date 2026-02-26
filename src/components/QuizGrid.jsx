@@ -326,10 +326,10 @@ export default function QuizGrid() {
     <div className="min-h-screen">
       {/* Header */}
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
-        <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-6 h-[60px] flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-[15px] font-bold text-slate-900 leading-none">My Quizzes</h1>
-            <p className="text-[11px] text-slate-400 mt-0.5">{localQuizzes.length} quizzes total</p>
+            <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">My Quizzes</h1>
+            <p className="font-body text-[11px] text-slate-400 mt-0.5">{localQuizzes.length} quizzes total</p>
           </div>
           <button
             onClick={handleCreateQuiz}
@@ -359,7 +359,7 @@ export default function QuizGrid() {
         {dataLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-sm animate-pulse h-48" />
+              <div key={i} className="glass-card rounded-2xl animate-pulse h-48" />
             ))}
           </div>
         ) : filteredQuizzes.length === 0 ? (

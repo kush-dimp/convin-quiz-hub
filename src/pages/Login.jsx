@@ -65,7 +65,7 @@ export default function Login() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+        <div className="glass-card rounded-2xl border border-slate-100 p-6">
           {/* Mode toggle */}
           <div className="flex bg-slate-100 rounded-xl p-0.5 mb-6">
             {['login', 'signup'].map(m => (

@@ -652,7 +652,7 @@ export default function QuestionImportModal({ onClose, onImported }) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 flex-shrink-0">
           <div>
-            <h2 className="text-[15px] font-bold text-slate-900">Import Questions</h2>
+            <h2 className="font-heading text-xl font-bold text-slate-900">Import Questions</h2>
             <p className="text-xs text-slate-400 mt-0.5">
               {step === 'upload' ? 'Upload or paste in any format — we\'ll handle the conversion' : 'Review detected questions before importing'}
             </p>

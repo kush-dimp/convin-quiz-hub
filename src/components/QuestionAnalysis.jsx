@@ -91,7 +91,7 @@ export default function QuestionAnalysis() {
           <div className="flex items-center gap-2.5">
             <FileText className="w-4 h-4 text-[#E63E6D]" />
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Question Performance Analysis</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Question Performance Analysis</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Per-question metrics and flags</p>
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function QuestionAnalysis() {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="glass-card rounded-2xl overflow-hidden">
               {displayed.length === 0 ? (
                 <div className="py-12 text-center text-sm text-slate-400">No questions found.</div>
               ) : (
@@ -206,8 +206,8 @@ export default function QuestionAnalysis() {
             </div>
 
             {/* Option distribution for a sample question */}
-            <div className="bg-white rounded-2xl shadow-sm p-5">
-              <h3 className="text-sm font-bold text-slate-900 mb-1">Option Distribution — Q2: Explain TCP vs UDP</h3>
+            <div className="glass-card rounded-2xl p-5">
+              <h3 className="font-heading text-sm font-bold text-slate-900 mb-1">Option Distribution — Q2: Explain TCP vs UDP</h3>
               <p className="text-[12px] text-slate-400 mb-4">How users distributed across answer choices (277 attempts)</p>
               <ResponsiveContainer width="100%" height={160}>
                 <BarChart data={optionDist} layout="vertical" margin={{ top: 0, right: 20, bottom: 0, left: 10 }}>

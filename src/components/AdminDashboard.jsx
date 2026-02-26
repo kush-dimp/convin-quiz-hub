@@ -56,7 +56,7 @@ function Chip({ delta, positive }) {
 
 function StatCard({ label, value, sub, delta, positive, icon: Icon, iconBg, iconColor }) {
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm">
+    <div className="glass-card rounded-2xl p-5">
       <div className="flex items-start justify-between mb-4">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconBg}`}>
           <Icon className={`w-[18px] h-[18px] ${iconColor}`} />
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
-            <h1 className="text-[15px] font-bold text-slate-900 leading-none">Admin Dashboard</h1>
+            <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Admin Dashboard</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">Platform overview &amp; health</p>
           </div>
           <div className="flex items-center gap-2">
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
               <div className="bg-white rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-5">
                   <div>
-                    <h3 className="text-[14px] font-bold text-slate-900">User Signups</h3>
+                    <h3 className="font-heading text-[14px] font-bold text-slate-900">User Signups</h3>
                     <p className="text-[11px] text-slate-400 mt-0.5">Last 12 months</p>
                   </div>
                   <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">+12% avg</span>
@@ -198,7 +198,7 @@ export default function AdminDashboard() {
               <div className="bg-white rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-5">
                   <div>
-                    <h3 className="text-[14px] font-bold text-slate-900">Popular Quizzes</h3>
+                    <h3 className="font-heading text-[14px] font-bold text-slate-900">Popular Quizzes</h3>
                     <p className="text-[11px] text-slate-400 mt-0.5">By total attempts</p>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
               <div className="bg-white rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-[14px] font-bold text-slate-900">System Health</h3>
+                    <h3 className="font-heading text-[14px] font-bold text-slate-900">System Health</h3>
                     <p className="text-[11px] text-slate-400 mt-0.5">All systems operational</p>
                   </div>
                   <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
 
             {show.quick && (
               <div className="bg-white rounded-2xl p-5 shadow-sm">
-                <h3 className="text-[14px] font-bold text-slate-900 mb-3.5">Quick Actions</h3>
+                <h3 className="font-heading text-[14px] font-bold text-slate-900 mb-3.5">Quick Actions</h3>
                 <div className="space-y-2">
                   {QUICK.map(a => {
                     const Icon = a.icon
@@ -284,9 +284,9 @@ export default function AdminDashboard() {
 
         {/* Activity feed */}
         {show.activity && (
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div className="glass-card rounded-2xl overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-              <h3 className="text-[14px] font-bold text-slate-900">Recent Activity</h3>
+              <h3 className="font-heading text-[14px] font-bold text-slate-900">Recent Activity</h3>
               <span className="text-[11px] text-slate-400">{activity.length} events</span>
             </div>
             <div className="divide-y divide-slate-50">

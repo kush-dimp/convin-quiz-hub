@@ -17,6 +17,26 @@
   *::-webkit-scrollbar-thumb { background: #FFB3C6; border-radius: 999px; }
   *::-webkit-scrollbar-thumb:hover { background: #FF6B9D; }
   * { scrollbar-width: thin; scrollbar-color: #FFB3C6 transparent; }
+
+  /* Depth orbs */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -180px; right: -180px;
+    width: 560px; height: 560px;
+    background: radial-gradient(circle, rgba(255,107,157,0.18) 0%, transparent 68%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -160px; left: -120px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(72,187,120,0.14) 0%, transparent 68%);
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
 @layer utilities {
@@ -26,6 +46,51 @@
     backdrop-filter: blur(12px);
     background: rgba(255, 245, 247, 0.88);
     border-bottom: 1px solid rgba(255, 107, 157, 0.12);
+  }
+
+  /* Frosted glass cards */
+  .glass-card {
+    backdrop-filter: blur(16px) saturate(180%);
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.60);
+    box-shadow: 0 4px 24px rgba(255, 107, 157, 0.08), 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  /* Lighter panel (FilterBar, toolbars) */
+  .glass-panel {
+    backdrop-filter: blur(12px) saturate(160%);
+    background: rgba(255, 255, 255, 0.60);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 2px 16px rgba(255, 107, 157, 0.06);
+  }
+
+  /* Dark sidebar glass */
+  .glass-dark {
+    backdrop-filter: blur(20px) saturate(200%);
+    background: rgba(20, 8, 12, 0.84);
+    border-right: 1px solid rgba(255, 107, 157, 0.15);
+  }
+
+  /* Glass inputs */
+  .glass-input {
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 107, 157, 0.18);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .glass-input:focus {
+    background: rgba(255, 255, 255, 0.80);
+    border-color: rgba(255, 107, 157, 0.50);
+    box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.12);
+    outline: none;
+  }
+
+  /* Floating dropdowns */
+  .glass-dropdown {
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+    box-shadow: 0 8px 32px rgba(255, 107, 157, 0.12), 0 2px 8px rgba(0,0,0,0.08);
   }
 }
 

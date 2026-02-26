@@ -111,7 +111,7 @@ export default function ResultsDashboard() {
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
-            <h1 className="text-[15px] font-bold text-slate-900 leading-none">Results</h1>
+            <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Results</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">{results.length} total attempts</p>
           </div>
           <button onClick={exportCSV}
@@ -132,7 +132,7 @@ export default function ResultsDashboard() {
         </div>
 
         {/* Toolbar */}
-        <div className="bg-white rounded-2xl shadow-sm px-4 py-3 flex flex-wrap gap-3 items-center">
+        <div className="glass-card rounded-2xl px-4 py-3 flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-44">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
             <input
@@ -171,7 +171,7 @@ export default function ResultsDashboard() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="glass-card rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>

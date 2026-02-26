@@ -80,7 +80,7 @@ export default function AutomatedReports() {
           <div className="flex items-center gap-3">
             <FileText className="w-4 h-4 text-[#E63E6D]" />
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Automated Reports</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Automated Reports</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Schedule and automate report delivery</p>
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function AutomatedReports() {
       </header>
       <main className="max-w-5xl mx-auto px-6 py-6 space-y-5">
         {/* Live stats preview */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
+        <div className="glass-card rounded-2xl p-4">
           <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Live Stats Preview</h2>
           {resultsLoading ? (
             <div className="flex gap-6">
@@ -117,7 +117,7 @@ export default function AutomatedReports() {
         <div className="space-y-3">
           <h2 className="text-[13px] font-bold text-slate-900">Scheduled Reports ({reports.length})</h2>
           {reports.map(r => (
-            <div key={r.id} className={`bg-white rounded-2xl shadow-sm p-4 flex items-start gap-4 transition-opacity ${r.paused ? 'opacity-60' : ''}`}>
+            <div key={r.id} className={`glass-card rounded-2xl p-4 flex items-start gap-4 transition-opacity ${r.paused ? 'opacity-60' : ''}`}>
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${r.paused ? 'bg-slate-100 text-slate-400' : 'bg-[#FFF5F7] text-[#E63E6D]'}`}>
                 <FileText className="w-5 h-5" />
               </div>

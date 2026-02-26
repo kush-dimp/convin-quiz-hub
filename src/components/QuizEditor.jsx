@@ -327,7 +327,7 @@ function QuestionBankModal({ onClose, onAdd }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
         <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b flex-shrink-0">
           <Database className="w-5 h-5 text-[#E63E6D]" />
-          <h2 className="text-sm font-bold text-slate-900 flex-1">Add from Question Bank</h2>
+          <h2 className="font-heading text-sm font-bold text-slate-900 flex-1">Add from Question Bank</h2>
           <span className="text-xs text-slate-400">{filtered.length} questions</span>
           <button onClick={onClose}><X className="w-5 h-5 text-slate-400" /></button>
         </div>
@@ -384,7 +384,7 @@ function RandomizationPanel() {
   }
   return (
     <div className="space-y-4 py-2">
-      <h3 className="text-sm font-bold text-slate-900">Randomization Settings</h3>
+      <h3 className="font-heading text-sm font-bold text-slate-900">Randomization Settings</h3>
       <div className="space-y-3">
         {[
           { k: 'shuffleAll',      label: 'Shuffle All Questions',      desc: 'Present questions in random order for each test taker' },
@@ -439,7 +439,7 @@ function ScoringPanel({ questions, onUpdate }) {
   return (
     <div className="space-y-4 py-2">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-slate-900">Scoring & Difficulty</h3>
+        <h3 className="font-heading text-sm font-bold text-slate-900">Scoring & Difficulty</h3>
         <div className="flex items-center gap-2 text-sm text-slate-600">
           Total: <span className="font-bold text-[#E63E6D] text-base">{totalPts} pts</span>
         </div>
@@ -498,7 +498,7 @@ function MediaPanel() {
 
   return (
     <div className="space-y-4 py-2">
-      <h3 className="text-sm font-bold text-slate-900">Multimedia</h3>
+      <h3 className="font-heading text-sm font-bold text-slate-900">Multimedia</h3>
       <div className="flex gap-1 bg-slate-100 rounded-lg p-0.5 w-fit">
         {['upload','url','video'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 rounded-md text-xs font-semibold capitalize transition-colors ${tab === t ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{t === 'url' ? 'Image URL' : t === 'video' ? 'Video Embed' : 'Upload File'}</button>
@@ -551,7 +551,7 @@ function LogicPanel({ questions }) {
   return (
     <div className="space-y-4 py-2">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-slate-900">Skip Logic / Branching</h3>
+        <h3 className="font-heading text-sm font-bold text-slate-900">Skip Logic / Branching</h3>
         <button onClick={addRule} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC] rounded-lg transition-colors">
           <Plus className="w-3.5 h-3.5" /> Add Rule
         </button>

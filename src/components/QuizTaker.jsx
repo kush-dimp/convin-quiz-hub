@@ -533,7 +533,7 @@ export default function QuizTaker() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-sm p-8 max-w-md w-full mx-4 text-center">
+        <div className="glass-card rounded-2xl p-8 max-w-md w-full mx-4 text-center">
           <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
             <svg className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 4h.01M5.07 19H19a2 2 0 001.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16A2 2 0 005.07 19z" />
@@ -562,7 +562,7 @@ export default function QuizTaker() {
     return (
       <>
       <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-sm p-10 max-w-lg w-full text-center">
+        <div className="glass-card rounded-2xl p-10 max-w-lg w-full text-center">
           {/* Score circle */}
           <div className={`w-28 h-28 rounded-full mx-auto mb-6 flex flex-col items-center justify-center border-4
             ${passed ? 'border-emerald-400 bg-emerald-50' : 'border-red-400 bg-red-50'}`}>
@@ -792,7 +792,7 @@ export default function QuizTaker() {
       <main className="flex-1 overflow-y-auto py-6 px-4">
         <div className="max-w-2xl mx-auto">
           {/* Question card */}
-          <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 mb-4">
+          <div className="glass-card rounded-2xl p-6 sm:p-8 mb-4">
             {/* Question header */}
             <div className="flex items-start justify-between gap-4 mb-5">
               <div className="flex items-center gap-2">
@@ -953,7 +953,7 @@ export default function QuizTaker() {
           </div>
 
           {/* Question grid dots */}
-          <div className="bg-white rounded-2xl shadow-sm px-4 sm:px-6 py-4 mb-4">
+          <div className="glass-card rounded-2xl px-4 sm:px-6 py-4 mb-4">
             <p className="text-xs text-slate-500 font-medium mb-3">Questions</p>
             <div className="flex flex-wrap gap-2">
               {questions.map((q, idx) => {

@@ -125,7 +125,7 @@ export default function CertificatesPage() {
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-base font-bold text-slate-900 leading-none">Certificates</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Certificates</h1>
               <p className="text-xs text-slate-400 mt-0.5">Issued completion certificates</p>
             </div>
           </div>
@@ -280,7 +280,7 @@ export default function CertificatesPage() {
             <p className="text-slate-400 text-sm">No certificates found</p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="glass-card rounded-2xl border border-slate-100 overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100">

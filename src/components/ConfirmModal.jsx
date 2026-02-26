@@ -67,7 +67,7 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
         {/* Header */}
         <div className={`flex items-center gap-3 px-6 py-5 ${config.bg}`}>
           {config.icon}
-          <h2 className="text-base font-bold text-gray-900 flex-1">{config.title}</h2>
+          <h2 className="font-heading text-base font-bold text-gray-900 flex-1">{config.title}</h2>
           <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X className="w-5 h-5" />
           </button>

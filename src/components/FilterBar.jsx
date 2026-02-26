@@ -296,7 +296,7 @@ export default function FilterBar({
   ]
 
   return (
-    <div className="space-y-2.5 mb-6">
+    <div className="glass-panel rounded-2xl px-5 py-4 space-y-2.5 mb-6">
       {/* ── Row 1: filter + view controls ── */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Search */}
@@ -307,11 +307,7 @@ export default function FilterBar({
             placeholder="Search by title, description, instructor…"
             value={searchInput}
             onChange={(e) => onSearchChange(e.target.value)}
-            className={`w-full pl-9 pr-8 py-2 text-sm bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 placeholder-gray-400 transition-colors ${
-              searchInput.trim()
-                ? 'border-[#FF6B9D]/60 focus:border-[#FF6B9D]'
-                : 'border-gray-200 focus:border-[#FF6B9D]'
-            }`}
+            className="w-full pl-9 pr-8 py-2 text-sm glass-input rounded-lg placeholder-gray-400"
           />
           {searchInput && (
             <button

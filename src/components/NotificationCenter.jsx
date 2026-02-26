@@ -68,7 +68,7 @@ export default function NotificationCenter() {
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-3xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
-            <h1 className="text-[15px] font-bold text-slate-900 leading-none">
+            <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">
               Notifications
               {unreadCount > 0 && (
                 <span className="ml-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full align-middle">{unreadCount}</span>
@@ -111,7 +111,7 @@ export default function NotificationCenter() {
         {loading && (
           <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex items-start gap-3 bg-white rounded-2xl shadow-sm p-4 animate-pulse">
+              <div key={i} className="flex items-start gap-3 glass-card rounded-2xl p-4 animate-pulse">
                 <div className="w-9 h-9 bg-slate-100 rounded-xl flex-shrink-0" />
                 <div className="flex-1 space-y-2">
                   <div className="h-3 bg-slate-100 rounded w-20" />
@@ -125,7 +125,7 @@ export default function NotificationCenter() {
 
         {/* Notification list grouped by date */}
         {!loading && Object.keys(groups).length === 0 && (
-          <div className="text-center py-20 bg-white rounded-2xl shadow-sm">
+          <div className="text-center py-20 glass-card rounded-2xl">
             <Bell className="w-10 h-10 text-slate-200 mx-auto mb-2" />
             <p className="text-sm text-slate-400">All caught up! No notifications here.</p>
           </div>
@@ -142,7 +142,7 @@ export default function NotificationCenter() {
                   <div
                     key={n.id}
                     onClick={() => markRead(n.id)}
-                    className={`flex items-start gap-3 bg-white rounded-2xl shadow-sm p-4 cursor-pointer transition-all ${!n.read ? 'border-l-4 border-l-[#FF6B9D]' : 'opacity-60'}`}
+                    className={`flex items-start gap-3 glass-card rounded-2xl p-4 cursor-pointer transition-all ${!n.read ? 'border-l-4 border-l-[#FF6B9D]' : 'opacity-60'}`}
                   >
                     <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${cfg.bg}`}>
                       <Icon className={`w-4 h-4 ${cfg.color}`} />
@@ -187,7 +187,7 @@ export default function NotificationCenter() {
           <div className="bg-white h-full w-full max-w-sm shadow-2xl flex flex-col">
             <div className="flex items-center gap-3 px-5 py-4 bg-slate-50 border-b border-slate-100">
               <Settings className="w-4 h-4 text-[#E63E6D]" />
-              <h2 className="text-sm font-bold text-slate-900 flex-1">Notification Preferences</h2>
+              <h2 className="font-heading text-sm font-bold text-slate-900 flex-1">Notification Preferences</h2>
               <button onClick={() => setShowPrefs(false)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-5">

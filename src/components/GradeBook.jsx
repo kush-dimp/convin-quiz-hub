@@ -91,7 +91,7 @@ export default function GradeBook() {
           <div className="flex items-center gap-3">
             <BookOpen className="w-4 h-4 text-[#E63E6D]" />
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Grade Book</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Grade Book</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Student grade overview</p>
             </div>
           </div>

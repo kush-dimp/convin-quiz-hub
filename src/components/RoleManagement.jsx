@@ -113,7 +113,7 @@ export default function RoleManagement() {
           <div className="flex items-center gap-3">
             <Key className="w-4 h-4 text-[#E63E6D]" />
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Roles & Permissions</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Roles & Permissions</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Control access and permissions</p>
             </div>
           </div>
@@ -129,7 +129,7 @@ export default function RoleManagement() {
         <div className="flex gap-5">
           {/* Role list */}
           <aside className="w-52 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-sm p-3 space-y-1">
+            <div className="glass-card rounded-2xl p-3 space-y-1">
               {roles.map(role => (
                 <button
                   key={role.id}
@@ -161,7 +161,7 @@ export default function RoleManagement() {
           {/* Permission matrix */}
           <div className="flex-1">
             {selected ? (
-              <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <div className="glass-card rounded-2xl overflow-hidden">
                 <div className="flex items-center gap-3 px-5 py-4 bg-slate-50 border-b border-slate-100">
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${selected.color}`}>{selected.name}</span>
                   <span className="text-xs text-slate-500">{selected.permissions.size} of {PERMISSIONS.length} permissions granted</span>
@@ -193,7 +193,7 @@ export default function RoleManagement() {
 
         {/* Users with roles — live from DB */}
         {!loading && users.length > 0 && (
-          <div className="mt-6 bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div className="mt-6 glass-card rounded-2xl overflow-hidden">
             <div className="px-5 py-3.5 border-b border-slate-100">
               <h3 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Users & Assigned Roles</h3>
             </div>
@@ -223,7 +223,7 @@ export default function RoleManagement() {
         )}
 
         {/* Permission matrix overview */}
-        <div className="mt-6 bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="mt-6 glass-card rounded-2xl overflow-hidden">
           <div className="px-5 py-3.5 border-b border-slate-100">
             <h3 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Permission Matrix Overview</h3>
           </div>

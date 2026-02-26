@@ -70,7 +70,7 @@ export default function AuditLogs() {
           <div className="flex items-center gap-3">
             <Activity className="w-4 h-4 text-[#E63E6D]" />
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Audit Logs</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Audit Logs</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">System activity and security events</p>
             </div>
             <span className="text-xs text-slate-400">({filtered.length} events)</span>
@@ -122,7 +122,7 @@ export default function AuditLogs() {
         </div>
 
         {/* Log Table */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="glass-card rounded-2xl overflow-hidden">
           {loading ? (
             <div className="divide-y divide-slate-50">
               {Array.from({ length: 8 }).map((_, i) => (

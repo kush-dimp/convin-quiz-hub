@@ -36,7 +36,7 @@ function CardPlaceholder({ quizId }) {
 /* ── Skeleton ── */
 export function SkeletonCard() {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
+    <div className="glass-card rounded-2xl overflow-hidden animate-pulse">
       <div className="h-40 bg-slate-100" />
       <div className="p-4 space-y-3">
         <div className="h-4 bg-slate-100 rounded-full w-4/5" />
@@ -167,13 +167,13 @@ export default function QuizCard({
     <div
       onClick={handleCardClick}
       className={`
-        bg-white rounded-2xl group
-        transition-all duration-200 cursor-pointer
+        glass-card rounded-2xl group
+        transition-all duration-200 cursor-pointer hover:-translate-y-0.5
         ${isHighlighted
-          ? 'shadow-lg shadow-[#FFB3C6] ring-2 ring-[#FF6B9D] ring-offset-2'
+          ? 'ring-2 ring-[#FF6B9D] ring-offset-2'
           : isSelected
-            ? 'shadow-md shadow-[#FFB3C6] ring-2 ring-[#FF6B9D]'
-            : 'shadow-sm hover:shadow-md hover:shadow-slate-200'
+            ? 'ring-2 ring-[#FF6B9D]'
+            : ''
         }
         ${isDisabled ? 'opacity-40 pointer-events-none' : ''}
       `}
@@ -236,7 +236,7 @@ export default function QuizCard({
       {/* Body */}
       <div className="px-4 pt-3.5 pb-4">
         <div className="flex items-start gap-1.5 mb-1">
-          <h3 className="flex-1 font-semibold text-slate-900 text-[14px] leading-snug line-clamp-2 min-w-0">
+          <h3 className="flex-1 font-heading font-semibold text-slate-900 text-[14px] leading-snug line-clamp-2 min-w-0">
             {title}
           </h3>
           <ThreeDotMenu

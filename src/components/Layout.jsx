@@ -102,10 +102,10 @@ export default function Layout() {
     : 'Loading…'
 
   return (
-    <div className="flex h-screen overflow-hidden bg-transparent">
+    <div className="relative z-10 flex h-screen overflow-hidden bg-transparent">
 
       {/* ── Sidebar ── */}
-      <aside className="relative w-[220px] flex-shrink-0 flex flex-col bg-slate-900 overflow-hidden">
+      <aside className="relative w-[220px] flex-shrink-0 flex flex-col glass-dark overflow-hidden">
         {/* Subtle top gradient accent */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#C41E5C]/30 to-transparent pointer-events-none" />
 

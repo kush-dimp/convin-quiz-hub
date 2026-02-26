@@ -8,12 +8,12 @@ import { useScoreDistribution, usePerformanceOverTime } from '../hooks/useAnalyt
 const COLORS = ['#6366f1','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4']
 
 function SectionTitle({ children }) {
-  return <h3 className="text-sm font-bold text-slate-900 mb-3">{children}</h3>
+  return <h3 className="font-heading text-sm font-bold text-slate-900 mb-3">{children}</h3>
 }
 
 function Card({ title, children, className = '' }) {
   return (
-    <div className={`bg-white rounded-2xl shadow-sm p-4 ${className}`}>
+    <div className={`glass-card rounded-2xl p-4 ${className}`}>
       {title && <SectionTitle>{title}</SectionTitle>}
       {children}
     </div>
@@ -83,7 +83,7 @@ export default function AnalyticsDashboard() {
           <div className="flex items-center gap-2.5">
             <TrendingUp className="w-4 h-4 text-[#E63E6D]" />
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Analytics & Insights</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Analytics & Insights</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Quiz performance overview</p>
             </div>
           </div>

@@ -63,7 +63,7 @@ export default function BulkUsers() {
           <div className="flex items-center gap-3">
             <Users className="w-4 h-4 text-[#E63E6D]" />
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Users</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Users</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Manage and invite team members</p>
             </div>
             <span className="text-sm text-slate-400">({users.length})</span>
@@ -91,7 +91,7 @@ export default function BulkUsers() {
       </header>
       <main className="max-w-7xl mx-auto px-6 py-6 space-y-4">
         {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-sm px-4 py-3 flex flex-wrap gap-3 items-center">
+        <div className="glass-card rounded-2xl px-4 py-3 flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-44">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search users…" className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]" />
@@ -121,7 +121,7 @@ export default function BulkUsers() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="glass-card rounded-2xl overflow-hidden">
           {loading ? (
             <div className="divide-y divide-slate-50">
               {Array.from({ length: 6 }).map((_, i) => (

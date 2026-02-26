@@ -79,14 +79,14 @@ export default function UserProgressPage() {
         <div className="max-w-5xl mx-auto px-6 h-[56px] flex items-center gap-3">
           <Award className="w-4 h-4 text-[#E63E6D]" />
           <div>
-            <h1 className="text-[15px] font-bold text-slate-900 leading-none">User Progress</h1>
+            <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">User Progress</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">Individual learner analytics</p>
           </div>
         </div>
       </header>
       <main className="max-w-5xl mx-auto px-6 py-6 space-y-6">
         {/* Users list + select current user */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
+        <div className="glass-card rounded-2xl p-4">
           <p className="text-xs font-semibold text-slate-500 mb-3">Viewing progress for:</p>
           {usersLoading ? (
             <div className="flex items-center gap-2 py-2">
@@ -110,7 +110,7 @@ export default function UserProgressPage() {
         </div>
 
         {/* Profile header */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-5">
+        <div className="glass-card rounded-2xl p-5 flex items-center gap-5">
           <div className="w-16 h-16 rounded-2xl bg-[#FFE5EC] flex items-center justify-center text-xl font-bold text-[#E63E6D] flex-shrink-0">{initials}</div>
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold text-slate-900">{userName}</h2>
@@ -125,8 +125,8 @@ export default function UserProgressPage() {
 
         <div className="grid md:grid-cols-2 gap-5">
           {/* Score over time */}
-          <div className="bg-white rounded-2xl shadow-sm p-5">
-            <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#FF6B9D]" /> Score History</h3>
+          <div className="glass-card rounded-2xl p-5">
+            <h3 className="font-heading text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#FF6B9D]" /> Score History</h3>
             {resultsLoading ? (
               <div className="h-[180px] flex items-center justify-center">
                 <div className="w-6 h-6 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />
@@ -147,8 +147,8 @@ export default function UserProgressPage() {
           </div>
 
           {/* Skills */}
-          <div className="bg-white rounded-2xl shadow-sm p-5">
-            <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><Target className="w-4 h-4 text-[#FF6B9D]" /> Skill Levels</h3>
+          <div className="glass-card rounded-2xl p-5">
+            <h3 className="font-heading text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><Target className="w-4 h-4 text-[#FF6B9D]" /> Skill Levels</h3>
             <div className="space-y-3">
               {skills.map(s => (
                 <div key={s.name}>
@@ -165,8 +165,8 @@ export default function UserProgressPage() {
         </div>
 
         {/* Badges & achievements */}
-        <div className="bg-white rounded-2xl shadow-sm p-5">
-          <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2"><Star className="w-4 h-4 text-amber-400" /> Badges & Achievements</h3>
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-heading text-sm font-bold text-slate-900 mb-4 flex items-center gap-2"><Star className="w-4 h-4 text-amber-400" /> Badges & Achievements</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {BADGES.map(b => (
               <div key={b.id} className={`flex flex-col items-center text-center p-3 rounded-xl border transition-all ${b.earned ? 'border-amber-200 bg-amber-50' : 'border-slate-100 bg-slate-50 opacity-40'}`}>
@@ -179,8 +179,8 @@ export default function UserProgressPage() {
         </div>
 
         {/* Recent activity timeline */}
-        <div className="bg-white rounded-2xl shadow-sm p-5">
-          <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2"><Calendar className="w-4 h-4 text-[#FF6B9D]" /> Recent Activity</h3>
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-heading text-sm font-bold text-slate-900 mb-4 flex items-center gap-2"><Calendar className="w-4 h-4 text-[#FF6B9D]" /> Recent Activity</h3>
           {resultsLoading ? (
             <div className="flex items-center gap-2 py-4">
               <div className="w-4 h-4 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />

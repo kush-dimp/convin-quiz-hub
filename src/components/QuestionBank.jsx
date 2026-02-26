@@ -292,7 +292,7 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-          <h2 className="text-[15px] font-bold text-slate-900">{isNew ? 'New Question' : 'Edit Question'}</h2>
+          <h2 className="font-heading text-xl font-bold text-slate-900">{isNew ? 'New Question' : 'Edit Question'}</h2>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
             <X className="w-4 h-4" />
           </button>
@@ -513,7 +513,7 @@ export default function QuestionBank() {
           <div className="flex items-center gap-2.5">
             <Database className="w-4 h-4 text-[#E63E6D]" />
             <div>
-              <h1 className="text-[15px] font-bold text-slate-900 leading-none">Question Bank</h1>
+              <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Question Bank</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">{questions.length} questions total</p>
             </div>
           </div>
@@ -551,7 +551,7 @@ export default function QuestionBank() {
         )}
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-sm px-4 py-3 flex flex-wrap gap-3 items-center">
+        <div className="glass-card rounded-2xl px-4 py-3 flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-48">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
@@ -580,7 +580,7 @@ export default function QuestionBank() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="glass-card rounded-2xl overflow-hidden">
           <div className="hidden md:grid grid-cols-[2rem_1fr_6rem_6rem_5rem_5rem_6rem] items-center gap-3 px-4 border-b border-slate-100">
             <div />
             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider py-3.5">Question</span>

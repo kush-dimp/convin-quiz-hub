@@ -52,7 +52,7 @@ function RestoreModal({ version, onConfirm, onCancel }) {
           <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
             <AlertTriangle className="w-4 h-4 text-amber-500" />
           </div>
-          <h3 className="text-sm font-bold text-slate-900">Restore Version {version.version_num}?</h3>
+          <h3 className="font-heading text-sm font-bold text-slate-900">Restore Version {version.version_num}?</h3>
         </div>
         <div className="px-6 py-5">
           <p className="text-sm text-slate-500 leading-relaxed">
@@ -115,7 +115,7 @@ export default function VersionHistory({ quiz, onClose }) {
         <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
           <History className="w-5 h-5 text-[#E63E6D]" />
           <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-bold text-slate-900">Version History</h2>
+            <h2 className="font-heading text-sm font-bold text-slate-900">Version History</h2>
             <p className="text-xs text-slate-500 truncate">"{quiz?.title ?? 'Quiz'}" · {versions.length} versions</p>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-slate-500 bg-amber-50 text-amber-700 border border-amber-100 rounded-lg px-2.5 py-1.5">
@@ -191,7 +191,7 @@ export default function VersionHistory({ quiz, onClose }) {
               <div className="p-5 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">Version {selected.version_num}</h3>
+                    <h3 className="font-heading text-sm font-bold text-slate-900">Version {selected.version_num}</h3>
                     <p className="text-xs text-slate-500 mt-0.5">{new Date(selected.created_at).toLocaleString()} by {authorName(selected)}</p>
                     <p className="text-xs text-slate-700 mt-1 font-medium">{selected.summary}</p>
                   </div>

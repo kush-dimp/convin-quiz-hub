@@ -96,7 +96,7 @@ export default function CheatDetection() {
         <div className="max-w-6xl mx-auto px-6 h-[56px] flex items-center gap-3">
           <Shield className="w-4 h-4 text-[#E63E6D]" />
           <div>
-            <h1 className="text-[15px] font-bold text-slate-900 leading-none">Cheat Detection</h1>
+            <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Cheat Detection</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">Flag and review suspicious attempts</p>
           </div>
           {highRisk > 0 && <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full ml-1">{highRisk} high risk</span>}
@@ -119,7 +119,7 @@ export default function CheatDetection() {
         </div>
 
         {/* Detection types info */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
+        <div className="glass-card rounded-2xl p-4">
           <h3 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Detection Patterns</h3>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {[
@@ -149,7 +149,7 @@ export default function CheatDetection() {
         <div className="space-y-3">
           {loading && (
             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-sm border-l-4 border-l-slate-200 p-4 space-y-2">
+              <div key={i} className="glass-card rounded-2xl border-l-4 border-l-slate-200 p-4 space-y-2">
                 <div className="h-3.5 bg-slate-100 rounded animate-pulse w-1/3" />
                 <div className="h-2.5 bg-slate-100 rounded animate-pulse w-2/3" />
                 <div className="h-2.5 bg-slate-100 rounded animate-pulse w-1/2" />
@@ -157,13 +157,13 @@ export default function CheatDetection() {
             ))
           )}
           {!loading && displayed.length === 0 && (
-            <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+            <div className="text-center py-16 glass-card rounded-2xl">
               <Shield className="w-10 h-10 text-slate-200 mx-auto mb-2" />
               <p className="text-sm text-slate-400">No attempts in this category</p>
             </div>
           )}
           {!loading && displayed.map(attempt => (
-            <div key={attempt.id} className={`bg-white rounded-2xl shadow-sm border-l-4 p-4 transition-opacity ${reviewed.has(attempt.id) ? 'opacity-70' : ''} ${attempt.riskScore >= 60 ? 'border-l-red-400' : attempt.riskScore >= 30 ? 'border-l-amber-400' : 'border-l-slate-200'}`}>
+            <div key={attempt.id} className={`glass-card rounded-2xl border-l-4 p-4 transition-opacity ${reviewed.has(attempt.id) ? 'opacity-70' : ''} ${attempt.riskScore >= 60 ? 'border-l-red-400' : attempt.riskScore >= 30 ? 'border-l-amber-400' : 'border-l-slate-200'}`}>
               <div className="flex items-start gap-3 flex-wrap">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">

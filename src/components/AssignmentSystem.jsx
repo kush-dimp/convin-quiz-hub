@@ -97,7 +97,7 @@ export default function AssignmentSystem() {
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-6xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
-            <h1 className="text-[15px] font-bold text-slate-900 leading-none">Assignments</h1>
+            <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Assignments</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">Track and manage quiz assignments</p>
           </div>
           <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6]">
@@ -147,7 +147,7 @@ export default function AssignmentSystem() {
           {loading && (
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl shadow-sm p-4 animate-pulse">
+                <div key={i} className="glass-card rounded-2xl p-4 animate-pulse">
                   <div className="flex items-start gap-3">
                     <div className="flex-1 space-y-2">
                       <div className="h-4 bg-slate-100 rounded w-48" />
@@ -160,7 +160,7 @@ export default function AssignmentSystem() {
             </div>
           )}
           {!loading && filtered.length === 0 && (
-            <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+            <div className="text-center py-16 glass-card rounded-2xl">
               <ClipboardList className="w-10 h-10 text-slate-200 mx-auto mb-2" />
               <p className="text-sm text-slate-400">No assignments match your filters</p>
             </div>
@@ -173,11 +173,11 @@ export default function AssignmentSystem() {
             const prereq = a.prerequisiteId ? assignments.find(x => x.id === a.prerequisiteId) : null
 
             return (
-              <div key={a.id} className={`bg-white rounded-2xl shadow-sm p-4 ${overdue ? 'border-l-4 border-l-red-400' : ''}`}>
+              <div key={a.id} className={`glass-card rounded-2xl p-4 ${overdue ? 'border-l-4 border-l-red-400' : ''}`}>
                 <div className="flex items-start gap-3 flex-wrap">
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-sm font-bold text-slate-900">{a.quizTitle}</h3>
+                      <h3 className="font-heading text-sm font-bold text-slate-900">{a.quizTitle}</h3>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${statusColor[a.status] || statusColor.pending}`}>
                         {a.status.replace('_', ' ')}
                       </span>
@@ -238,7 +238,7 @@ export default function AssignmentSystem() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
               <Plus className="w-5 h-5 text-[#E63E6D]" />
-              <h2 className="text-sm font-bold text-slate-900 flex-1">New Assignment</h2>
+              <h2 className="font-heading text-sm font-bold text-slate-900 flex-1">New Assignment</h2>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
             </div>
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">

@@ -63,7 +63,7 @@ function TemplateCard({ template, onPreview, onUse, loading }) {
   const types = uniqueTypes(template.questions)
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:shadow-slate-200/60 transition-all duration-200 group flex flex-col">
+    <div className="glass-card rounded-2xl overflow-hidden hover:shadow-lg hover:shadow-slate-200/60 transition-all duration-200 group flex flex-col">
       {/* Thumbnail */}
       <div className={`h-36 bg-gradient-to-br ${t.gradient} flex items-center justify-center relative overflow-hidden flex-shrink-0`}>
         {/* decorative circles */}
@@ -185,7 +185,7 @@ function PreviewModal({ template, onClose, onUse, loading }) {
 
           {/* Sample questions */}
           <div>
-            <h3 className="text-sm font-bold text-slate-800 mb-3">Sample Questions</h3>
+            <h3 className="font-heading text-sm font-bold text-slate-800 mb-3">Sample Questions</h3>
             <div className="space-y-2.5">
               {template.questions.map((q, i) => {
                 const m = TYPE_META[q.type] ?? { label: q.type, color: 'bg-slate-100 text-slate-500', icon: HelpCircle }
@@ -241,7 +241,7 @@ function PreviewModal({ template, onClose, onUse, loading }) {
           {/* Rate */}
           <div className="border-t border-slate-100 pt-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-bold text-slate-800">Rating</h3>
+              <h3 className="font-heading text-sm font-bold text-slate-800">Rating</h3>
               <StarRating value={template.rating} count={template.ratingCount} />
             </div>
             {!rated ? (
@@ -292,7 +292,7 @@ function SaveAsTemplateModal({ quiz, onClose }) {
         <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <Award className="w-7 h-7 text-emerald-500" />
         </div>
-        <h2 className="text-base font-bold text-slate-900">Template Saved!</h2>
+        <h2 className="font-heading text-base font-bold text-slate-900">Template Saved!</h2>
         <p className="text-sm text-slate-500 mt-2">"{name}" is now available in the Template Library.</p>
         <button onClick={onClose} className="mt-4 w-full py-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white text-sm font-semibold rounded-xl shadow-sm transition-all">Done</button>
       </div>
@@ -304,7 +304,7 @@ function SaveAsTemplateModal({ quiz, onClose }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100">
           <Plus className="w-5 h-5 text-[#E63E6D]" />
-          <h2 className="text-base font-bold text-slate-900 flex-1">Save as Template</h2>
+          <h2 className="font-heading text-base font-bold text-slate-900 flex-1">Save as Template</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
         </div>
         <div className="px-6 py-5 space-y-4">
@@ -393,7 +393,7 @@ export default function TemplateLibrary() {
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70 bg-white/80 backdrop-blur">
         <div className="max-w-6xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
-            <h1 className="text-[15px] font-bold text-slate-900 leading-none">Template Library</h1>
+            <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Template Library</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">Start with a proven quiz structure</p>
           </div>
           <button
@@ -441,7 +441,7 @@ export default function TemplateLibrary() {
         {official.length > 0 && (
           <section className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-sm font-bold text-slate-900">Official Templates</h2>
+              <h2 className="font-heading text-sm font-bold text-slate-900">Official Templates</h2>
               <span className="text-xs bg-[#FFF5F7] text-[#E63E6D] px-2 py-0.5 rounded-full font-semibold border border-[#FFE5EC]">Convin Team</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -454,7 +454,7 @@ export default function TemplateLibrary() {
         {community.length > 0 && (
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-sm font-bold text-slate-900">Community Templates</h2>
+              <h2 className="font-heading text-sm font-bold text-slate-900">Community Templates</h2>
               <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-semibold border border-emerald-100">Community Contributed</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
