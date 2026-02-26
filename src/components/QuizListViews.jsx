@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import {
   Eye, Play, BarChart2, Lock, MoreVertical,
@@ -59,15 +60,25 @@ function SelectBox({ isSelected, isSelectionMode, onToggle }) {
 /* ── Shared: three-dot menu ────────────────────────────────── */
 function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
   const [open, setOpen] = useState(false)
-  const ref = useRef(null)
+  const [menuPos, setMenuPos] = useState({ top: 0, right: 0 })
+  const btnRef = useRef(null)
+  const menuRef = useRef(null)
   const navigate = useNavigate()
+
   useEffect(() => {
-    function h(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
-    if (open) document.addEventListener('mousedown', h)
+    if (!open) return
+    function h(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target) &&
+          btnRef.current && !btnRef.current.contains(e.target)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', h)
     return () => document.removeEventListener('mousedown', h)
   }, [open])
 
   if (disabled) return <div className="w-7" />
+
   const actions = [
     { icon: Pencil,  label: 'Edit',      onClick: () => navigate(`/quizzes/${quizId}/editor`) },
     { icon: Copy,    label: 'Duplicate', onClick: onDuplicate },
@@ -75,16 +86,29 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
     { icon: Share2,  label: 'Share',     onClick: () => navigator.clipboard.writeText(`${window.location.origin}/quiz/${quizId}/take`) },
     { icon: Trash2,  label: 'Delete',    onClick: () => onDelete?.(), danger: true },
   ]
+
+  function handleOpen(e) {
+    e.stopPropagation()
+    const rect = btnRef.current.getBoundingClientRect()
+    setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right })
+    setOpen(p => !p)
+  }
+
   return (
-    <div ref={ref} className="relative flex-shrink-0">
+    <div className="flex-shrink-0">
       <button
-        onClick={(e) => { e.stopPropagation(); setOpen((p) => !p) }}
+        ref={btnRef}
+        onClick={handleOpen}
         className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
       >
         <MoreVertical className="w-4 h-4" />
       </button>
-      {open && (
-        <div className="absolute right-0 top-8 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 w-40">
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
+          className="bg-white border border-gray-200 rounded-xl shadow-lg py-1 w-40"
+        >
           {actions.map(({ icon: Icon, label, onClick, danger }) => (
             <button
               key={label}
@@ -97,7 +121,8 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
               {label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

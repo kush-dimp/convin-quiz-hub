@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import {
   Eye, Play, BarChart2, Lock, MoreVertical,
@@ -53,12 +54,19 @@ export function SkeletonCard() {
 /* ── Three-dot menu ── */
 function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
   const [open, setOpen] = useState(false)
-  const ref = useRef(null)
+  const [menuPos, setMenuPos] = useState({ top: 0, right: 0 })
+  const btnRef = useRef(null)
+  const menuRef = useRef(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     if (!open) return
-    function close(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    function close(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target) &&
+          btnRef.current && !btnRef.current.contains(e.target)) {
+        setOpen(false)
+      }
+    }
     document.addEventListener('mousedown', close)
     return () => document.removeEventListener('mousedown', close)
   }, [open])
@@ -73,16 +81,28 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
     { icon: Trash2,  label: 'Delete',    onClick: () => onDelete?.(), danger: true },
   ]
 
+  function handleOpen(e) {
+    e.stopPropagation()
+    const rect = btnRef.current.getBoundingClientRect()
+    setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right })
+    setOpen(p => !p)
+  }
+
   return (
-    <div ref={ref} className="relative flex-shrink-0">
+    <div className="flex-shrink-0">
       <button
-        onClick={e => { e.stopPropagation(); setOpen(p => !p) }}
+        ref={btnRef}
+        onClick={handleOpen}
         className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
       >
         <MoreVertical className="w-4 h-4" />
       </button>
-      {open && (
-        <div className="absolute right-0 top-9 z-30 bg-white border border-slate-200/80 rounded-xl shadow-xl py-1.5 w-44 animate-fade-in">
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
+          className="bg-white border border-slate-200/80 rounded-xl shadow-xl py-1.5 w-44"
+        >
           {actions.map(({ icon: Icon, label, onClick, danger }) => (
             <button
               key={label}
@@ -97,7 +117,8 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
               {label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
