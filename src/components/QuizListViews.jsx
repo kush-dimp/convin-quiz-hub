@@ -90,7 +90,13 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
   function handleOpen(e) {
     e.stopPropagation()
     const rect = btnRef.current.getBoundingClientRect()
-    setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right })
+    const spaceBelow = window.innerHeight - rect.bottom
+    const right = window.innerWidth - rect.right
+    if (spaceBelow < 220) {
+      setMenuPos({ bottom: window.innerHeight - rect.top + 4, right, top: undefined })
+    } else {
+      setMenuPos({ top: rect.bottom + 4, right, bottom: undefined })
+    }
     setOpen(p => !p)
   }
 
@@ -106,7 +112,7 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
       {open && createPortal(
         <div
           ref={menuRef}
-          style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
+          style={{ position: 'fixed', top: menuPos.top, bottom: menuPos.bottom, right: menuPos.right, zIndex: 9999 }}
           className="bg-white border border-gray-200 rounded-xl shadow-lg py-1 w-40"
         >
           {actions.map(({ icon: Icon, label, onClick, danger }) => (
