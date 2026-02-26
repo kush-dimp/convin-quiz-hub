@@ -25,21 +25,34 @@ function scoreAnswers(questions, userAnswers) {
     const type = q.type
 
     if (type === 'mcq_single') {
-      const correct = q.payload?.correct
-      isCorrect = raw !== undefined && raw !== null && raw === correct
+      // correct option is identified by its index into the options array
+      const options = q.payload?.options ?? []
+      const correctOption = options[q.payload?.correctIndex ?? 0]
+      isCorrect = raw !== undefined && raw !== null && raw === correctOption?.id
       pointsForQ = isCorrect ? points : 0
     } else if (type === 'true_false') {
-      const correct = q.payload?.correct // boolean
-      // userAnswer stored as string 'true' or 'false'
+      // correctAnswer is a boolean; userAnswer is stored as string 'true'/'false'
+      const correct = q.payload?.correctAnswer
       isCorrect = raw !== undefined && raw !== null && String(raw) === String(correct)
       pointsForQ = isCorrect ? points : 0
     } else if (type === 'mcq_multi') {
-      const correct = (q.payload?.correct ?? []).slice().sort()
-      const selected = Array.isArray(raw) ? raw.slice().sort() : []
-      isCorrect = JSON.stringify(correct) === JSON.stringify(selected)
+      // correctIndices → map to option ids, compare with selected ids
+      const options = q.payload?.options ?? []
+      const correctIds = (q.payload?.correctIndices ?? [])
+        .map(i => options[i]?.id)
+        .filter(Boolean)
+        .sort()
+      const selectedIds = Array.isArray(raw) ? raw.slice().sort() : []
+      isCorrect = correctIds.length > 0 && JSON.stringify(correctIds) === JSON.stringify(selectedIds)
+      pointsForQ = isCorrect ? points : 0
+    } else if (type === 'fill_blank') {
+      const correct = q.payload?.correctAnswer ?? ''
+      const cs = q.payload?.caseSensitive ?? false
+      const answer = raw ?? ''
+      isCorrect = answer !== '' && (cs ? answer === correct : answer.toLowerCase() === correct.toLowerCase())
       pointsForQ = isCorrect ? points : 0
     } else {
-      // short / essay — not auto-graded
+      // short / essay / matching / ordering / rating / matrix — not auto-graded
       isCorrect = false
       pointsForQ = 0
     }
@@ -156,6 +169,128 @@ function ConfirmSubmitModal({ unanswered, onConfirm, onCancel }) {
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+function RatingSelector({ scale = 5, value, onChange }) {
+  return (
+    <div className="flex gap-2 flex-wrap">
+      {Array.from({ length: scale }, (_, i) => i + 1).map((n) => (
+        <button
+          key={n}
+          onClick={() => onChange(n)}
+          className={`w-11 h-11 rounded-xl border-2 font-semibold text-sm transition-all
+            ${value === n
+              ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
+              : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:bg-indigo-50/40'
+            }`}
+        >
+          {n}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function MatchingQuestion({ pairs = [], value, onChange }) {
+  const matched = value ?? {}
+  const rights = pairs.map(p => p.right)
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-slate-400">Match each item on the left to the correct item on the right.</p>
+      {pairs.map((pair, i) => (
+        <div key={i} className="flex items-center gap-3">
+          <div className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-700 font-medium">
+            {pair.left}
+          </div>
+          <span className="text-slate-400 text-sm flex-shrink-0">→</span>
+          <select
+            value={matched[pair.left] ?? ''}
+            onChange={e => onChange({ ...matched, [pair.left]: e.target.value })}
+            className={`flex-1 px-3 py-2.5 rounded-xl border-2 text-sm focus:border-indigo-400 focus:outline-none transition-colors ${
+              matched[pair.left] ? 'border-indigo-300 bg-indigo-50/40 text-slate-800' : 'border-slate-200 bg-white text-slate-500'
+            }`}
+          >
+            <option value="">Select...</option>
+            {rights.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function OrderingQuestion({ items = [], value, onChange }) {
+  const orderedItems = value ?? [...items]
+
+  function move(idx, dir) {
+    const next = [...orderedItems]
+    const swap = idx + dir
+    if (swap < 0 || swap >= next.length) return
+    ;[next[idx], next[swap]] = [next[swap], next[idx]]
+    onChange(next)
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs text-slate-400 mb-1">Arrange the items in the correct order using the arrows.</p>
+      {orderedItems.map((item, i) => (
+        <div key={i} className="flex items-center gap-3">
+          <span className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 text-xs font-bold flex items-center justify-center flex-shrink-0">
+            {i + 1}
+          </span>
+          <div className="flex-1 px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm text-slate-700">
+            {item}
+          </div>
+          <div className="flex flex-col gap-0.5 flex-shrink-0">
+            <button onClick={() => move(i, -1)} disabled={i === 0}
+              className="w-6 h-5 flex items-center justify-center rounded text-xs text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 transition-colors">▲</button>
+            <button onClick={() => move(i, 1)} disabled={i === orderedItems.length - 1}
+              className="w-6 h-5 flex items-center justify-center rounded text-xs text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 transition-colors">▼</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function MatrixQuestion({ rows = [], columns = [], value, onChange }) {
+  const answers = value ?? {}
+  if (!rows.length || !columns.length) {
+    return <p className="text-sm text-slate-400 italic">No matrix data available.</p>
+  }
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr>
+            <th className="py-2 pr-4 text-left w-1/3" />
+            {columns.map(col => (
+              <th key={col} className="py-2 px-3 text-center text-xs font-semibold text-slate-600">{col}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, ri) => (
+            <tr key={row} className={ri % 2 === 0 ? 'bg-slate-50' : 'bg-white'}>
+              <td className="py-2.5 pr-4 text-sm text-slate-700 font-medium">{row}</td>
+              {columns.map(col => (
+                <td key={col} className="py-2.5 px-3 text-center">
+                  <button
+                    onClick={() => onChange({ ...answers, [row]: col })}
+                    className={`w-5 h-5 rounded-full border-2 mx-auto block transition-all
+                      ${answers[row] === col
+                        ? 'border-indigo-500 bg-indigo-500'
+                        : 'border-slate-300 hover:border-indigo-300'
+                      }`}
+                  />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -345,18 +480,15 @@ export default function QuizTaker() {
   // ── Derived values ────────────────────────────────────────────────────────
   const totalQuestions = questions.length
   const currentQuestion = questions[currentIndex] ?? null
-  const answeredCount = questions.filter((q) => {
-    const a = userAnswers[q.id]
+  function hasAnswer(a) {
     if (Array.isArray(a)) return a.length > 0
-    return a !== undefined && a !== null && a !== ''
-  }).length
-  const unansweredCount = totalQuestions - answeredCount
-  const isLastQuestion = currentIndex === totalQuestions - 1
-  const isAnswered = (q) => {
-    const a = userAnswers[q?.id]
-    if (Array.isArray(a)) return a.length > 0
+    if (a !== null && typeof a === 'object') return Object.keys(a).length > 0
     return a !== undefined && a !== null && a !== ''
   }
+  const answeredCount = questions.filter((q) => hasAnswer(userAnswers[q.id])).length
+  const unansweredCount = totalQuestions - answeredCount
+  const isLastQuestion = currentIndex === totalQuestions - 1
+  const isAnswered = (q) => hasAnswer(userAnswers[q?.id])
 
   // ── Loading / Error states ────────────────────────────────────────────────
   if (loading) {
@@ -539,8 +671,17 @@ export default function QuizTaker() {
                   {currentQuestion.points ?? 1} {(currentQuestion.points ?? 1) === 1 ? 'pt' : 'pts'}
                 </span>
                 {currentQuestion.type === 'mcq_multi' && (
-                  <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                    Select all that apply
+                  <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Select all that apply</span>
+                )}
+                {currentQuestion.type === 'matching' && (
+                  <span className="text-xs text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">Match the pairs</span>
+                )}
+                {currentQuestion.type === 'ordering' && (
+                  <span className="text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">Arrange in order</span>
+                )}
+                {currentQuestion.type === 'rating' && (
+                  <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                    Rate 1–{currentQuestion.payload?.scale ?? 5}
                   </span>
                 )}
               </div>
@@ -607,6 +748,18 @@ export default function QuizTaker() {
                 })
               )}
 
+              {currentQuestion.type === 'fill_blank' && (
+                <div>
+                  <input
+                    type="text"
+                    value={userAnswers[currentQuestion.id] ?? ''}
+                    onChange={(e) => setAnswer(currentQuestion.id, e.target.value)}
+                    placeholder="Type the missing word or phrase..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-400 focus:outline-none text-slate-800 text-sm transition-colors"
+                  />
+                </div>
+              )}
+
               {(currentQuestion.type === 'short' || currentQuestion.type === 'essay') && (
                 <div>
                   {currentQuestion.type === 'essay' ? (
@@ -628,6 +781,41 @@ export default function QuizTaker() {
                   )}
                   <p className="mt-2 text-xs text-slate-400">This question will be graded manually.</p>
                 </div>
+              )}
+
+              {currentQuestion.type === 'rating' && (
+                <div>
+                  <RatingSelector
+                    scale={currentQuestion.payload?.scale ?? 5}
+                    value={userAnswers[currentQuestion.id]}
+                    onChange={(val) => setAnswer(currentQuestion.id, val)}
+                  />
+                </div>
+              )}
+
+              {currentQuestion.type === 'matching' && (
+                <MatchingQuestion
+                  pairs={currentQuestion.payload?.pairs ?? []}
+                  value={userAnswers[currentQuestion.id]}
+                  onChange={(val) => setAnswer(currentQuestion.id, val)}
+                />
+              )}
+
+              {currentQuestion.type === 'ordering' && (
+                <OrderingQuestion
+                  items={currentQuestion.payload?.items ?? []}
+                  value={userAnswers[currentQuestion.id]}
+                  onChange={(val) => setAnswer(currentQuestion.id, val)}
+                />
+              )}
+
+              {currentQuestion.type === 'matrix' && (
+                <MatrixQuestion
+                  rows={currentQuestion.payload?.rows ?? []}
+                  columns={currentQuestion.payload?.columns ?? []}
+                  value={userAnswers[currentQuestion.id]}
+                  onChange={(val) => setAnswer(currentQuestion.id, val)}
+                />
               )}
             </div>
           </div>

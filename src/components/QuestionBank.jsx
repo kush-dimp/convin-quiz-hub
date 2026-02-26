@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Database, Search, Plus, Edit2, Trash2, Copy, Download, X, Check } from 'lucide-react'
+import { Database, Search, Plus, Edit2, Trash2, Copy, Download, X, Check, Upload } from 'lucide-react'
 import { QUESTION_TYPES, DIFFICULTY_LEVELS, TOPICS } from '../data/mockQuestions'
+import QuestionImportModal from './QuestionImport'
 
 const diffColor = {
   Easy:   'bg-emerald-50 text-emerald-700',
@@ -15,6 +16,10 @@ function emptyForm() {
     points: 10, explanation: '',
     options: ['', '', '', ''], correctIndex: 0, correctIndices: [],
     correctAnswer: null, caseSensitive: false,
+    sampleAnswer: '',
+    scale: 5,
+    pairs: [{ left: '', right: '' }, { left: '', right: '' }],
+    items: ['', '', ''],
   }
 }
 
@@ -33,6 +38,10 @@ function flattenRow(q) {
     correctIndices: p.correctIndices ?? [],
     correctAnswer: p.correctAnswer ?? null,
     caseSensitive: p.caseSensitive ?? false,
+    sampleAnswer: p.sampleAnswer ?? '',
+    scale: p.scale ?? 5,
+    pairs: p.pairs ?? [{ left: '', right: '' }, { left: '', right: '' }],
+    items: p.items ?? ['', '', ''],
   }
 }
 
@@ -41,6 +50,10 @@ function buildPayload(f) {
   if (f.type === 'mcq_multi')  return { options: f.options, correctIndices: f.correctIndices }
   if (f.type === 'true_false') return { correctAnswer: f.correctAnswer }
   if (f.type === 'fill_blank') return { correctAnswer: f.correctAnswer, caseSensitive: f.caseSensitive }
+  if (f.type === 'short' || f.type === 'essay') return { sampleAnswer: f.sampleAnswer ?? '' }
+  if (f.type === 'rating')    return { scale: f.scale ?? 5 }
+  if (f.type === 'matching')  return { pairs: f.pairs ?? [] }
+  if (f.type === 'ordering')  return { items: f.items ?? [] }
   return {}
 }
 
@@ -131,7 +144,113 @@ function AnswerEditor({ form, onChange }) {
     </div>
   )
 
-  return <p className="text-sm text-slate-400 italic">This question type is graded manually.</p>
+  if (form.type === 'short' || form.type === 'essay') return (
+    <div className="space-y-2">
+      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+        Sample Answer <span className="normal-case font-normal text-slate-400">(optional — for reference)</span>
+      </p>
+      <textarea
+        value={form.sampleAnswer ?? ''}
+        onChange={e => upd('sampleAnswer', e.target.value)}
+        rows={form.type === 'essay' ? 4 : 2}
+        placeholder={form.type === 'essay' ? 'Enter a model answer for reference…' : 'Enter the expected short answer…'}
+        className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50 resize-none"
+      />
+      <p className="text-[11px] text-slate-400">This question type requires manual grading.</p>
+    </div>
+  )
+
+  if (form.type === 'rating') {
+    const scale = form.scale ?? 5
+    return (
+      <div className="space-y-2">
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Rating Scale</p>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-slate-600">1 to</span>
+          <select
+            value={scale}
+            onChange={e => upd('scale', Number(e.target.value))}
+            className="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+          >
+            {[3, 4, 5, 7, 10].map(n => <option key={n} value={n}>{n}</option>)}
+          </select>
+          <span className="text-sm text-slate-600">points</span>
+        </div>
+        <div className="flex gap-1.5 mt-1 flex-wrap">
+          {Array.from({ length: scale }, (_, i) => (
+            <span key={i} className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 text-xs font-bold flex items-center justify-center">
+              {i + 1}
+            </span>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (form.type === 'matching') {
+    const pairs = form.pairs?.length ? form.pairs : [{ left: '', right: '' }, { left: '', right: '' }]
+    return (
+      <div className="space-y-2">
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Matching Pairs</p>
+        {pairs.map((pair, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <input
+              value={pair.left}
+              onChange={e => { const p = [...pairs]; p[i] = { ...p[i], left: e.target.value }; upd('pairs', p) }}
+              placeholder={`Left ${i + 1}`}
+              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+            />
+            <span className="text-slate-400 text-sm flex-shrink-0">→</span>
+            <input
+              value={pair.right}
+              onChange={e => { const p = [...pairs]; p[i] = { ...p[i], right: e.target.value }; upd('pairs', p) }}
+              placeholder={`Right ${i + 1}`}
+              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+            />
+            {pairs.length > 2 && (
+              <button onClick={() => upd('pairs', pairs.filter((_, j) => j !== i))} className="text-slate-300 hover:text-red-400 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        ))}
+        <button onClick={() => upd('pairs', [...pairs, { left: '', right: '' }])} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 mt-1">
+          <Plus className="w-3.5 h-3.5" /> Add Pair
+        </button>
+      </div>
+    )
+  }
+
+  if (form.type === 'ordering') {
+    const items = form.items?.length ? form.items : ['', '', '']
+    return (
+      <div className="space-y-2">
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Items to Order</p>
+        <p className="text-[11px] text-slate-400">Add items in the correct order</p>
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <span className="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+            <input
+              value={item}
+              onChange={e => { const it = [...items]; it[i] = e.target.value; upd('items', it) }}
+              placeholder={`Item ${i + 1}`}
+              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+            />
+            {items.length > 2 && (
+              <button onClick={() => upd('items', items.filter((_, j) => j !== i))} className="text-slate-300 hover:text-red-400 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        ))}
+        <button onClick={() => upd('items', [...items, ''])} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 mt-1">
+          <Plus className="w-3.5 h-3.5" /> Add Item
+        </button>
+      </div>
+    )
+  }
+
+  return <p className="text-sm text-slate-400 italic">This question type requires manual configuration in the quiz editor.</p>
 }
 
 /* ── Create / Edit modal ── */
@@ -144,6 +263,10 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
       ...p, type,
       options: ['', '', '', ''], correctIndex: 0,
       correctIndices: [], correctAnswer: null,
+      sampleAnswer: '',
+      scale: 5,
+      pairs: [{ left: '', right: '' }, { left: '', right: '' }],
+      items: ['', '', ''],
     }))
   }
 
@@ -272,6 +395,7 @@ export default function QuestionBank() {
   const [selected, setSelected] = useState(new Set())
   const [modal, setModal] = useState(null)   // null | 'new' | flattenedQuestion
   const [saving, setSaving] = useState(false)
+  const [showImport, setShowImport] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -402,6 +526,12 @@ export default function QuestionBank() {
                 <Download className="w-4 h-4" /> Export ({selected.size})
               </button>
             )}
+            <button
+              onClick={() => setShowImport(true)}
+              className="flex items-center gap-2 border border-slate-200 text-slate-600 hover:bg-slate-50 px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm transition-all"
+            >
+              <Upload className="w-4 h-4" /> Import
+            </button>
             <button
               onClick={() => setModal('new')}
               className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all"
@@ -535,13 +665,24 @@ export default function QuestionBank() {
         </div>
       </main>
 
-      {/* Modal */}
+      {/* Single question modal */}
       {modal !== null && (
         <QuestionModal
           initial={modal === 'new' ? null : modal}
           onSave={handleSave}
           onClose={() => setModal(null)}
           saving={saving}
+        />
+      )}
+
+      {/* Bulk import modal */}
+      {showImport && (
+        <QuestionImportModal
+          onClose={() => setShowImport(false)}
+          onImported={created => {
+            setQuestions(prev => [...created, ...prev])
+            setShowImport(false)
+          }}
         />
       )}
     </div>
