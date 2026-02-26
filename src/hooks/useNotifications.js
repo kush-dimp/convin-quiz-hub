@@ -1,62 +1,57 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { useState, useEffect, useRef } from 'react'
 
 export function useNotifications(userId) {
   const [notifications, setNotifications] = useState([])
   const [loading,       setLoading]       = useState(true)
+  const intervalRef = useRef(null)
+
+  async function loadNotifications() {
+    if (!userId) return
+    try {
+      const params = new URLSearchParams({ userId })
+      const res  = await fetch(`/api/notifications?${params}`)
+      const data = await res.json()
+      setNotifications(Array.isArray(data) ? data : [])
+    } catch (err) {
+      console.warn('[notifications] fetch failed:', err.message)
+    }
+  }
 
   useEffect(() => {
     if (!userId) { setLoading(false); return }
 
-    // Initial load
-    supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(100)
-      .then(({ data }) => {
-        setNotifications(data ?? [])
-        setLoading(false)
-      })
+    loadNotifications().then(() => setLoading(false))
 
-    // Realtime subscription for new notifications
-    const channel = supabase
-      .channel(`notifications:${userId}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
-        payload => setNotifications(prev => [payload.new, ...prev])
-      )
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
-        payload => setNotifications(prev => prev.map(n => n.id === payload.new.id ? payload.new : n))
-      )
-      .subscribe()
-
-    return () => supabase.removeChannel(channel)
+    // Poll every 30s instead of Realtime
+    intervalRef.current = setInterval(loadNotifications, 30000)
+    return () => clearInterval(intervalRef.current)
   }, [userId])
 
   const unreadCount = notifications.filter(n => !n.read).length
 
   async function markRead(id) {
-    await supabase.from('notifications').update({ read: true }).eq('id', id)
+    await fetch(`/api/notifications/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ read: true }),
+    })
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
   }
 
   async function markAllRead() {
-    await supabase.from('notifications').update({ read: true }).eq('user_id', userId).eq('read', false)
+    const params = new URLSearchParams({ userId })
+    await fetch(`/api/notifications/bulk?${params}`, { method: 'PUT' })
     setNotifications(prev => prev.map(n => ({ ...n, read: true })))
   }
 
   async function dismiss(id) {
-    await supabase.from('notifications').delete().eq('id', id)
+    await fetch(`/api/notifications/${id}`, { method: 'DELETE' })
     setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
   async function dismissAllRead() {
-    await supabase.from('notifications').delete().eq('user_id', userId).eq('read', true)
+    const params = new URLSearchParams({ userId })
+    await fetch(`/api/notifications/bulk?${params}`, { method: 'DELETE' })
     setNotifications(prev => prev.filter(n => !n.read))
   }
 

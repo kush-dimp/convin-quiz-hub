@@ -5,7 +5,6 @@ import {
   Mail, Eye, Search, ChevronDown, ChevronUp, AlertTriangle,
 } from 'lucide-react'
 import { useResults, useResultStats } from '../hooks/useResults'
-import { supabase } from '../lib/supabase'
 
 function StatCard({ icon: Icon, label, value, sub, iconBg, iconColor }) {
   return (
@@ -46,13 +45,13 @@ export default function ResultsDashboard() {
   const { stats } = useResultStats(null)
 
   async function deleteAttempt(id) {
-    await supabase.from('quiz_attempts').delete().eq('id', id)
+    await fetch(`/api/results/${id}`, { method: 'DELETE' })
     refetch()
   }
 
   async function deleteSelected() {
     if (!selected.size) return
-    await supabase.from('quiz_attempts').delete().in('id', [...selected])
+    await Promise.all([...selected].map(id => fetch(`/api/results/${id}`, { method: 'DELETE' })))
     setSelected(new Set())
     refetch()
   }

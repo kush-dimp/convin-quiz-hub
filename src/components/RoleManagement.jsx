@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Key, Plus, Edit2, Trash2, Check, X, Shield } from 'lucide-react'
 import { useUsers } from '../hooks/useUsers'
-import { supabase } from '../lib/supabase'
 
 // Maps display names → DB enum values
 const ROLE_DB_MAP = {
@@ -82,21 +81,22 @@ export default function RoleManagement() {
   async function saveChanges() {
     setSaving(true); setSaveError(null)
     try {
-      // Ensure all permission definitions exist in the permissions table
-      await supabase.from('permissions').upsert(
-        PERMISSIONS.map(p => ({ id: p.id, label: p.label })),
-        { onConflict: 'id' }
-      )
       // Build rows for all system roles
-      const rows = []
+      const rolePermissions = []
       for (const role of roles) {
         const dbRole = ROLE_DB_MAP[role.name]
         if (!dbRole) continue
-        for (const permId of role.permissions) rows.push({ role: dbRole, permission: permId })
+        for (const permId of role.permissions) rolePermissions.push({ role: dbRole, permission: permId })
       }
-      // Replace existing role_permissions for system roles
-      await supabase.from('role_permissions').delete().in('role', Object.values(ROLE_DB_MAP))
-      if (rows.length > 0) await supabase.from('role_permissions').insert(rows)
+      const res = await fetch('/api/role-permissions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          permissions: PERMISSIONS.map(p => ({ id: p.id, label: p.label })),
+          rolePermissions,
+        }),
+      })
+      if (!res.ok) throw new Error('Failed to save')
       setSaved(true); setTimeout(() => setSaved(false), 2000)
     } catch (err) {
       setSaveError(err.message)

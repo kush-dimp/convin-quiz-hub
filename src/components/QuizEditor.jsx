@@ -11,7 +11,6 @@ import {
 } from 'lucide-react'
 import { QUESTION_TYPES, DIFFICULTY_LEVELS, TOPICS, mockQuestionBank } from '../data/mockQuestions'
 import { useQuiz } from '../hooks/useQuizzes'
-import { supabase } from '../lib/supabase'
 
 /* ── Shared Tabs ─────────────────────────────────────────────────────── */
 const EDITOR_TABS = [
@@ -777,11 +776,12 @@ export default function QuizEditor() {
       const { error: qErr } = await saveQuestions(questions)
       if (qErr) throw qErr
       // Update quiz title
-      const { error: tErr } = await supabase
-        .from('quizzes')
-        .update({ title: quizTitle })
-        .eq('id', id)
-      if (tErr) throw tErr
+      const tRes = await fetch(`/api/quizzes/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: quizTitle }),
+      })
+      if (!tRes.ok) throw new Error('Failed to save quiz title')
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     } catch (err) {

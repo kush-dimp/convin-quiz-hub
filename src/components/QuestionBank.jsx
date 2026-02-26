@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Database, Search, Plus, Filter, Edit2, Trash2, Copy, Download } from 'lucide-react'
-import { supabase } from '../lib/supabase'
 import { QUESTION_TYPES, DIFFICULTY_LEVELS, TOPICS } from '../data/mockQuestions'
 
 const diffColor = {
@@ -24,12 +23,9 @@ export default function QuestionBank() {
   useEffect(() => {
     async function load() {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('questions')
-        .select('*')
-        .is('quiz_id', null)
-        .order('created_at', { ascending: false })
-      if (!error) setQuestions(data ?? [])
+      const res  = await fetch('/api/questions')
+      const data = await res.json()
+      setQuestions(Array.isArray(data) ? data : [])
       setLoading(false)
     }
     load()
@@ -45,32 +41,30 @@ export default function QuestionBank() {
   function toggle(id) { setSelected(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n }) }
 
   async function addQuestion() {
-    const { data, error } = await supabase
-      .from('questions')
-      .insert({
-        quiz_id: null,
-        type: 'mcq_single',
-        text: 'New Question',
-        difficulty: 'Medium',
-        topic: 'General',
-        points: 10,
-      })
-      .select()
-      .single()
-    if (!error && data) setQuestions(prev => [data, ...prev])
+    const res  = await fetch('/api/questions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'mcq_single', text: 'New Question', difficulty: 'Medium', topic: 'General', points: 10 }),
+    })
+    const data = await res.json()
+    if (res.ok) setQuestions(prev => [data, ...prev])
   }
 
   function startEdit(q) { setEditingId(q.id); setEditText(q.text) }
 
   async function saveEdit(id) {
-    const { error } = await supabase.from('questions').update({ text: editText }).eq('id', id)
-    if (!error) setQuestions(prev => prev.map(q => q.id === id ? { ...q, text: editText } : q))
+    const res = await fetch(`/api/questions/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: editText }),
+    })
+    if (res.ok) setQuestions(prev => prev.map(q => q.id === id ? { ...q, text: editText } : q))
     setEditingId(null)
   }
 
   async function deleteQuestion(id) {
-    const { error } = await supabase.from('questions').delete().eq('id', id)
-    if (!error) {
+    const res = await fetch(`/api/questions/${id}`, { method: 'DELETE' })
+    if (res.ok) {
       setQuestions(prev => prev.filter(q => q.id !== id))
       setSelected(prev => { const n = new Set(prev); n.delete(id); return n })
     }

@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Shield, AlertTriangle, Eye, Flag, Check, X, Filter } from 'lucide-react'
 import { useResults } from '../hooks/useResults'
-import { supabase } from '../lib/supabase'
 
 const sevColor = { high: 'text-red-600 bg-red-50', medium: 'text-amber-700 bg-amber-50', low: 'text-blue-600 bg-blue-50' }
 
@@ -40,8 +39,12 @@ export default function CheatDetection() {
 
   async function clearAttempt(id) {
     try {
-      const { error } = await supabase.from('quiz_attempts').update({ flagged: false }).eq('id', id)
-      if (error) throw error
+      const res = await fetch(`/api/results/attempts/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ flagged: false }),
+      })
+      if (!res.ok) throw new Error('Failed to clear')
       setDismissed(p => { const n = new Set(p); n.add(id); return n })
       showToast('Attempt cleared successfully')
     } catch {

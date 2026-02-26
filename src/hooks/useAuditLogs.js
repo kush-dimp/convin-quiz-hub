@@ -1,36 +1,29 @@
 import { useState, useEffect, useRef } from 'react'
-import { supabase } from '../lib/supabase'
 
 export function useAuditLogs({ live = false } = {}) {
   const [logs,    setLogs]    = useState([])
   const [loading, setLoading] = useState(true)
+  const intervalRef = useRef(null)
+
+  async function loadLogs() {
+    try {
+      const res  = await fetch('/api/audit')
+      const data = await res.json()
+      setLogs(Array.isArray(data) ? data : [])
+    } catch (err) {
+      console.warn('[audit-logs] fetch failed:', err.message)
+    }
+  }
 
   useEffect(() => {
-    // Initial load (most recent 200)
-    supabase
-      .from('audit_logs')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(200)
-      .then(({ data }) => {
-        setLogs(data ?? [])
-        setLoading(false)
-      })
+    loadLogs().then(() => setLoading(false))
   }, [])
 
   useEffect(() => {
     if (!live) return
-
-    const channel = supabase
-      .channel('audit_logs_live')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'audit_logs' },
-        payload => setLogs(prev => [payload.new, ...prev].slice(0, 200))
-      )
-      .subscribe()
-
-    return () => supabase.removeChannel(channel)
+    // Poll every 30s instead of Realtime
+    intervalRef.current = setInterval(loadLogs, 30000)
+    return () => clearInterval(intervalRef.current)
   }, [live])
 
   return { logs, loading }

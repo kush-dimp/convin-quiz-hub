@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { X, History, RotateCcw, GitCompare, User, Clock, ChevronDown, ChevronRight, AlertTriangle, CheckCircle2, Save } from 'lucide-react'
-import { supabase } from '../lib/supabase'
 
 function timeAgo(isoStr) {
   const diff = Date.now() - new Date(isoStr).getTime()
@@ -87,12 +86,9 @@ export default function VersionHistory({ quiz, onClose }) {
     if (!id) { setLoading(false); return }
     async function load() {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('quiz_versions')
-        .select('*, profiles(name)')
-        .eq('quiz_id', id)
-        .order('version_num', { ascending: false })
-      if (!error) setVersions(data ?? [])
+      const res  = await fetch(`/api/quiz-versions?quizId=${id}`)
+      const data = await res.json()
+      setVersions(Array.isArray(data) ? data : [])
       setLoading(false)
     }
     load()

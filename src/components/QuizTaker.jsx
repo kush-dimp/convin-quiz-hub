@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -212,41 +211,33 @@ export default function QuizTaker() {
     setLoading(true)
     setError(null)
     try {
-      const [{ data: quizData, error: quizErr }, { data: questionData, error: qErr }] =
-        await Promise.all([
-          supabase.from('quizzes').select('*').eq('id', id).single(),
-          supabase.from('questions').select('*').eq('quiz_id', id).order('position'),
-        ])
+      const [quizRes, qRes] = await Promise.all([
+        fetch(`/api/quizzes/${id}`),
+        fetch(`/api/quizzes/${id}/questions`),
+      ])
 
-      if (quizErr) throw quizErr
-      if (qErr) throw qErr
+      if (!quizRes.ok) throw new Error('Failed to load quiz')
+      if (!qRes.ok)    throw new Error('Failed to load questions')
+
+      const quizData     = await quizRes.json()
+      const questionData = await qRes.json()
 
       setQuiz(quizData)
       setQuestions(questionData ?? [])
 
-      // Determine attempt number
-      const { count } = await supabase
-        .from('quiz_attempts')
-        .select('*', { count: 'exact', head: true })
-        .eq('quiz_id', id)
-        .eq('user_id', profile.id)
-
-      const attemptNumber = (count ?? 0) + 1
-
-      // Create attempt row
-      const { data: newAttempt, error: attErr } = await supabase
-        .from('quiz_attempts')
-        .insert({
-          quiz_id: id,
-          user_id: profile.id,
-          attempt_number: attemptNumber,
-          status: 'in_progress',
+      // Create attempt row (server uses DEMO_USER_ID)
+      const attRes = await fetch('/api/results/attempts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          quiz_id:    id,
+          user_id:    profile.id,
+          status:     'in_progress',
           started_at: new Date().toISOString(),
-        })
-        .select()
-        .single()
-
-      if (attErr) throw attErr
+        }),
+      })
+      if (!attRes.ok) throw new Error('Failed to create attempt')
+      const newAttempt = await attRes.json()
       setAttempt(newAttempt)
 
       // Start timer
@@ -290,35 +281,38 @@ export default function QuizTaker() {
     try {
       // Insert all answers
       if (enriched.length > 0) {
-        const { error: ansErr } = await supabase.from('attempt_answers').insert(
-          enriched.map((a) => ({
-            attempt_id: attempt.id,
-            question_id: a.questionId,
-            answer: a.answer,
-            is_correct: a.isCorrect,
-            points_earned: a.pointsEarned,
-            time_spent_s: a.timeSpent,
-          }))
-        )
-        if (ansErr) throw ansErr
+        const ansRes = await fetch(`/api/results/attempts/${attempt.id}/answers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(
+            enriched.map((a) => ({
+              question_id:   a.questionId,
+              answer:        a.answer,
+              is_correct:    a.isCorrect,
+              points_earned: a.pointsEarned,
+              time_spent_s:  a.timeSpent,
+            }))
+          ),
+        })
+        if (!ansRes.ok) throw new Error('Failed to save answers')
       }
 
       // Update attempt
-      const { error: updErr } = await supabase
-        .from('quiz_attempts')
-        .update({
-          status: 'submitted',
+      const updRes = await fetch(`/api/results/attempts/${attempt.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status:       'submitted',
           submitted_at: new Date().toISOString(),
           time_taken_s: totalSeconds,
-          score_pct: scorePct,
+          score_pct:    scorePct,
           points_earned: pointsEarned,
-          total_points: totalPoints,
+          total_points:  totalPoints,
           passed,
-          tab_switches: tabSwitches,
-        })
-        .eq('id', attempt.id)
-
-      if (updErr) throw updErr
+          tab_switches:  tabSwitches,
+        }),
+      })
+      if (!updRes.ok) throw new Error('Failed to update attempt')
 
       setResults({ scorePct, passed, totalSeconds, pointsEarned, totalPoints })
     } catch (err) {

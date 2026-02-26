@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
 import { logAudit } from '../lib/audit'
 
 /**
@@ -11,25 +10,17 @@ export function useQuizzes(filters = {}) {
   const [loading, setLoading] = useState(true)
   const [error,   setError]   = useState(null)
 
-  const fetch = useCallback(async () => {
+  const fetchQuizzes = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      let q = supabase
-        .from('quizzes')
-        .select(`
-          *,
-          quiz_stats (*),
-          profiles!quizzes_instructor_id_fkey (name)
-        `)
-        .order('created_at', { ascending: false })
-
-      if (filters.status)       q = q.eq('status', filters.status)
-      if (filters.instructorId) q = q.eq('instructor_id', filters.instructorId)
-
-      const { data, error } = await q
-      if (error) throw error
-      setQuizzes(data ?? [])
+      const params = new URLSearchParams()
+      if (filters.status)       params.set('status',       filters.status)
+      if (filters.instructorId) params.set('instructorId', filters.instructorId)
+      const res  = await fetch(`/api/quizzes?${params}`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Failed to fetch quizzes')
+      setQuizzes(data)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -37,39 +28,42 @@ export function useQuizzes(filters = {}) {
     }
   }, [filters.status, filters.instructorId])
 
-  useEffect(() => { fetch() }, [fetch])
+  useEffect(() => { fetchQuizzes() }, [fetchQuizzes])
 
   async function createQuiz(payload) {
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data, error } = await supabase
-      .from('quizzes')
-      .insert({ ...payload, instructor_id: user.id })
-      .select()
-      .single()
+    const res  = await fetch('/api/quizzes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    const data = await res.json()
+    const error = res.ok ? null : { message: data.error }
     if (!error) {
       setQuizzes(prev => [data, ...prev])
       await logAudit({ action: 'quiz.created', resource: data.title, severity: 'info' })
     }
-    return { data, error }
+    return { data: res.ok ? data : null, error }
   }
 
   async function updateQuiz(id, patch) {
-    const { data, error } = await supabase
-      .from('quizzes')
-      .update(patch)
-      .eq('id', id)
-      .select()
-      .single()
+    const res  = await fetch(`/api/quizzes/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    })
+    const data = await res.json()
+    const error = res.ok ? null : { message: data.error }
     if (!error) {
       setQuizzes(prev => prev.map(q => q.id === id ? { ...q, ...data } : q))
-      await logAudit({ action: `quiz.updated`, resource: data.title, severity: 'info' })
+      await logAudit({ action: 'quiz.updated', resource: data.title, severity: 'info' })
     }
-    return { data, error }
+    return { data: res.ok ? data : null, error }
   }
 
   async function deleteQuiz(id) {
     const quiz = quizzes.find(q => q.id === id)
-    const { error } = await supabase.from('quizzes').delete().eq('id', id)
+    const res  = await fetch(`/api/quizzes/${id}`, { method: 'DELETE' })
+    const error = res.ok ? null : { message: 'Failed to delete' }
     if (!error) {
       setQuizzes(prev => prev.filter(q => q.id !== id))
       await logAudit({ action: 'quiz.deleted', resource: quiz?.title, severity: 'warning' })
@@ -89,10 +83,9 @@ export function useQuizzes(filters = {}) {
     return updateQuiz(id, { status: 'archived' })
   }
 
-  return { quizzes, loading, error, refetch: fetch, createQuiz, updateQuiz, deleteQuiz, publishQuiz, archiveQuiz }
+  return { quizzes, loading, error, refetch: fetchQuizzes, createQuiz, updateQuiz, deleteQuiz, publishQuiz, archiveQuiz }
 }
 
-/** Fetch a single quiz by ID (with questions). */
 // DB columns that exist on the questions table
 const Q_COLUMNS = new Set(['id','quiz_id','position','type','text','rich_text','points','difficulty','topic','explanation','time_limit_s','payload','created_by'])
 
@@ -125,14 +118,15 @@ export function useQuiz(id) {
     async function load() {
       setLoading(true)
       const [quizRes, qRes] = await Promise.all([
-        supabase.from('quizzes').select('*, quiz_stats(*)').eq('id', id).single(),
-        supabase.from('questions').select('*').eq('quiz_id', id).order('position'),
+        fetch(`/api/quizzes/${id}`),
+        fetch(`/api/quizzes/${id}/questions`),
       ])
-      if (quizRes.error) setError(quizRes.error.message)
+      const quizData = await quizRes.json()
+      const qData    = await qRes.json()
+      if (!quizRes.ok) setError(quizData.error ?? 'Failed to load quiz')
       else {
-        setQuiz(quizRes.data)
-        // Flatten payload fields into question objects for the editor
-        setQuestions((qRes.data ?? []).map(deserializeQuestion))
+        setQuiz(quizData)
+        setQuestions((Array.isArray(qData) ? qData : []).map(deserializeQuestion))
       }
       setLoading(false)
     }
@@ -140,30 +134,15 @@ export function useQuiz(id) {
   }, [id])
 
   async function saveQuestions(qs) {
-    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    const existing = []
-    const brand_new = []
-    qs.forEach((q, i) => {
-      const row = serializeQuestion(q, i, id)
-      if (uuidRe.test(q.id)) existing.push(row)
-      else brand_new.push(row)
+    const serialized = qs.map((q, i) => serializeQuestion(q, i, id))
+    const res  = await fetch(`/api/quizzes/${id}/questions`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(serialized),
     })
-
-    const saved = []
-    if (existing.length) {
-      const { data, error } = await supabase
-        .from('questions').upsert(existing, { onConflict: 'id' }).select()
-      if (error) return { data: null, error }
-      saved.push(...(data ?? []))
-    }
-    if (brand_new.length) {
-      const { data, error } = await supabase
-        .from('questions').insert(brand_new).select()
-      if (error) return { data: null, error }
-      saved.push(...(data ?? []))
-    }
-
-    const sorted = saved.sort((a, b) => a.position - b.position)
+    const data = await res.json()
+    if (!res.ok) return { data: null, error: { message: data.error } }
+    const sorted = (Array.isArray(data) ? data : []).sort((a, b) => a.position - b.position)
     setQuestions(sorted.map(deserializeQuestion))
     return { data: sorted, error: null }
   }

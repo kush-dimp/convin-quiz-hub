@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ClipboardList, Plus, Trash2, Check, Clock, AlertTriangle, Users, User, RefreshCw, Lock, ChevronDown, X } from 'lucide-react'
 import { useAssignments } from '../hooks/useAssignments'
-import { supabase } from '../lib/supabase'
 
 const statusColor = {
   completed:   'bg-emerald-100 text-emerald-700',
@@ -41,14 +40,16 @@ export default function AssignmentSystem() {
 
   // Load quizzes and users for the modal selectors
   useEffect(() => {
-    supabase.from('quizzes').select('id, title').order('created_at', { ascending: false }).limit(50)
-      .then(({ data }) => {
-        const list = data ?? []
+    fetch('/api/quizzes')
+      .then(r => r.json())
+      .then(data => {
+        const list = Array.isArray(data) ? data.slice(0, 50) : []
         setQuizzes(list)
         if (list.length > 0) setForm(p => ({ ...p, quizId: list[0].id }))
       })
-    supabase.from('profiles').select('id, name, role').order('name').limit(100)
-      .then(({ data }) => setDbUsers(data ?? []))
+    fetch('/api/users')
+      .then(r => r.json())
+      .then(data => setDbUsers(Array.isArray(data) ? data : []))
   }, [])
 
   // Normalise status for display
