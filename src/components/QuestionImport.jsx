@@ -236,8 +236,14 @@ function parseJSON(input) {
      Answer: B                 or   Correct: B
 ──────────────────────────────────────────────────────── */
 function parsePlainText(input) {
-  // Split into question blocks by blank lines or numbered markers
-  const blocks = input.split(/\n\s*\n/).filter(b => b.trim())
+  // Many files have no blank lines between questions, so insert a blank line
+  // before each numbered question marker (Q1. Q2: 1. 2) etc.) so they split
+  // into separate blocks correctly.
+  const normalized = input.replace(
+    /\n([ \t]*(?:q(?:uestion)?\s*\d+[\s:.)]|\d+[.)]\s+))/gi,
+    '\n\n$1'
+  )
+  const blocks = normalized.split(/\n\s*\n/).filter(b => b.trim())
   const results = []
 
   for (const block of blocks) {
@@ -593,6 +599,7 @@ export default function QuestionImportModal({ onClose, onImported }) {
     setImporting(true)
     setImportError('')
     const created = []
+    const failed = []
     try {
       for (const q of questions) {
         const res = await fetch('/api/questions', {
@@ -608,15 +615,32 @@ export default function QuestionImportModal({ onClose, onImported }) {
             payload: q.payload ?? {},
           }),
         })
-        if (res.ok) created.push(await res.json())
+        if (res.ok) {
+          created.push(await res.json())
+        } else {
+          const err = await res.json().catch(() => ({}))
+          failed.push({ text: q.text?.slice(0, 50), reason: err.error ?? `HTTP ${res.status}` })
+        }
       }
-      onImported(created)
-      onClose()
     } catch (e) {
-      setImportError('Some questions failed to import. Please try again.')
-    } finally {
+      setImportError(`Network error: ${e.message ?? 'Please try again.'}`)
       setImporting(false)
+      return
     }
+
+    if (created.length > 0) onImported(created)
+
+    if (failed.length === 0) {
+      onClose()
+    } else {
+      const names = failed.slice(0, 3).map(f => `"${f.text}…" (${f.reason})`).join(', ')
+      const more = failed.length > 3 ? ` and ${failed.length - 3} more` : ''
+      setImportError(
+        `${failed.length} question${failed.length !== 1 ? 's' : ''} failed to save: ${names}${more}.` +
+        (created.length > 0 ? ` ${created.length} imported successfully.` : '')
+      )
+    }
+    setImporting(false)
   }
 
   return (
