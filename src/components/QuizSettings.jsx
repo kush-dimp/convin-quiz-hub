@@ -515,11 +515,6 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
   const dynamicFields = ['{name}', '{quiz_title}', '{score}', '{date}', '{certificate_id}', '{instructor}']
 
   // Scale factor for the preview modal (fit within 80vw × 80vh)
-  const previewScale = Math.min(
-    (typeof window !== 'undefined' ? window.innerWidth * 0.8 : 800) / CERT_W,
-    (typeof window !== 'undefined' ? window.innerHeight * 0.8 : 600) / CERT_H,
-  )
-
   return (
     <div className="space-y-6">
       <Row label="Enable certificate issuance" description="Award certificates upon quiz completion/passing">
@@ -589,35 +584,51 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
       )}
 
       {/* Preview Modal */}
-      {showPreview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-             onClick={() => setShowPreview(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-            <button onClick={() => setShowPreview(false)}
-              className="absolute -top-10 right-0 text-white/80 hover:text-white flex items-center gap-1 text-sm">
-              <X className="w-4 h-4" /> Close
-            </button>
-            <div style={{
-              transform: `scale(${previewScale})`,
-              transformOrigin: 'top left',
-              width: CERT_W,
-              height: CERT_H,
+      {showPreview && (() => {
+        const availW = window.innerWidth  * 0.92
+        const availH = window.innerHeight * 0.92 - 64
+        const scale   = Math.min(availW / CERT_W, availH / CERT_H, 1)
+        const scaledW = Math.round(CERT_W * scale)
+        const scaledH = Math.round(CERT_H * scale)
+        return (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm p-4 gap-4"
+               onClick={() => setShowPreview(false)}>
+            {/* Close button — always visible above cert */}
+            <div className="flex-shrink-0" onClick={e => e.stopPropagation()}>
+              <button onClick={() => setShowPreview(false)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/20 text-white text-sm font-semibold hover:bg-white/30 transition-colors">
+                <X className="w-4 h-4" /> Close Preview
+              </button>
+            </div>
+            {/* Wrapper sized to scaled dimensions so flex layout is correct */}
+            <div onClick={e => e.stopPropagation()} style={{
+              position: 'relative',
+              width: scaledW,
+              height: scaledH,
+              flexShrink: 0,
               boxShadow: '0 25px 60px rgba(0,0,0,0.4)',
               borderRadius: 8,
               overflow: 'hidden',
             }}>
-              <CertificateRenderer
-                cert={{ id: 'preview-preview', issued_at: new Date().toISOString() }}
-                quizTitle={quizTitle || 'Sample Quiz'}
-                userName="Jane Smith"
-                scorePct={95}
-                template={template}
-                primaryColor={primaryColor}
-              />
+              <div style={{
+                position: 'absolute', top: 0, left: 0,
+                width: CERT_W, height: CERT_H,
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left',
+              }}>
+                <CertificateRenderer
+                  cert={{ id: 'PREVIEWP', issued_at: new Date().toISOString() }}
+                  quizTitle={quizTitle || 'Sample Quiz'}
+                  userName="Jane Smith"
+                  scorePct={95}
+                  template={template}
+                  primaryColor={primaryColor}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      })()}
     </div>
   )
 }
