@@ -114,10 +114,6 @@ export default function CertificatesPage() {
     })
   }, [certs, search, quizFilter, statusFilter])
 
-  // Scale for view modal
-  const viewScale = typeof window !== 'undefined'
-    ? Math.min((window.innerWidth * 0.9) / CERT_W, (window.innerHeight * 0.85) / CERT_H)
-    : 0.7
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -351,9 +347,16 @@ export default function CertificatesPage() {
       {viewCert && (() => {
         let tpl = {}
         try { tpl = JSON.parse(viewCert.certificate_template || '{}') } catch {}
+        // Reserve space for button bar (≈52px) + gaps + padding
+        const availW = window.innerWidth  * 0.92
+        const availH = window.innerHeight * 0.92 - 64
+        const scale   = Math.min(availW / CERT_W, availH / CERT_H, 1)
+        const scaledW = Math.round(CERT_W * scale)
+        const scaledH = Math.round(CERT_H * scale)
         return (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="flex items-center gap-4 mb-4">
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm p-4 gap-4">
+            {/* Buttons — always visible above cert */}
+            <div className="flex items-center gap-3 flex-shrink-0">
               <button
                 onClick={() => window.print()}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-slate-800 text-sm font-semibold hover:bg-slate-100 transition-colors shadow"
@@ -367,23 +370,31 @@ export default function CertificatesPage() {
                 <X className="w-4 h-4" /> Close
               </button>
             </div>
+            {/* Wrapper sized to scaled dimensions so it occupies correct layout space */}
             <div style={{
-              transform: `scale(${viewScale})`,
-              transformOrigin: 'top center',
-              width: CERT_W,
-              height: CERT_H,
+              position: 'relative',
+              width: scaledW,
+              height: scaledH,
+              flexShrink: 0,
               boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
               borderRadius: 8,
               overflow: 'hidden',
             }}>
-              <CertificateRenderer
-                cert={viewCert}
-                quizTitle={viewCert.quiz_title}
-                userName={viewCert.user_name}
-                scorePct={null}
-                template={tpl.template}
-                primaryColor={tpl.primaryColor}
-              />
+              <div style={{
+                position: 'absolute', top: 0, left: 0,
+                width: CERT_W, height: CERT_H,
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left',
+              }}>
+                <CertificateRenderer
+                  cert={viewCert}
+                  quizTitle={viewCert.quiz_title}
+                  userName={viewCert.user_name}
+                  scorePct={null}
+                  template={tpl.template}
+                  primaryColor={tpl.primaryColor}
+                />
+              </div>
             </div>
           </div>
         )

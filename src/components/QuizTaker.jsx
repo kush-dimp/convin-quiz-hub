@@ -677,13 +677,14 @@ export default function QuizTaker() {
       {showCertModal && certificate && (() => {
         let tpl = {}
         try { tpl = JSON.parse(quiz?.certificate_template || '{}') } catch {}
-        const scale = Math.min(
-          (window.innerWidth * 0.9) / CERT_W,
-          (window.innerHeight * 0.85) / CERT_H,
-        )
+        const availW = window.innerWidth  * 0.92
+        const availH = window.innerHeight * 0.92 - 64
+        const scale   = Math.min(availW / CERT_W, availH / CERT_H, 1)
+        const scaledW = Math.round(CERT_W * scale)
+        const scaledH = Math.round(CERT_H * scale)
         return (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="flex items-center gap-4 mb-4">
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm p-4 gap-4">
+            <div className="flex items-center gap-4 flex-shrink-0">
               <button
                 onClick={() => window.print()}
                 className="px-5 py-2.5 rounded-xl bg-white text-slate-800 text-sm font-semibold hover:bg-slate-100 transition-colors shadow"
@@ -698,22 +699,29 @@ export default function QuizTaker() {
               </button>
             </div>
             <div style={{
-              transform: `scale(${scale})`,
-              transformOrigin: 'top center',
-              width: CERT_W,
-              height: CERT_H,
+              position: 'relative',
+              width: scaledW,
+              height: scaledH,
+              flexShrink: 0,
               boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
               borderRadius: 8,
               overflow: 'hidden',
             }}>
-              <CertificateRenderer
-                cert={certificate}
-                quizTitle={quiz?.title}
-                userName={profile?.name}
-                scorePct={Math.round(scorePct)}
-                template={tpl.template}
-                primaryColor={tpl.primaryColor}
-              />
+              <div style={{
+                position: 'absolute', top: 0, left: 0,
+                width: CERT_W, height: CERT_H,
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left',
+              }}>
+                <CertificateRenderer
+                  cert={certificate}
+                  quizTitle={quiz?.title}
+                  userName={profile?.name}
+                  scorePct={Math.round(scorePct)}
+                  template={tpl.template}
+                  primaryColor={tpl.primaryColor}
+                />
+              </div>
             </div>
           </div>
         )
