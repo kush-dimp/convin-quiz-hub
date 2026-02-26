@@ -30,8 +30,8 @@ export default {
         },
       },
       fontFamily: {
-        heading: ['Syne', 'system-ui', 'sans-serif'],
-        body:    ['DM Sans', 'system-ui', 'sans-serif'],
+        heading: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        body:    ['Manrope', 'system-ui', 'sans-serif'],
       },
     },
   },
