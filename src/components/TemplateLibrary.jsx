@@ -394,7 +394,7 @@ export default function TemplateLibrary() {
         <div className="max-w-6xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
             <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Template Library</h1>
-            <p className="text-[11px] text-slate-400 mt-0.5">Start with a proven quiz structure</p>
+            <p className="text-[11px] text-white/60 mt-0.5">Start with a proven quiz structure</p>
           </div>
           <button
             onClick={() => setSaveAsSource({ title: 'My Quiz' })}
@@ -441,8 +441,8 @@ export default function TemplateLibrary() {
         {official.length > 0 && (
           <section className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="font-heading text-sm font-bold text-slate-900">Official Templates</h2>
-              <span className="text-xs bg-[#FFF5F7] text-[#E63E6D] px-2 py-0.5 rounded-full font-semibold border border-[#FFE5EC]">Convin Team</span>
+              <h2 className="font-heading text-sm font-bold text-white">Official Templates</h2>
+              <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full font-semibold border border-white/30">Convin Team</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {official.map(t => <TemplateCard key={t.id} template={t} onPreview={setPreview} onUse={handleUse} loading={loading} />)}
@@ -454,8 +454,8 @@ export default function TemplateLibrary() {
         {community.length > 0 && (
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="font-heading text-sm font-bold text-slate-900">Community Templates</h2>
-              <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-semibold border border-emerald-100">Community Contributed</span>
+              <h2 className="font-heading text-sm font-bold text-white">Community Templates</h2>
+              <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full font-semibold border border-white/30">Community Contributed</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {community.map(t => <TemplateCard key={t.id} template={t} onPreview={setPreview} onUse={handleUse} loading={loading} />)}
