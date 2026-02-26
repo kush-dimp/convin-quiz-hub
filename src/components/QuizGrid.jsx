@@ -404,6 +404,8 @@ export default function QuizGrid() {
                   isSelectionMode={isSelectionMode}
                   onDuplicate={handleDuplicate}
                   highlightedId={highlightedId}
+                  onHistory={(quiz) => setHistoryQuiz(quiz)}
+                  onDelete={(quiz) => setModal({ type: 'delete', items: [quiz] })}
                 />
               )}
             </div>

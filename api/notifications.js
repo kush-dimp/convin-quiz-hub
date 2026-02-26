@@ -2,9 +2,10 @@ import { sql, DEMO_USER_ID } from './_db.js'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
+  const path = req.query.sub ? `/api/notifications/${req.query.sub.split('?')[0]}` : req.url
 
   // DELETE /api/notifications/bulk
-  if (req.url.includes('/bulk') && req.method === 'DELETE') {
+  if (path.includes('/bulk') && req.method === 'DELETE') {
     const url = new URL(req.url, 'http://localhost')
     const userId = url.searchParams.get('userId') ?? DEMO_USER_ID
     await sql`DELETE FROM notifications WHERE user_id = ${userId} AND read = true`
@@ -12,7 +13,7 @@ export default async function handler(req, res) {
   }
 
   // PUT /api/notifications/bulk
-  if (req.url.includes('/bulk') && req.method === 'PUT') {
+  if (path.includes('/bulk') && req.method === 'PUT') {
     const url = new URL(req.url, 'http://localhost')
     const userId = url.searchParams.get('userId') ?? DEMO_USER_ID
     await sql`UPDATE notifications SET read = true WHERE user_id = ${userId}`
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
   }
 
   // /api/notifications/:id
-  const idMatch = req.url.match(/\/api\/notifications\/([^/?]+)$/)
+  const idMatch = path.match(/\/api\/notifications\/([^/?]+)$/)
   if (idMatch) {
     const id = idMatch[1]
     if (req.method === 'PUT') {

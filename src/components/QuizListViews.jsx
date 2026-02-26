@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Eye, Play, BarChart2, Lock, MoreVertical,
-  Pencil, Copy, Share2, Trash2, Timer, Star, Check,
+  Pencil, Copy, Share2, Trash2, Timer, Star, Check, History,
 } from 'lucide-react'
 
 /* ── Shared: status badge ──────────────────────────────────── */
@@ -56,9 +57,10 @@ function SelectBox({ isSelected, isSelectionMode, onToggle }) {
 }
 
 /* ── Shared: three-dot menu ────────────────────────────────── */
-function ThreeDotMenu({ disabled, onDuplicate }) {
+function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
+  const navigate = useNavigate()
   useEffect(() => {
     function h(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
     if (open) document.addEventListener('mousedown', h)
@@ -67,10 +69,11 @@ function ThreeDotMenu({ disabled, onDuplicate }) {
 
   if (disabled) return <div className="w-7" />
   const actions = [
-    { icon: Pencil, label: 'Edit',      onClick: () => {} },
-    { icon: Copy,   label: 'Duplicate', onClick: onDuplicate },
-    { icon: Share2, label: 'Share',     onClick: () => {} },
-    { icon: Trash2, label: 'Delete',    onClick: () => {}, danger: true },
+    { icon: Pencil,  label: 'Edit',      onClick: () => navigate(`/quizzes/${quizId}/editor`) },
+    { icon: Copy,    label: 'Duplicate', onClick: onDuplicate },
+    { icon: History, label: 'History',   onClick: () => onHistory?.() },
+    { icon: Share2,  label: 'Share',     onClick: () => navigator.clipboard.writeText(`${window.location.origin}/quiz/${quizId}/take`) },
+    { icon: Trash2,  label: 'Delete',    onClick: () => onDelete?.(), danger: true },
   ]
   return (
     <div ref={ref} className="relative flex-shrink-0">
@@ -109,6 +112,8 @@ export function QuizListCard({
   isSelectionMode = false,
   onDuplicate,
   isHighlighted = false,
+  onHistory,
+  onDelete,
 }) {
   const { title, instructor, category, status, rating, updatedAt, thumbnail, isPrivate, stats } = quiz
 
@@ -161,7 +166,7 @@ export function QuizListCard({
         </div>
       </div>
 
-      <ThreeDotMenu disabled={isSelectionMode || isDisabled} onDuplicate={() => onDuplicate?.(quiz)} />
+      <ThreeDotMenu disabled={isSelectionMode || isDisabled} onDuplicate={() => onDuplicate?.(quiz)} quizId={quiz.id} onHistory={onHistory} onDelete={onDelete} />
     </div>
   )
 }
@@ -175,6 +180,8 @@ export function QuizCompactView({
   isSelectionMode,
   onDuplicate,
   highlightedId,
+  onHistory,
+  onDelete,
 }) {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
@@ -203,13 +210,15 @@ export function QuizCompactView({
           isSelectionMode={isSelectionMode}
           onDuplicate={onDuplicate}
           isHighlighted={quiz.id === highlightedId}
+          onHistory={onHistory}
+          onDelete={onDelete}
         />
       ))}
     </div>
   )
 }
 
-function CompactRow({ quiz, isLast, isSelected, onToggleSelect, isDisabled, isSelectionMode, onDuplicate, isHighlighted }) {
+function CompactRow({ quiz, isLast, isSelected, onToggleSelect, isDisabled, isSelectionMode, onDuplicate, isHighlighted, onHistory, onDelete }) {
   const { title, instructor, category, status, rating, updatedAt, isPrivate, stats } = quiz
   const date = new Date(updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
 
@@ -261,7 +270,7 @@ function CompactRow({ quiz, isLast, isSelected, onToggleSelect, isDisabled, isSe
         <Rating value={rating} />
       </div>
 
-      <ThreeDotMenu disabled={isSelectionMode || isDisabled} onDuplicate={() => onDuplicate?.(quiz)} />
+      <ThreeDotMenu disabled={isSelectionMode || isDisabled} onDuplicate={() => onDuplicate?.(quiz)} quizId={quiz.id} onHistory={() => onHistory?.(quiz)} onDelete={() => onDelete?.(quiz)} />
     </div>
   )
 }

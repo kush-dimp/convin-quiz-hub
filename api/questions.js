@@ -3,9 +3,10 @@ import { sql, DEMO_USER_ID } from './_db.js'
 // Question bank: questions where quiz_id IS NULL
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
+  const path = req.query.sub ? `/api/questions/${req.query.sub.split('?')[0]}` : req.url
 
   // /api/questions/:id
-  const idMatch = req.url.match(/\/api\/questions\/([^/?]+)$/)
+  const idMatch = path.match(/\/api\/questions\/([^/?]+)$/)
   if (idMatch) {
     const qid = idMatch[1]
 
