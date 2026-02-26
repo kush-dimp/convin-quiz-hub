@@ -1,3 +1,13 @@
 {
-  "rewrites": [{ "source": "/((?!api(?:/|$)).*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/api/quizzes/:path+",           "destination": "/api/quizzes" },
+    { "source": "/api/results/:path+",            "destination": "/api/results" },
+    { "source": "/api/users/:path+",              "destination": "/api/users" },
+    { "source": "/api/assignments/:path+",        "destination": "/api/assignments" },
+    { "source": "/api/notifications/:path+",      "destination": "/api/notifications" },
+    { "source": "/api/questions/:path+",          "destination": "/api/questions" },
+    { "source": "/api/quiz-versions/:path+",      "destination": "/api/quiz-versions" },
+    { "source": "/api/role-permissions/:path+",   "destination": "/api/role-permissions" },
+    { "source": "/((?!api(?:/|$)).*)",            "destination": "/index.html" }
+  ]
 }

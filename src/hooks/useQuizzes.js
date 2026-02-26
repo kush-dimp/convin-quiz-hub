@@ -117,18 +117,23 @@ export function useQuiz(id) {
     if (!id || id === 'new') { setLoading(false); return }
     async function load() {
       setLoading(true)
-      const [quizRes, qRes] = await Promise.all([
-        fetch(`/api/quizzes/${id}`),
-        fetch(`/api/quizzes/${id}/questions`),
-      ])
-      const quizData = await quizRes.json()
-      const qData    = await qRes.json()
-      if (!quizRes.ok) setError(quizData.error ?? 'Failed to load quiz')
-      else {
-        setQuiz(quizData)
-        setQuestions((Array.isArray(qData) ? qData : []).map(deserializeQuestion))
+      try {
+        const [quizRes, qRes] = await Promise.all([
+          fetch(`/api/quizzes/${id}`),
+          fetch(`/api/quizzes/${id}/questions`),
+        ])
+        const quizData = await quizRes.json()
+        const qData    = await qRes.json()
+        if (!quizRes.ok) setError(quizData.error ?? 'Failed to load quiz')
+        else {
+          setQuiz(quizData)
+          setQuestions((Array.isArray(qData) ? qData : []).map(deserializeQuestion))
+        }
+      } catch (err) {
+        setError(err.message ?? 'Failed to load quiz')
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
     load()
   }, [id])
