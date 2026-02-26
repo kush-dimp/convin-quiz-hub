@@ -13,6 +13,13 @@
   }
   h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', system-ui, sans-serif; }
   .glass-card, .glass-panel, .glass { --tw-text-opacity: 1; color: #0f172a; }
+
+  /* Darken light text inside glass containers */
+  .glass-card .text-slate-400, .glass-panel .text-slate-400, .glass .text-slate-400 { color: #475569; }
+  .glass-card .text-slate-500, .glass-panel .text-slate-500, .glass .text-slate-500 { color: #334155; }
+  .glass-card .text-gray-400,  .glass-panel .text-gray-400,  .glass .text-gray-400  { color: #4b5563; }
+  .glass-card .text-gray-500,  .glass-panel .text-gray-500,  .glass .text-gray-500  { color: #374151; }
+  .glass-card .text-slate-300, .glass-panel .text-slate-300, .glass .text-slate-300 { color: #475569; }
   *::-webkit-scrollbar { width: 5px; height: 5px; }
   *::-webkit-scrollbar-track { background: transparent; }
   *::-webkit-scrollbar-thumb { background: #FFB3C6; border-radius: 999px; }
