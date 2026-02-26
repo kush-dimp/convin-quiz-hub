@@ -436,8 +436,8 @@ export default function FilterBar({
             <FilterChip key={i} label={chip.label} onRemove={chip.onRemove} />
           ))}
           {!isLoading && (
-            <span className="text-xs text-gray-400 ml-auto">
-              <span className="font-semibold text-gray-600">{resultCount}</span>{' '}
+            <span className="ml-auto text-[11px] font-semibold text-slate-500 bg-white/70 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/60 shadow-sm">
+              <span className="font-bold text-slate-700">{resultCount}</span>{' '}
               quiz{resultCount !== 1 ? 'zes' : ''} found
             </span>
           )}

@@ -334,7 +334,7 @@ export default function QuizGrid() {
           <button
             onClick={handleCreateQuiz}
             disabled={isCreating}
-            className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-[#FFB3C6] flex-shrink-0 disabled:opacity-60"
+            className="btn-shine flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-[#FFB3C6] flex-shrink-0 disabled:opacity-60"
           >
             <Plus className="w-3.5 h-3.5" />
             {isCreating ? 'Creating…' : 'Create Quiz'}
@@ -376,7 +376,7 @@ export default function QuizGrid() {
               {view === 'grid' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {displayedQuizzes.map((quiz, i) => (
-                    <div key={quiz.id} className="animate-fade-in-up" style={{ animationDelay: `${i * 40}ms` }}>
+                    <div key={quiz.id} className="animate-fade-in-up" style={{ animationDelay: `${i * 80}ms` }}>
                       <QuizCard {...cardProps(quiz)} />
                     </div>
                   ))}

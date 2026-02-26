@@ -26,7 +26,7 @@ function gradFor(id) { return GRAD[id % GRAD.length] }
 function CardPlaceholder({ quizId }) {
   return (
     <div className={`flex items-center justify-center w-full h-full bg-gradient-to-br ${gradFor(quizId)} bg-slate-50`}>
-      <div className="w-14 h-14 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+      <div className="w-14 h-14 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm animate-float">
         <Timer className="w-7 h-7 text-[#FF6B9D]/80" />
       </div>
     </div>
@@ -163,11 +163,22 @@ export default function QuizCard({
     navigate(`/quizzes/${quiz.id}/editor`)
   }
 
+  function handleClick(e) {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const ripple = document.createElement('span')
+    ripple.className = 'ripple-effect'
+    ripple.style.left = `${e.clientX - rect.left - 50}px`
+    ripple.style.top  = `${e.clientY - rect.top  - 50}px`
+    e.currentTarget.appendChild(ripple)
+    setTimeout(() => ripple.remove(), 600)
+    handleCardClick()
+  }
+
   return (
     <div
-      onClick={handleCardClick}
+      onClick={handleClick}
       className={`
-        glass-card rounded-2xl group
+        glass-card card-accent-bar rounded-2xl group
         transition-all duration-200 cursor-pointer hover:-translate-y-0.5
         ${isHighlighted
           ? 'ring-2 ring-[#FF6B9D] ring-offset-2'
