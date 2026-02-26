@@ -115,12 +115,12 @@ export function useQuestionPerformance(quizId) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!quizId) { setLoading(false); return }
     async function load() {
-      const { data: rows } = await supabase
+      let q = supabase
         .from('attempt_answers')
         .select('question_id, is_correct, time_spent_s, questions(text, position, difficulty)')
-        .eq('questions.quiz_id', quizId)
+      if (quizId) q = q.eq('questions.quiz_id', quizId)
+      const { data: rows } = await q
 
       // Group by question
       const map = {}

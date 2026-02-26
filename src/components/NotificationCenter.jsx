@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Bell, Check, CheckCheck, Trash2, Settings, ClipboardList, Award, AlertTriangle, Info, Clock, X } from 'lucide-react'
 import { useNotifications } from '../hooks/useNotifications'
 import { useAuth } from '../contexts/AuthContext'
@@ -35,6 +36,7 @@ function dateBucket(isoStr) {
 }
 
 export default function NotificationCenter() {
+  const navigate = useNavigate()
   const { profile } = useAuth()
   const { notifications, loading, unreadCount, markRead, markAllRead, dismiss, dismissAllRead } = useNotifications(profile?.id)
   const [filter, setFilter]       = useState('all')
@@ -153,7 +155,16 @@ export default function NotificationCenter() {
                       <p className="text-sm font-semibold text-slate-900 mt-0.5">{n.title}</p>
                       <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{n.body}</p>
                       {n.actionLabel && (
-                        <button className="mt-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700">{n.actionLabel} →</button>
+                        <button
+                          onClick={e => {
+                            e.stopPropagation()
+                            markRead(n.id)
+                            const routes = { quiz: `/quizzes/${n.resource_id}/editor`, result: `/results/${n.resource_id}`, attempt: `/results/${n.resource_id}`, assignment: '/assignments' }
+                            const route = routes[n.resource_type]
+                            if (route) navigate(route)
+                          }}
+                          className="mt-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                        >{n.actionLabel} →</button>
                       )}
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0 ml-auto">

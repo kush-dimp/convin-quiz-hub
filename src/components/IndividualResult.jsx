@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ChevronLeft, Download, Mail, Clock, Award, MessageSquare, Flag, Check, X, HelpCircle } from 'lucide-react'
 import { useResult } from '../hooks/useResults'
@@ -111,6 +112,15 @@ export default function IndividualResult() {
   const pointsEarned = attempt.points_earned ?? 0
   const totalPoints = attempt.total_points ?? 0
 
+  const [note, setNote] = useState(() => { try { return localStorage.getItem(`note_${id}`) || '' } catch { return '' } })
+  const [noteSaved, setNoteSaved] = useState(false)
+
+  function saveNote() {
+    try { localStorage.setItem(`note_${id}`, note) } catch {}
+    setNoteSaved(true)
+    setTimeout(() => setNoteSaved(false), 2000)
+  }
+
   const initials = userName.split(' ').map(n => n[0]).join('')
   const correctCount = answers.filter(a => a.is_correct).length
   const wrongCount = answers.filter(a => !a.is_correct).length
@@ -128,8 +138,8 @@ export default function IndividualResult() {
               <p className="text-[11px] text-slate-400 mt-0.5">Detailed attempt review</p>
             </div>
           </div>
-          <button className="border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm flex items-center gap-1.5"><Mail className="w-4 h-4" /> Email Results</button>
-          <button className="border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm flex items-center gap-1.5"><Download className="w-4 h-4" /> Download PDF</button>
+          <button onClick={() => window.open(`mailto:${email}?subject=Quiz Results: ${quizTitle}&body=Hi ${userName},%0A%0AYour score: ${score}%25 (${passed ? 'Passed' : 'Failed'})%0ATime taken: ${timeTaken}%0A%0ABest regards`)} className="border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm flex items-center gap-1.5"><Mail className="w-4 h-4" /> Email Results</button>
+          <button onClick={() => window.print()} className="border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm flex items-center gap-1.5"><Download className="w-4 h-4" /> Download PDF</button>
         </div>
       </header>
       <main className="max-w-4xl mx-auto px-6 py-6 space-y-6">
@@ -199,8 +209,10 @@ export default function IndividualResult() {
         {/* Instructor notes */}
         <div className="bg-white rounded-2xl shadow-sm p-5">
           <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-indigo-400" /> Instructor Notes</h3>
-          <textarea rows={3} placeholder="Add private notes or comments for this submission…" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 resize-none" />
-          <button className="mt-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200">Save Note</button>
+          <textarea value={note} onChange={e => setNote(e.target.value)} rows={3} placeholder="Add private notes or comments for this submission…" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 resize-none" />
+          <button onClick={saveNote} className="mt-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 flex items-center gap-1.5">
+            {noteSaved ? <><Check className="w-3.5 h-3.5" /> Saved!</> : 'Save Note'}
+          </button>
         </div>
       </main>
     </div>

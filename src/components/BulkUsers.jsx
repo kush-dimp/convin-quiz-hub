@@ -110,7 +110,12 @@ export default function BulkUsers() {
               <span className="text-xs text-slate-500">{selected.size} selected</span>
               <button onClick={() => bulkAction('activate')} className="text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1"><UserCheck className="w-3.5 h-3.5" /> Activate</button>
               <button onClick={() => bulkAction('deactivate')} className="text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1"><UserX className="w-3.5 h-3.5" /> Deactivate</button>
-              <button onClick={() => {}} className="text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> Email All</button>
+              <button
+                onClick={() => {
+                  const emails = users.filter(u => selected.has(u.id)).map(u => u.email).filter(Boolean).join(',')
+                  if (emails) window.open(`mailto:${emails}`)
+                }}
+                className="text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> Email All</button>
             </div>
           )}
         </div>
@@ -202,7 +207,12 @@ export default function BulkUsers() {
                             <UserCheck className="w-3.5 h-3.5" />
                           </button>
                         )}
-                        <button className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
+                        <button
+                          onClick={() => {
+                            const name = window.prompt('Full name:', u.name)
+                            if (name !== null && name.trim()) updateUser(u.id, { name: name.trim() })
+                          }}
+                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
                   </tr>

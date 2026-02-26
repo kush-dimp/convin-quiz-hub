@@ -31,11 +31,22 @@ export default function CheatDetection() {
   const [filter, setFilter] = useState('all')
   const [reviewed, setReviewed] = useState(new Set())
   const [dismissed, setDismissed] = useState(new Set())
+  const [toast, setToast] = useState(null)
+
+  function showToast(msg, ok = true) {
+    setToast({ msg, ok })
+    setTimeout(() => setToast(null), 2500)
+  }
 
   async function clearAttempt(id) {
-    // Mark as not flagged in DB and dismiss locally
-    await supabase.from('quiz_attempts').update({ flagged: false }).eq('id', id)
-    setDismissed(p => { const n = new Set(p); n.add(id); return n })
+    try {
+      const { error } = await supabase.from('quiz_attempts').update({ flagged: false }).eq('id', id)
+      if (error) throw error
+      setDismissed(p => { const n = new Set(p); n.add(id); return n })
+      showToast('Attempt cleared successfully')
+    } catch {
+      showToast('Failed to clear attempt', false)
+    }
   }
 
   // Build suspicious attempts: flagged results + high tab-switchers from all results
@@ -72,6 +83,12 @@ export default function CheatDetection() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {toast && (
+        <div className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl shadow-lg text-sm font-semibold text-white transition-all ${toast.ok ? 'bg-emerald-600' : 'bg-red-600'}`}>
+          {toast.ok ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+          {toast.msg}
+        </div>
+      )}
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-6xl mx-auto px-6 h-[56px] flex items-center gap-3">
           <Shield className="w-4 h-4 text-indigo-600" />

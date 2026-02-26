@@ -65,6 +65,18 @@ export default function QuestionAnalysis() {
     else { setSortField(f); setSortDir('asc') }
   }
 
+  function exportCSV() {
+    const rows = [['Question', 'Correct %', 'Total', 'Avg Time (s)', 'Discrimination Index', 'Difficulty', 'Flag']]
+    displayed.forEach(q => {
+      const pct = Math.round(q.correct / q.total * 100)
+      const flag = getFlag(q)
+      rows.push([`"${q.text.replace(/"/g, '""')}"`, pct + '%', q.total, q.avgTime, q.discriminationIndex, q.difficulty, flag ? flag.label : 'OK'])
+    })
+    const csv = rows.map(r => r.join(',')).join('\n')
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'question-analysis.csv' })
+    a.click()
+  }
+
   const optionDist = [
     { name: 'Option A', value: 45, correct: false },
     { name: 'Option B', value: 201, correct: true  },
@@ -83,7 +95,7 @@ export default function QuestionAnalysis() {
               <p className="text-[11px] text-slate-400 mt-0.5">Per-question metrics and flags</p>
             </div>
           </div>
-          <button className="flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm transition-colors">
+          <button onClick={exportCSV} className="flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm transition-colors">
             <Download className="w-4 h-4" /> Export Report
           </button>
         </div>

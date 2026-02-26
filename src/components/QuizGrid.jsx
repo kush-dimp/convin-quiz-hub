@@ -319,6 +319,7 @@ export default function QuizGrid() {
     onDuplicate:    handleDuplicate,
     isHighlighted:  quiz.id === highlightedId,
     onHistory:      () => setHistoryQuiz(quiz),
+    onDelete:       () => setModal({ type: 'delete', items: [quiz] }),
   })
 
   return (

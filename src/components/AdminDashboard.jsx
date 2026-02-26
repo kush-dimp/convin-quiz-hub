@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Users, BookOpen, TrendingUp, Award,
   Activity, Database, HardDrive, Zap, AlertTriangle,
@@ -26,11 +27,11 @@ const SYSTEM = [
 ]
 
 const QUICK = [
-  { label: 'Create Quiz',       icon: BookOpen,      color: 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'  },
-  { label: 'Invite Users',      icon: Users,         color: 'text-blue-600 bg-blue-50 hover:bg-blue-100'        },
-  { label: 'Export Analytics',  icon: BarChart2,     color: 'text-teal-600 bg-teal-50 hover:bg-teal-100'        },
-  { label: 'Review Flags',      icon: AlertTriangle, color: 'text-red-600 bg-red-50 hover:bg-red-100'           },
-  { label: 'Generate Report',   icon: Activity,      color: 'text-violet-600 bg-violet-50 hover:bg-violet-100'  },
+  { label: 'Create Quiz',       icon: BookOpen,      color: 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100', to: '/'                },
+  { label: 'Invite Users',      icon: Users,         color: 'text-blue-600 bg-blue-50 hover:bg-blue-100',       to: '/users'           },
+  { label: 'Export Analytics',  icon: BarChart2,     color: 'text-teal-600 bg-teal-50 hover:bg-teal-100',       to: '/analytics'       },
+  { label: 'Review Flags',      icon: AlertTriangle, color: 'text-red-600 bg-red-50 hover:bg-red-100',          to: '/cheat-detection' },
+  { label: 'Generate Report',   icon: Activity,      color: 'text-violet-600 bg-violet-50 hover:bg-violet-100', to: '/reports'         },
 ]
 
 const DEFAULT_WIDGETS = [
@@ -82,6 +83,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 }
 
 export default function AdminDashboard() {
+  const navigate = useNavigate()
   const [widgets, setWidgets] = useState(DEFAULT_WIDGETS)
   const [showCustomize, setShowCustomize] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
@@ -267,7 +269,7 @@ export default function AdminDashboard() {
                   {QUICK.map(a => {
                     const Icon = a.icon
                     return (
-                      <button key={a.label} className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-semibold transition-colors ${a.color}`}>
+                      <button key={a.label} onClick={() => navigate(a.to)} className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-semibold transition-colors ${a.color}`}>
                         <Icon className="w-4 h-4" />
                         {a.label}
                         <ArrowUpRight className="w-3.5 h-3.5 ml-auto opacity-40" />

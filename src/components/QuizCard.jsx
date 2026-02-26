@@ -51,7 +51,7 @@ export function SkeletonCard() {
 }
 
 /* ── Three-dot menu ── */
-function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory }) {
+function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   const navigate = useNavigate()
@@ -69,8 +69,8 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory }) {
     { icon: Pencil,  label: 'Edit',      onClick: () => navigate(`/quizzes/${quizId}/editor`) },
     { icon: Copy,    label: 'Duplicate', onClick: onDuplicate },
     { icon: History, label: 'History',   onClick: () => onHistory?.() },
-    { icon: Share2,  label: 'Share',     onClick: () => {} },
-    { icon: Trash2,  label: 'Delete',    onClick: () => {}, danger: true },
+    { icon: Share2,  label: 'Share',     onClick: () => navigator.clipboard.writeText(`${window.location.origin}/quiz/${quizId}/take`) },
+    { icon: Trash2,  label: 'Delete',    onClick: () => onDelete?.(), danger: true },
   ]
 
   return (
@@ -113,6 +113,7 @@ export default function QuizCard({
   onDuplicate,
   isHighlighted = false,
   onHistory,
+  onDelete,
 }) {
   const navigate = useNavigate()
   const {
@@ -188,13 +189,13 @@ export default function QuizCard({
         {!isSelectionMode && (
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-center pb-4 gap-2">
             {[
-              { icon: Eye,       label: 'Preview' },
-              { icon: Pencil,    label: 'Edit'    },
-              { icon: BarChart2, label: 'Reports' },
-            ].map(({ icon: Icon, label }) => (
+              { icon: Eye,       label: 'Preview', to: `/quiz/${quiz.id}/take`          },
+              { icon: Pencil,    label: 'Edit',    to: `/quizzes/${quiz.id}/editor`     },
+              { icon: BarChart2, label: 'Reports', to: `/results`                       },
+            ].map(({ icon: Icon, label, to }) => (
               <button
                 key={label}
-                onClick={e => e.stopPropagation()}
+                onClick={e => { e.stopPropagation(); navigate(to) }}
                 className="flex items-center gap-1.5 bg-white text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-md hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
               >
                 <Icon className="w-3 h-3" />
@@ -216,6 +217,7 @@ export default function QuizCard({
             onDuplicate={() => onDuplicate?.(quiz)}
             quizId={quiz.id}
             onHistory={onHistory}
+            onDelete={onDelete}
           />
         </div>
 
