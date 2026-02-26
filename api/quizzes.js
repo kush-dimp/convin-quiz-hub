@@ -2,9 +2,11 @@ import { sql, DEMO_USER_ID } from './_db.js'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
+  // Reconstruct full path from sub-path query param (added by vercel.json rewrite)
+  const path = req.query.sub ? `/api/quizzes/${req.query.sub.split('?')[0]}` : req.url
 
   // Route: /api/quizzes/:id/questions
-  const questionsMatch = req.url.match(/\/api\/quizzes\/([^/?]+)\/questions/)
+  const questionsMatch = path.match(/\/api\/quizzes\/([^/?]+)\/questions/)
   if (questionsMatch) {
     const quizId = questionsMatch[1]
     if (req.method === 'GET') {
@@ -44,7 +46,7 @@ export default async function handler(req, res) {
   }
 
   // Route: /api/quizzes/:id
-  const idMatch = req.url.match(/\/api\/quizzes\/([^/?]+)$/)
+  const idMatch = path.match(/\/api\/quizzes\/([^/?]+)$/)
   if (idMatch) {
     const quizId = idMatch[1]
     if (req.method === 'GET') {

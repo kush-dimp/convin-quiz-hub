@@ -1,13 +1,11 @@
 {
   "rewrites": [
-    { "source": "/api/quizzes/:path+",           "destination": "/api/quizzes" },
-    { "source": "/api/results/:path+",            "destination": "/api/results" },
-    { "source": "/api/users/:path+",              "destination": "/api/users" },
-    { "source": "/api/assignments/:path+",        "destination": "/api/assignments" },
-    { "source": "/api/notifications/:path+",      "destination": "/api/notifications" },
-    { "source": "/api/questions/:path+",          "destination": "/api/questions" },
-    { "source": "/api/quiz-versions/:path+",      "destination": "/api/quiz-versions" },
-    { "source": "/api/role-permissions/:path+",   "destination": "/api/role-permissions" },
-    { "source": "/((?!api(?:/|$)).*)",            "destination": "/index.html" }
+    { "source": "/api/quizzes/:sub+",          "destination": "/api/quizzes?sub=:sub" },
+    { "source": "/api/results/:sub+",           "destination": "/api/results?sub=:sub" },
+    { "source": "/api/users/:sub+",             "destination": "/api/users?sub=:sub" },
+    { "source": "/api/assignments/:sub+",       "destination": "/api/assignments?sub=:sub" },
+    { "source": "/api/notifications/:sub+",     "destination": "/api/notifications?sub=:sub" },
+    { "source": "/api/questions/:sub+",         "destination": "/api/questions?sub=:sub" },
+    { "source": "/((?!api(?:/|$)).*)",          "destination": "/index.html" }
   ]
 }

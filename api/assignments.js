@@ -2,9 +2,10 @@ import { sql, DEMO_USER_ID } from './_db.js'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
+  const path = req.query.sub ? `/api/assignments/${req.query.sub.split('?')[0]}` : req.url
 
   // /api/assignments/:id
-  const idMatch = req.url.match(/\/api\/assignments\/([^/?]+)$/)
+  const idMatch = path.match(/\/api\/assignments\/([^/?]+)$/)
   if (idMatch) {
     const id = idMatch[1]
 

@@ -2,9 +2,10 @@ import { sql } from './_db.js'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
+  const path = req.query.sub ? `/api/results/${req.query.sub.split('?')[0]}` : req.url
 
   // POST /api/results/attempts/:id/answers
-  const answersMatch = req.url.match(/\/api\/results\/attempts\/([^/?]+)\/answers/)
+  const answersMatch = path.match(/\/api\/results\/attempts\/([^/?]+)\/answers/)
   if (answersMatch) {
     const attemptId = answersMatch[1]
     if (req.method === 'POST') {
@@ -23,7 +24,7 @@ export default async function handler(req, res) {
   }
 
   // PUT /api/results/attempts/:id
-  const attemptIdMatch = req.url.match(/\/api\/results\/attempts\/([^/?]+)$/)
+  const attemptIdMatch = path.match(/\/api\/results\/attempts\/([^/?]+)$/)
   if (attemptIdMatch) {
     const attemptId = attemptIdMatch[1]
     if (req.method === 'PUT') {
@@ -45,7 +46,7 @@ export default async function handler(req, res) {
   }
 
   // POST /api/results/attempts
-  if (req.url.endsWith('/attempts') || req.url.includes('/attempts?')) {
+  if (path.endsWith('/attempts') || path.includes('/attempts?')) {
     if (req.method === 'POST') {
       const { quiz_id, user_id, attempt_number, status, started_at } = req.body
       const rows = await sql`
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
   }
 
   // GET /api/results/stats
-  if (req.url.includes('/stats')) {
+  if (path.includes('/stats')) {
     const url = new URL(req.url, 'http://localhost')
     const quizId = url.searchParams.get('quizId')
     let rows
@@ -83,7 +84,7 @@ export default async function handler(req, res) {
   }
 
   // /api/results/:id
-  const idMatch = req.url.match(/\/api\/results\/([^/?]+)$/)
+  const idMatch = path.match(/\/api\/results\/([^/?]+)$/)
   if (idMatch) {
     const attemptId = idMatch[1]
     if (req.method === 'DELETE') {
