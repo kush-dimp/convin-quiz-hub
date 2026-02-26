@@ -14,20 +14,41 @@ const STATUS_STYLES = {
 
 /* gradient placeholder bg per category */
 const GRAD = [
-  'from-[#FF6B9D]/20 to-[#E63E6D]/20',
-  'from-blue-500/20 to-cyan-600/20',
-  'from-violet-500/20 to-pink-600/20',
-  'from-rose-500/20 to-orange-600/20',
-  'from-teal-500/20 to-emerald-600/20',
-  'from-amber-500/20 to-yellow-600/20',
+  'from-[#FF6B9D]/40 to-[#E63E6D]/40',
+  'from-blue-500/40 to-cyan-600/40',
+  'from-violet-500/40 to-pink-600/40',
+  'from-rose-500/40 to-orange-600/40',
+  'from-teal-500/40 to-emerald-600/40',
+  'from-amber-500/40 to-yellow-600/40',
 ]
 function gradFor(id) { return GRAD[id % GRAD.length] }
 
-function CardPlaceholder({ quizId }) {
+const CATEGORY_ICON = {
+  'General': '📚', 'Technology': '💻', 'Science': '🔬',
+  'Math': '📐', 'HR': '👥', 'Safety': '🛡️',
+  'Compliance': '✅', 'Certification': '🏆', 'AWS': '☁️',
+  'Trivia': '🎯', 'Survey': '📋', 'Cloud': '☁️',
+  'Engineering': '⚙️', 'Marketing': '📣', 'Finance': '💰',
+}
+
+function CardPlaceholder({ quiz }) {
+  const icon  = CATEGORY_ICON[quiz.category] || '📝'
+  const first = (quiz.title || '?')[0].toUpperCase()
   return (
-    <div className={`flex items-center justify-center w-full h-full bg-gradient-to-br ${gradFor(quizId)} bg-slate-50`}>
-      <div className="w-14 h-14 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm animate-float">
-        <Timer className="w-7 h-7 text-[#FF6B9D]/80" />
+    <div className={`relative flex items-center justify-center w-full h-full bg-gradient-to-br ${gradFor(quiz.id)}`}>
+      {/* Giant backdrop letter */}
+      <span className="absolute font-heading text-[96px] font-black text-white/[0.10] select-none leading-none pointer-events-none">
+        {first}
+      </span>
+      {/* Category badge */}
+      {quiz.category && (
+        <span className="absolute bottom-2.5 left-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-black/20 backdrop-blur-sm text-white/90">
+          {quiz.category}
+        </span>
+      )}
+      {/* Floating icon */}
+      <div className="relative z-10 w-14 h-14 rounded-2xl bg-white/70 backdrop-blur-sm flex items-center justify-center shadow-md animate-float text-2xl">
+        {icon}
       </div>
     </div>
   )
@@ -193,7 +214,7 @@ export default function QuizCard({
       <div className="relative h-40 overflow-hidden">
         {thumbnail
           ? <img src={thumbnail} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          : <CardPlaceholder quizId={quiz.id} />
+          : <CardPlaceholder quiz={quiz} />
         }
 
         {/* Status badge */}

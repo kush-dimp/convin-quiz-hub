@@ -143,6 +143,29 @@ function MultiSelectDropdown({ label, options, value, onChange }) {
 function DateRangeDropdown({ dateFrom, dateTo, onFromChange, onToChange }) {
   const isActive = dateFrom || dateTo
 
+  const PRESETS = [
+    { label: 'Last 7 days',  days: 7   },
+    { label: 'Last 15 days', days: 15  },
+    { label: 'Last 21 days', days: 21  },
+    { label: 'Last 30 days', days: 30  },
+    { label: 'Last month',   days: null },
+  ]
+
+  function applyPreset(preset, close) {
+    const today = new Date()
+    const iso   = (d) => d.toISOString().split('T')[0]
+    if (preset.days === null) {
+      const from = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+      const to   = new Date(today.getFullYear(), today.getMonth(), 0)
+      onFromChange(iso(from)); onToChange(iso(to))
+    } else {
+      const from = new Date(today)
+      from.setDate(today.getDate() - preset.days)
+      onFromChange(iso(from)); onToChange(iso(today))
+    }
+    close()
+  }
+
   return (
     <DropdownBase
       trigger={({ open, toggle }) => (
@@ -162,38 +185,52 @@ function DateRangeDropdown({ dateFrom, dateTo, onFromChange, onToChange }) {
         </button>
       )}
       panel={({ close }) => (
-        <div className="p-4 w-60 space-y-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            Filter by created date
-          </p>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1">From</label>
-            <input
-              type="date"
-              value={dateFrom}
-              max={dateTo || undefined}
-              onChange={(e) => onFromChange(e.target.value)}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 focus:border-[#FF6B9D]"
-            />
+        <div className="w-64">
+          {/* Quick presets */}
+          <div className="p-2 border-b border-gray-100">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-2 mb-1.5">Quick select</p>
+            {PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                onClick={() => applyPreset(preset, close)}
+                className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-[#FFF5F7] hover:text-[#E63E6D] rounded-lg transition-colors font-medium"
+              >
+                {preset.label}
+              </button>
+            ))}
           </div>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1">To</label>
-            <input
-              type="date"
-              value={dateTo}
-              min={dateFrom || undefined}
-              onChange={(e) => onToChange(e.target.value)}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 focus:border-[#FF6B9D]"
-            />
+          {/* Custom range */}
+          <div className="p-4 space-y-3">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Custom range</p>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">From</label>
+              <input
+                type="date"
+                value={dateFrom}
+                max={dateTo || undefined}
+                onChange={(e) => onFromChange(e.target.value)}
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 focus:border-[#FF6B9D]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">To</label>
+              <input
+                type="date"
+                value={dateTo}
+                min={dateFrom || undefined}
+                onChange={(e) => onToChange(e.target.value)}
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 focus:border-[#FF6B9D]"
+              />
+            </div>
+            {isActive && (
+              <button
+                onClick={() => { onFromChange(''); onToChange(''); close() }}
+                className="w-full text-xs text-[#E63E6D] hover:text-[#C41E5C] font-medium text-center pt-1"
+              >
+                Clear dates
+              </button>
+            )}
           </div>
-          {isActive && (
-            <button
-              onClick={() => { onFromChange(''); onToChange(''); close() }}
-              className="w-full text-xs text-[#E63E6D] hover:text-[#C41E5C] font-medium text-center"
-            >
-              Clear dates
-            </button>
-          )}
         </div>
       )}
     />
@@ -296,7 +333,7 @@ export default function FilterBar({
   ]
 
   return (
-    <div className="glass-panel rounded-2xl px-5 py-4 space-y-2.5 mb-6">
+    <div className="relative z-40 glass-panel rounded-2xl px-5 py-4 space-y-2.5 mb-6">
       {/* ── Row 1: filter + view controls ── */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Search */}

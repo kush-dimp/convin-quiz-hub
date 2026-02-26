@@ -6,7 +6,7 @@
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(135deg, #FFF5F7 0%, #F0FFF4 60%, #FFF5F7 100%);
+    background: linear-gradient(135deg, #1A0B13 0%, #0B1A0F 58%, #1A0B13 100%);
     background-attachment: fixed;
     color: #0f172a;
     font-family: 'Manrope', system-ui, sans-serif;
@@ -24,7 +24,7 @@
     position: fixed;
     top: -180px; right: -180px;
     width: 560px; height: 560px;
-    background: radial-gradient(circle, rgba(255,107,157,0.18) 0%, transparent 68%);
+    background: radial-gradient(circle, rgba(255,107,157,0.45) 0%, transparent 68%);
     pointer-events: none;
     z-index: 0;
   }
@@ -33,7 +33,7 @@
     position: fixed;
     bottom: -160px; left: -120px;
     width: 480px; height: 480px;
-    background: radial-gradient(circle, rgba(72,187,120,0.14) 0%, transparent 68%);
+    background: radial-gradient(circle, rgba(72,187,120,0.35) 0%, transparent 68%);
     pointer-events: none;
     z-index: 0;
   }
