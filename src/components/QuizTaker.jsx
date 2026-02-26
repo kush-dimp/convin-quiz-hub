@@ -82,8 +82,8 @@ function OptionCard({ selected, onClick, children }) {
       onClick={onClick}
       className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-150 text-sm font-medium
         ${selected
-          ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
-          : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-slate-50'
+          ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#2D0A1A]'
+          : 'border-slate-200 bg-white text-slate-700 hover:border-[#FFB3C6] hover:bg-slate-50'
         }`}
     >
       {children}
@@ -103,8 +103,8 @@ function TrueFalseButtons({ value, onChange }) {
             onClick={() => onChange(String(bool))}
             className={`flex-1 py-5 rounded-2xl border-2 text-lg font-semibold transition-all duration-150
               ${selected
-                ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
-                : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-slate-50'
+                ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#2D0A1A]'
+                : 'border-slate-200 bg-white text-slate-700 hover:border-[#FFB3C6] hover:bg-slate-50'
               }`}
           >
             {label}
@@ -122,12 +122,12 @@ function MultiOptionCard({ selected, onClick, children }) {
       onClick={onClick}
       className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-150 text-sm font-medium flex items-center gap-3
         ${selected
-          ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
-          : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-slate-50'
+          ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#2D0A1A]'
+          : 'border-slate-200 bg-white text-slate-700 hover:border-[#FFB3C6] hover:bg-slate-50'
         }`}
     >
       <span className={`w-5 h-5 rounded flex-shrink-0 border-2 flex items-center justify-center transition-colors
-        ${selected ? 'border-indigo-500 bg-indigo-500' : 'border-slate-300 bg-white'}`}>
+        ${selected ? 'border-[#FF6B9D] bg-[#FF6B9D]' : 'border-slate-300 bg-white'}`}>
         {selected && (
           <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -164,7 +164,7 @@ function ConfirmSubmitModal({ unanswered, onConfirm, onCancel }) {
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-semibold hover:from-indigo-700 hover:to-violet-700 transition-all shadow-sm"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#E63E6D] to-[#C41E5C] text-white text-sm font-semibold hover:from-[#C41E5C] hover:to-[#9d1649] transition-all shadow-sm"
           >
             Submit
           </button>
@@ -183,8 +183,8 @@ function RatingSelector({ scale = 5, value, onChange }) {
           onClick={() => onChange(n)}
           className={`w-11 h-11 rounded-xl border-2 font-semibold text-sm transition-all
             ${value === n
-              ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
-              : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:bg-indigo-50/40'
+              ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#2D0A1A]'
+              : 'border-slate-200 bg-white text-slate-600 hover:border-[#FFB3C6] hover:bg-[#FFF5F7]/40'
             }`}
         >
           {n}
@@ -209,8 +209,8 @@ function MatchingQuestion({ pairs = [], value, onChange }) {
           <select
             value={matched[pair.left] ?? ''}
             onChange={e => onChange({ ...matched, [pair.left]: e.target.value })}
-            className={`flex-1 px-3 py-2.5 rounded-xl border-2 text-sm focus:border-indigo-400 focus:outline-none transition-colors ${
-              matched[pair.left] ? 'border-indigo-300 bg-indigo-50/40 text-slate-800' : 'border-slate-200 bg-white text-slate-500'
+            className={`flex-1 px-3 py-2.5 rounded-xl border-2 text-sm focus:border-[#FF6B9D] focus:outline-none transition-colors ${
+              matched[pair.left] ? 'border-[#FF6B9D]/60 bg-[#FFF5F7]/40 text-slate-800' : 'border-slate-200 bg-white text-slate-500'
             }`}
           >
             <option value="">Select...</option>
@@ -238,7 +238,7 @@ function OrderingQuestion({ items = [], value, onChange }) {
       <p className="text-xs text-slate-400 mb-1">Arrange the items in the correct order using the arrows.</p>
       {orderedItems.map((item, i) => (
         <div key={i} className="flex items-center gap-3">
-          <span className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 text-xs font-bold flex items-center justify-center flex-shrink-0">
+          <span className="w-7 h-7 rounded-full bg-[#FFE5EC] text-[#E63E6D] text-xs font-bold flex items-center justify-center flex-shrink-0">
             {i + 1}
           </span>
           <div className="flex-1 px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm text-slate-700">
@@ -282,8 +282,8 @@ function MatrixQuestion({ rows = [], columns = [], value, onChange }) {
                     onClick={() => onChange({ ...answers, [row]: col })}
                     className={`w-5 h-5 rounded-full border-2 mx-auto block transition-all
                       ${answers[row] === col
-                        ? 'border-indigo-500 bg-indigo-500'
-                        : 'border-slate-300 hover:border-indigo-300'
+                        ? 'border-[#FF6B9D] bg-[#FF6B9D]'
+                        : 'border-slate-300 hover:border-[#FFB3C6]'
                       }`}
                   />
                 </td>
@@ -524,15 +524,15 @@ export default function QuizTaker() {
   // ── Loading / Error states ────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#FF6B9D] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="bg-white rounded-2xl shadow-sm p-8 max-w-md w-full mx-4 text-center">
           <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
             <svg className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -543,7 +543,7 @@ export default function QuizTaker() {
           <p className="text-slate-500 text-sm mb-6">{error}</p>
           <button
             onClick={() => navigate('/')}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-semibold hover:from-indigo-700 hover:to-violet-700 transition-all"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E63E6D] to-[#C41E5C] text-white text-sm font-semibold hover:from-[#C41E5C] hover:to-[#9d1649] transition-all"
           >
             Back to Quizzes
           </button>
@@ -561,7 +561,7 @@ export default function QuizTaker() {
 
     return (
       <>
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-sm p-10 max-w-lg w-full text-center">
           {/* Score circle */}
           <div className={`w-28 h-28 rounded-full mx-auto mb-6 flex flex-col items-center justify-center border-4
@@ -659,7 +659,7 @@ export default function QuizTaker() {
           <div className="flex flex-col sm:flex-row gap-3 mt-6">
             <button
               onClick={() => navigate(`/results/${attempt?.id}`)}
-              className="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-semibold hover:from-indigo-700 hover:to-violet-700 transition-all shadow-sm"
+              className="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-[#E63E6D] to-[#C41E5C] text-white text-sm font-semibold hover:from-[#C41E5C] hover:to-[#9d1649] transition-all shadow-sm"
             >
               View Detailed Results
             </button>
@@ -733,7 +733,7 @@ export default function QuizTaker() {
   // ── Quiz taking screen ────────────────────────────────────────────────────
   if (!currentQuestion) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <p className="text-slate-500">No questions found for this quiz.</p>
       </div>
     )
@@ -743,7 +743,7 @@ export default function QuizTaker() {
   const isTimeLow = timeLeft !== null && timeLeft < 60
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* ── Header bar ─────────────────────────────────────────────────── */}
       <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 flex-shrink-0 z-10">
         <div className="flex items-center gap-3 min-w-0">
@@ -773,7 +773,7 @@ export default function QuizTaker() {
           {/* Early submit */}
           <button
             onClick={() => setShowConfirm(true)}
-            className="hidden sm:block text-xs text-slate-500 hover:text-indigo-600 font-medium transition-colors"
+            className="hidden sm:block text-xs text-slate-500 hover:text-[#E63E6D] font-medium transition-colors"
           >
             Submit Quiz
           </button>
@@ -783,7 +783,7 @@ export default function QuizTaker() {
       {/* Progress bar */}
       <div className="h-1 bg-slate-200 flex-shrink-0">
         <div
-          className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-300"
+          className="h-full bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] transition-all duration-300"
           style={{ width: `${progressPct}%` }}
         />
       </div>
@@ -796,7 +796,7 @@ export default function QuizTaker() {
             {/* Question header */}
             <div className="flex items-start justify-between gap-4 mb-5">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
+                <span className="text-xs font-semibold text-[#E63E6D] bg-[#FFF5F7] px-2.5 py-1 rounded-full">
                   Q{currentIndex + 1}
                 </span>
                 <span className="text-xs text-slate-400">
@@ -841,7 +841,7 @@ export default function QuizTaker() {
                     <span className="inline-flex items-center gap-3">
                       <span className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-xs font-bold
                         ${userAnswers[currentQuestion.id] === opt.id
-                          ? 'border-indigo-500 bg-indigo-500 text-white'
+                          ? 'border-[#FF6B9D] bg-[#FF6B9D] text-white'
                           : 'border-slate-300 text-slate-400'}`}>
                         {opt.id?.toUpperCase()}
                       </span>
@@ -870,7 +870,7 @@ export default function QuizTaker() {
                       onClick={() => toggleMultiAnswer(currentQuestion.id, opt.id)}
                     >
                       <span className="inline-flex items-center gap-2">
-                        <span className={`text-xs font-bold ${selected ? 'text-indigo-600' : 'text-slate-400'}`}>
+                        <span className={`text-xs font-bold ${selected ? 'text-[#E63E6D]' : 'text-slate-400'}`}>
                           {opt.id?.toUpperCase()}
                         </span>
                         {opt.text}
@@ -887,7 +887,7 @@ export default function QuizTaker() {
                     value={userAnswers[currentQuestion.id] ?? ''}
                     onChange={(e) => setAnswer(currentQuestion.id, e.target.value)}
                     placeholder="Type the missing word or phrase..."
-                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-400 focus:outline-none text-slate-800 text-sm transition-colors"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[#FF6B9D] focus:outline-none text-slate-800 text-sm transition-colors"
                   />
                 </div>
               )}
@@ -900,7 +900,7 @@ export default function QuizTaker() {
                       value={userAnswers[currentQuestion.id] ?? ''}
                       onChange={(e) => setAnswer(currentQuestion.id, e.target.value)}
                       placeholder="Type your answer here..."
-                      className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-400 focus:outline-none text-slate-800 text-sm resize-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[#FF6B9D] focus:outline-none text-slate-800 text-sm resize-none transition-colors"
                     />
                   ) : (
                     <input
@@ -908,7 +908,7 @@ export default function QuizTaker() {
                       value={userAnswers[currentQuestion.id] ?? ''}
                       onChange={(e) => setAnswer(currentQuestion.id, e.target.value)}
                       placeholder="Type your answer here..."
-                      className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-400 focus:outline-none text-slate-800 text-sm transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[#FF6B9D] focus:outline-none text-slate-800 text-sm transition-colors"
                     />
                   )}
                   <p className="mt-2 text-xs text-slate-400">This question will be graded manually.</p>
@@ -966,11 +966,11 @@ export default function QuizTaker() {
                     onClick={() => setCurrentIndex(idx)}
                     className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all border-2
                       ${isCurrent
-                        ? 'border-indigo-500 bg-indigo-500 text-white shadow-sm'
+                        ? 'border-[#FF6B9D] bg-[#FF6B9D] text-white shadow-sm'
                         : marked
                         ? 'border-amber-400 bg-amber-50 text-amber-700'
                         : answered
-                        ? 'border-indigo-200 bg-indigo-50 text-indigo-700'
+                        ? 'border-[#FFB3C6] bg-[#FFF5F7] text-[#C41E5C]'
                         : 'border-slate-200 bg-white text-slate-400 hover:border-slate-300'
                       }`}
                   >
@@ -986,7 +986,7 @@ export default function QuizTaker() {
                 Unanswered
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                <span className="w-3 h-3 rounded bg-indigo-100 border border-indigo-200 inline-block" />
+                <span className="w-3 h-3 rounded bg-[#FFE5EC] border border-[#FFB3C6] inline-block" />
                 Answered
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-400">
@@ -1034,8 +1034,8 @@ export default function QuizTaker() {
             <button
               onClick={() => setShowConfirm(true)}
               disabled={submitting}
-              className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600
-                text-white text-sm font-semibold hover:from-indigo-700 hover:to-violet-700 transition-all shadow-sm
+              className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-gradient-to-r from-[#E63E6D] to-[#C41E5C]
+                text-white text-sm font-semibold hover:from-[#C41E5C] hover:to-[#9d1649] transition-all shadow-sm
                 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? (
@@ -1055,8 +1055,8 @@ export default function QuizTaker() {
           ) : (
             <button
               onClick={() => setCurrentIndex((i) => Math.min(totalQuestions - 1, i + 1))}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600
-                text-white text-sm font-semibold hover:from-indigo-700 hover:to-violet-700 transition-all shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#E63E6D] to-[#C41E5C]
+                text-white text-sm font-semibold hover:from-[#C41E5C] hover:to-[#9d1649] transition-all shadow-sm"
             >
               Next
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

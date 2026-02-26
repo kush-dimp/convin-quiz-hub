@@ -39,7 +39,7 @@ export default function BulkActionBar({
             </span>
             <div className="w-40 h-1.5 bg-gray-700 rounded-full overflow-hidden">
               <div
-                className="h-full bg-indigo-400 rounded-full transition-all duration-300"
+                className="h-full bg-[#FF6B9D] rounded-full transition-all duration-300"
                 style={{ width: `${(bulkOp.progress / bulkOp.total) * 100}%` }}
               />
             </div>
@@ -55,7 +55,7 @@ export default function BulkActionBar({
                   checked={allSelected}
                   ref={(el) => { if (el) el.indeterminate = someSelected && !allSelected }}
                   onChange={allSelected ? onDeselectAll : onSelectAll}
-                  className="w-4 h-4 rounded accent-indigo-500 cursor-pointer"
+                  className="w-4 h-4 rounded accent-[#FF6B9D] cursor-pointer"
                 />
               </span>
               <span className="text-sm font-semibold whitespace-nowrap">

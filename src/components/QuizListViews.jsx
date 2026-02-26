@@ -48,8 +48,8 @@ function SelectBox({ isSelected, isSelectionMode, onToggle }) {
       onClick={(e) => { e.stopPropagation(); onToggle?.() }}
       className={`flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center cursor-pointer transition-all ${
         isSelected
-          ? 'bg-indigo-600 border-indigo-600'
-          : 'bg-white border-gray-300 hover:border-indigo-500'
+          ? 'bg-[#E63E6D] border-[#E63E6D]'
+          : 'bg-white border-gray-300 hover:border-[#FF6B9D]'
       } ${isSelectionMode || isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
     >
       {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
@@ -159,9 +159,9 @@ export function QuizListCard({
         bg-white border rounded-xl flex items-center gap-3 p-3 group
         hover:shadow-md transition-all duration-150 cursor-pointer
         ${isHighlighted
-          ? 'border-indigo-500 ring-4 ring-indigo-300 ring-offset-2'
+          ? 'border-[#FF6B9D] ring-4 ring-[#FFB3C6] ring-offset-2'
           : isSelected
-            ? 'border-indigo-400 ring-2 ring-inset ring-indigo-300 bg-indigo-50/30'
+            ? 'border-[#FF6B9D] ring-2 ring-inset ring-[#FFB3C6] bg-[#FFF5F7]/30'
             : 'border-gray-200'}
         ${isDisabled ? 'opacity-40 pointer-events-none' : ''}
       `}
@@ -170,10 +170,10 @@ export function QuizListCard({
       <SelectBox isSelected={isSelected} isSelectionMode={isSelectionMode} onToggle={onToggleSelect} />
 
       {/* Thumbnail */}
-      <div className="w-20 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center">
+      <div className="w-20 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-[#FFE5EC] to-[#FFE5EC] flex items-center justify-center">
         {thumbnail
           ? <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
-          : <Timer className="w-7 h-7 text-indigo-300" />}
+          : <Timer className="w-7 h-7 text-[#FFB3C6]" />}
       </div>
 
       {/* Content */}
@@ -259,7 +259,7 @@ function CompactRow({ quiz, isLast, isSelected, onToggleSelect, isDisabled, isSe
       className={`
         flex items-center gap-3 px-4 py-2.5 group cursor-pointer transition-colors
         ${!isLast ? 'border-b border-gray-100' : ''}
-        ${isHighlighted ? 'bg-indigo-50 outline outline-2 outline-indigo-400' : isSelected ? 'bg-indigo-50/60' : 'hover:bg-gray-50'}
+        ${isHighlighted ? 'bg-[#FFF5F7] outline outline-2 outline-[#FF6B9D]' : isSelected ? 'bg-[#FFF5F7]/60' : 'hover:bg-gray-50'}
         ${isDisabled ? 'opacity-40 pointer-events-none' : ''}
       `}
     >

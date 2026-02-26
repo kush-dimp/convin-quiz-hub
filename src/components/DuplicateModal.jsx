@@ -17,7 +17,7 @@ function Toggle({ checked, onChange, disabled }) {
       type="button"
       onClick={() => !disabled && onChange(!checked)}
       className={`relative inline-flex w-10 h-5 rounded-full transition-colors duration-200 flex-shrink-0 ${
-        checked ? 'bg-indigo-600' : 'bg-gray-300'
+        checked ? 'bg-[#E63E6D]' : 'bg-gray-300'
       } ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
     >
       <span
@@ -33,10 +33,10 @@ function Toggle({ checked, onChange, disabled }) {
 function OptionRow({ icon: Icon, label, description, checked, onChange, disabled }) {
   return (
     <label className={`flex items-center gap-3 p-3.5 rounded-xl border transition-colors cursor-pointer ${
-      checked && !disabled ? 'border-indigo-200 bg-indigo-50/50' : 'border-gray-200 hover:border-gray-300 bg-white'
+      checked && !disabled ? 'border-[#FFB3C6] bg-[#FFF5F7]/50' : 'border-gray-200 hover:border-gray-300 bg-white'
     } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-        checked ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'
+        checked ? 'bg-[#FFE5EC] text-[#E63E6D]' : 'bg-gray-100 text-gray-400'
       }`}>
         <Icon className="w-4 h-4" />
       </div>
@@ -153,8 +153,8 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
         {/* ── IDLE: options form ── */}
         {phase === 'idle' && (
           <>
-            <div className="flex items-center gap-3 px-6 py-5 bg-indigo-50 border-b border-indigo-100">
-              <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <div className="flex items-center gap-3 px-6 py-5 bg-[#FFF5F7] border-b border-[#FFE5EC]">
+              <div className="w-9 h-9 bg-[#E63E6D] rounded-xl flex items-center justify-center flex-shrink-0">
                 <Copy className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
@@ -176,7 +176,7 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full text-sm border border-gray-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 text-gray-900"
+                  className="w-full text-sm border border-gray-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 focus:border-[#FF6B9D] text-gray-900"
                 />
               </div>
 
@@ -218,11 +218,11 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
                       onClick={() => setFolder(f)}
                       className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm transition-all text-left ${
                         folder === f
-                          ? 'border-indigo-400 bg-indigo-50 text-indigo-700 font-semibold'
+                          ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#C41E5C] font-semibold'
                           : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
-                      <FolderOpen className={`w-3.5 h-3.5 flex-shrink-0 ${folder === f ? 'text-indigo-500' : 'text-gray-400'}`} />
+                      <FolderOpen className={`w-3.5 h-3.5 flex-shrink-0 ${folder === f ? 'text-[#FF6B9D]' : 'text-gray-400'}`} />
                       <span className="truncate text-xs">{f}</span>
                     </button>
                   ))}
@@ -247,7 +247,7 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
               <button
                 onClick={runDuplication}
                 disabled={!title.trim()}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#E63E6D] hover:bg-[#C41E5C] rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Duplicate Quiz
                 <ChevronRight className="w-4 h-4" />
@@ -259,8 +259,8 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
         {/* ── PROCESSING: progress ── */}
         {phase === 'processing' && (
           <div className="px-8 py-10 flex flex-col items-center text-center gap-5">
-            <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center">
-              <Loader2 className="w-7 h-7 text-indigo-600 animate-spin" />
+            <div className="w-14 h-14 rounded-full bg-[#FFE5EC] flex items-center justify-center">
+              <Loader2 className="w-7 h-7 text-[#E63E6D] animate-spin" />
             </div>
             <div>
               <p className="text-base font-bold text-gray-900">
@@ -275,11 +275,11 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
             <div className="w-full">
               <div className="flex justify-between text-xs text-gray-400 mb-1.5">
                 <span>Progress</span>
-                <span className="font-semibold text-indigo-600">{prog.pct}%</span>
+                <span className="font-semibold text-[#E63E6D]">{prog.pct}%</span>
               </div>
               <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-indigo-500 rounded-full transition-all duration-300"
+                  className="h-full bg-[#FF6B9D] rounded-full transition-all duration-300"
                   style={{ width: `${prog.pct}%` }}
                 />
               </div>
@@ -327,13 +327,13 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
               </button>
               <button
                 onClick={handleSuccess}
-                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC] rounded-lg transition-colors"
               >
                 View Quiz
               </button>
               <button
                 onClick={handleSuccess}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#E63E6D] hover:bg-[#C41E5C] rounded-lg transition-colors"
               >
                 Edit Quiz
                 <ChevronRight className="w-4 h-4" />
@@ -375,7 +375,7 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
               </button>
               <button
                 onClick={runDuplication}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#E63E6D] hover:bg-[#C41E5C] rounded-lg transition-colors"
               >
                 Retry
                 <ChevronRight className="w-4 h-4" />

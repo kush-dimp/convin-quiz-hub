@@ -74,10 +74,10 @@ export default function UserProgressPage() {
   const loading = usersLoading
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-5xl mx-auto px-6 h-[56px] flex items-center gap-3">
-          <Award className="w-4 h-4 text-indigo-600" />
+          <Award className="w-4 h-4 text-[#E63E6D]" />
           <div>
             <h1 className="text-[15px] font-bold text-slate-900 leading-none">User Progress</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">Individual learner analytics</p>
@@ -90,7 +90,7 @@ export default function UserProgressPage() {
           <p className="text-xs font-semibold text-slate-500 mb-3">Viewing progress for:</p>
           {usersLoading ? (
             <div className="flex items-center gap-2 py-2">
-              <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />
               <span className="text-xs text-slate-400">Loading users…</span>
             </div>
           ) : (
@@ -99,9 +99,9 @@ export default function UserProgressPage() {
                 <div
                   key={u.id}
                   onClick={() => setSelectedUserId(u.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-colors ${u.id === effectiveUserId ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-200'}`}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-colors ${u.id === effectiveUserId ? 'bg-[#E63E6D] text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-[#FFB3C6]'}`}
                 >
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${u.id === effectiveUserId ? 'bg-indigo-500 text-white' : 'bg-indigo-100 text-indigo-600'}`}>{u.name?.[0] ?? '?'}</div>
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${u.id === effectiveUserId ? 'bg-[#FF6B9D] text-white' : 'bg-[#FFE5EC] text-[#E63E6D]'}`}>{u.name?.[0] ?? '?'}</div>
                   {u.name?.split(' ')[0] ?? 'User'}
                 </div>
               ))}
@@ -111,13 +111,13 @@ export default function UserProgressPage() {
 
         {/* Profile header */}
         <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-100 flex items-center justify-center text-xl font-bold text-indigo-600 flex-shrink-0">{initials}</div>
+          <div className="w-16 h-16 rounded-2xl bg-[#FFE5EC] flex items-center justify-center text-xl font-bold text-[#E63E6D] flex-shrink-0">{initials}</div>
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold text-slate-900">{userName}</h2>
             <p className="text-sm text-slate-500">{email}{department ? ` · ${department}` : ''}{role ? ` · ${role}` : ''}</p>
           </div>
           <div className="grid grid-cols-3 gap-4 text-center flex-shrink-0">
-            <div><p className="text-2xl font-bold text-indigo-600">{quizzesTaken}</p><p className="text-xs text-slate-500">Quizzes</p></div>
+            <div><p className="text-2xl font-bold text-[#E63E6D]">{quizzesTaken}</p><p className="text-xs text-slate-500">Quizzes</p></div>
             <div><p className="text-2xl font-bold text-green-600">{certificates}</p><p className="text-xs text-slate-500">Certs</p></div>
             <div><p className="text-2xl font-bold text-amber-600">{avgScore}%</p><p className="text-xs text-slate-500">Avg Score</p></div>
           </div>
@@ -126,10 +126,10 @@ export default function UserProgressPage() {
         <div className="grid md:grid-cols-2 gap-5">
           {/* Score over time */}
           <div className="bg-white rounded-2xl shadow-sm p-5">
-            <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-indigo-400" /> Score History</h3>
+            <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#FF6B9D]" /> Score History</h3>
             {resultsLoading ? (
               <div className="h-[180px] flex items-center justify-center">
-                <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />
               </div>
             ) : scoreHistory.length === 0 ? (
               <div className="h-[180px] flex items-center justify-center text-sm text-slate-400">No attempts yet</div>
@@ -148,7 +148,7 @@ export default function UserProgressPage() {
 
           {/* Skills */}
           <div className="bg-white rounded-2xl shadow-sm p-5">
-            <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><Target className="w-4 h-4 text-indigo-400" /> Skill Levels</h3>
+            <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><Target className="w-4 h-4 text-[#FF6B9D]" /> Skill Levels</h3>
             <div className="space-y-3">
               {skills.map(s => (
                 <div key={s.name}>
@@ -180,10 +180,10 @@ export default function UserProgressPage() {
 
         {/* Recent activity timeline */}
         <div className="bg-white rounded-2xl shadow-sm p-5">
-          <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2"><Calendar className="w-4 h-4 text-indigo-400" /> Recent Activity</h3>
+          <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2"><Calendar className="w-4 h-4 text-[#FF6B9D]" /> Recent Activity</h3>
           {resultsLoading ? (
             <div className="flex items-center gap-2 py-4">
-              <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />
               <span className="text-xs text-slate-400">Loading…</span>
             </div>
           ) : scoreHistory.length === 0 ? (

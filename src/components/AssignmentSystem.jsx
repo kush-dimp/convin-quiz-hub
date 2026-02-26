@@ -93,14 +93,14 @@ export default function AssignmentSystem() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-6xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
             <h1 className="text-[15px] font-bold text-slate-900 leading-none">Assignments</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">Track and manage quiz assignments</p>
           </div>
-          <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200">
+          <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6]">
             <Plus className="w-4 h-4" /> New Assignment
           </button>
         </div>
@@ -127,7 +127,7 @@ export default function AssignmentSystem() {
           <div className="flex gap-1">
             {['all','pending','in_progress','completed','overdue'].map(s => (
               <button key={s} onClick={() => setFilterStatus(s)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${filterStatus === s ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${filterStatus === s ? 'bg-[#E63E6D] text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-[#FFB3C6]'}`}>
                 {s.replace('_', ' ')}
               </button>
             ))}
@@ -135,7 +135,7 @@ export default function AssignmentSystem() {
           <div className="flex gap-1 ml-auto">
             {['all','required','optional','recurring'].map(t => (
               <button key={t} onClick={() => setFilterType(t)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${filterType === t ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${filterType === t ? 'bg-[#E63E6D] text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-[#FFB3C6]'}`}>
                 {t}
               </button>
             ))}
@@ -214,7 +214,7 @@ export default function AssignmentSystem() {
                     {a.totalCount > 0 && (
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full transition-all ${pct === 100 ? 'bg-emerald-500' : overdue ? 'bg-red-400' : 'bg-indigo-500'}`} style={{ width: `${pct}%` }} />
+                          <div className={`h-full rounded-full transition-all ${pct === 100 ? 'bg-emerald-500' : overdue ? 'bg-red-400' : 'bg-[#FF6B9D]'}`} style={{ width: `${pct}%` }} />
                         </div>
                         <span className="text-[10px] text-slate-500 flex-shrink-0">{a.completedCount}/{a.totalCount} completed ({pct}%)</span>
                       </div>
@@ -237,7 +237,7 @@ export default function AssignmentSystem() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
-              <Plus className="w-5 h-5 text-indigo-600" />
+              <Plus className="w-5 h-5 text-[#E63E6D]" />
               <h2 className="text-sm font-bold text-slate-900 flex-1">New Assignment</h2>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
             </div>
@@ -246,7 +246,7 @@ export default function AssignmentSystem() {
               <div>
                 <label className="text-xs font-semibold text-slate-600 block mb-1.5">Quiz</label>
                 <select value={form.quizId} onChange={e => setForm(p => ({ ...p, quizId: e.target.value }))}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
                   {quizzes.length === 0 && <option value="">No quizzes available</option>}
                   {quizzes.map(q => <option key={q.id} value={q.id}>{q.title}</option>)}
                 </select>
@@ -257,7 +257,7 @@ export default function AssignmentSystem() {
                 <div className="flex gap-2">
                   {['all','users'].map(t => (
                     <button key={t} onClick={() => setForm(p => ({ ...p, assignTo: t }))}
-                      className={`flex-1 py-2 text-xs font-semibold rounded-lg border capitalize transition-colors ${form.assignTo === t ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:border-indigo-200'}`}>
+                      className={`flex-1 py-2 text-xs font-semibold rounded-lg border capitalize transition-colors ${form.assignTo === t ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#C41E5C]' : 'border-slate-200 text-slate-600 hover:border-[#FFB3C6]'}`}>
                       {t === 'all' ? 'All Users' : 'Specific Users'}
                     </button>
                   ))}
@@ -268,7 +268,7 @@ export default function AssignmentSystem() {
                       <label key={u.id} className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 cursor-pointer">
                         <input type="checkbox" checked={form.selectedUsers.includes(u.id)}
                           onChange={() => setForm(p => ({ ...p, selectedUsers: p.selectedUsers.includes(u.id) ? p.selectedUsers.filter(x => x !== u.id) : [...p.selectedUsers, u.id] }))}
-                          className="accent-indigo-600" />
+                          className="accent-[#E63E6D]" />
                         <span className="text-xs text-slate-700">{u.name}</span>
                         <span className="text-[10px] text-slate-400 ml-auto">{u.role}</span>
                       </label>
@@ -281,7 +281,7 @@ export default function AssignmentSystem() {
                 <div>
                   <label className="text-xs font-semibold text-slate-600 block mb-1.5">Due Date</label>
                   <input type="date" value={form.dueDate} onChange={e => setForm(p => ({ ...p, dueDate: e.target.value }))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]" />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-slate-600 block mb-1.5">Type</label>
@@ -304,7 +304,7 @@ export default function AssignmentSystem() {
                   <p className="text-[10px] text-slate-400 mt-0.5">Automatically reassign after each completion</p>
                 </div>
                 <button onClick={() => setForm(p => ({ ...p, recurring: !p.recurring }))}
-                  className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 ${form.recurring ? 'bg-indigo-600' : 'bg-slate-200'}`}>
+                  className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 ${form.recurring ? 'bg-[#E63E6D]' : 'bg-slate-200'}`}>
                   <div className={`w-4 h-4 bg-white rounded-full shadow transition-transform ${form.recurring ? 'translate-x-5' : ''}`} />
                 </button>
               </div>
@@ -312,7 +312,7 @@ export default function AssignmentSystem() {
                 <div>
                   <label className="text-xs font-semibold text-slate-600 block mb-1.5">Recurring Interval</label>
                   <select value={form.recurringInterval} onChange={e => setForm(p => ({ ...p, recurringInterval: e.target.value }))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
                     {['daily','weekly','monthly','quarterly','annually'].map(i => <option key={i}>{i}</option>)}
                   </select>
                 </div>
@@ -321,7 +321,7 @@ export default function AssignmentSystem() {
               <div>
                 <label className="text-xs font-semibold text-slate-600 block mb-1.5">Prerequisite (optional)</label>
                 <select value={form.prerequisiteId} onChange={e => setForm(p => ({ ...p, prerequisiteId: e.target.value }))}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
                   <option value="">None</option>
                   {rawAssignments.map(a => <option key={a.id} value={a.id}>{a.quizTitle}</option>)}
                 </select>
@@ -329,7 +329,7 @@ export default function AssignmentSystem() {
             </div>
             <div className="flex justify-end gap-3 px-6 pb-5 flex-shrink-0">
               <button onClick={() => setShowModal(false)} className="border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium">Cancel</button>
-              <button onClick={handleCreateAssignment} className="bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200">
+              <button onClick={handleCreateAssignment} className="bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6]">
                 Create Assignment
               </button>
             </div>

@@ -408,10 +408,10 @@ function UploadStep({ onParsed }) {
         onDrop={onDrop}
         onClick={() => fileRef.current.click()}
         className={`border-2 border-dashed rounded-2xl px-6 py-10 flex flex-col items-center gap-3 cursor-pointer transition-all ${
-          dragging ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-indigo-50/40'
+          dragging ? 'border-[#FF6B9D] bg-[#FFF5F7]' : 'border-slate-200 bg-slate-50 hover:border-[#FFB3C6] hover:bg-[#FFF5F7]/40'
         }`}
       >
-        <Upload className={`w-8 h-8 ${dragging ? 'text-indigo-500' : 'text-slate-300'}`} />
+        <Upload className={`w-8 h-8 ${dragging ? 'text-[#FF6B9D]' : 'text-slate-300'}`} />
         <div className="text-center">
           <p className="text-sm font-semibold text-slate-700">Drop a file here or click to browse</p>
           <p className="text-xs text-slate-400 mt-1">Supports CSV, TSV, JSON, TXT — any format</p>
@@ -440,7 +440,7 @@ function UploadStep({ onParsed }) {
           `      A) London   B) Paris *   C) Berlin\n` +
           `      Answer: B`
         }
-        className="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs font-mono bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200 resize-none placeholder:text-slate-300"
+        className="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs font-mono bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] resize-none placeholder:text-slate-300"
       />
 
       {error && (
@@ -451,7 +451,7 @@ function UploadStep({ onParsed }) {
 
       {/* Format hints */}
       <details className="group">
-        <summary className="flex items-center gap-1.5 text-xs text-indigo-600 cursor-pointer font-medium list-none">
+        <summary className="flex items-center gap-1.5 text-xs text-[#E63E6D] cursor-pointer font-medium list-none">
           <Info className="w-3.5 h-3.5" /> Supported formats & examples
           <ChevronDown className="w-3.5 h-3.5 group-open:rotate-180 transition-transform" />
         </summary>
@@ -490,7 +490,7 @@ function UploadStep({ onParsed }) {
         <button
           onClick={() => { if (pasteText.trim()) process(pasteText) }}
           disabled={!pasteText.trim()}
-          className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 disabled:opacity-40 shadow-sm"
+          className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] disabled:opacity-40 shadow-sm"
         >
           Parse Questions →
         </button>
@@ -545,9 +545,9 @@ function PreviewStep({ questions, onBack, onImport, importing }) {
                 value={q.text}
                 onChange={e => updateText(i, e.target.value)}
                 disabled={q._removed}
-                className="text-[12px] text-slate-700 font-medium bg-transparent border-b border-transparent hover:border-slate-200 focus:border-indigo-300 focus:outline-none w-full min-w-0 truncate"
+                className="text-[12px] text-slate-700 font-medium bg-transparent border-b border-transparent hover:border-slate-200 focus:border-[#FF6B9D]/60 focus:outline-none w-full min-w-0 truncate"
               />
-              <span className="hidden sm:block text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-md w-fit">
+              <span className="hidden sm:block text-[11px] font-semibold text-[#E63E6D] bg-[#FFF5F7] px-1.5 py-0.5 rounded-md w-fit">
                 {TYPE_LABELS[q.type] ?? q.type}
               </span>
               <div className="hidden sm:block"><AnswerPreview q={q} /></div>
@@ -572,7 +572,7 @@ function PreviewStep({ questions, onBack, onImport, importing }) {
         <button
           onClick={() => onImport(rows.filter(r => !r._removed))}
           disabled={ready === 0 || importing}
-          className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 disabled:opacity-50 shadow-sm"
+          className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] disabled:opacity-50 shadow-sm"
         >
           {importing ? 'Importing…' : `Import ${ready} Question${ready !== 1 ? 's' : ''}`}
         </button>
@@ -662,8 +662,8 @@ export default function QuestionImportModal({ onClose, onImported }) {
             <div className="flex items-center gap-1.5">
               {['upload', 'preview'].map((s, i) => (
                 <div key={s} className="flex items-center gap-1.5">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${step === s || (step === 'preview' && i === 0) ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-400'}`}>{i + 1}</div>
-                  {i === 0 && <div className={`w-4 h-0.5 ${step === 'preview' ? 'bg-indigo-300' : 'bg-slate-200'}`} />}
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${step === s || (step === 'preview' && i === 0) ? 'bg-[#E63E6D] text-white' : 'bg-slate-200 text-slate-400'}`}>{i + 1}</div>
+                  {i === 0 && <div className={`w-4 h-0.5 ${step === 'preview' ? 'bg-[#FFB3C6]' : 'bg-slate-200'}`} />}
                 </div>
               ))}
             </div>

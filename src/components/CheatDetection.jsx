@@ -85,7 +85,7 @@ export default function CheatDetection() {
   const loading = flaggedLoading
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       {toast && (
         <div className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl shadow-lg text-sm font-semibold text-white transition-all ${toast.ok ? 'bg-emerald-600' : 'bg-red-600'}`}>
           {toast.ok ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
@@ -94,7 +94,7 @@ export default function CheatDetection() {
       )}
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-6xl mx-auto px-6 h-[56px] flex items-center gap-3">
-          <Shield className="w-4 h-4 text-indigo-600" />
+          <Shield className="w-4 h-4 text-[#E63E6D]" />
           <div>
             <h1 className="text-[15px] font-bold text-slate-900 leading-none">Cheat Detection</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">Flag and review suspicious attempts</p>
@@ -141,7 +141,7 @@ export default function CheatDetection() {
         {/* Filter tabs */}
         <div className="flex gap-1.5">
           {['all','pending','reviewed','cleared'].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${filter === f ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300'}`}>{f}</button>
+            <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${filter === f ? 'bg-[#E63E6D] text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-[#FFB3C6]'}`}>{f}</button>
           ))}
         </div>
 
@@ -186,7 +186,7 @@ export default function CheatDetection() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button
                     onClick={() => setReviewed(p => { const n = new Set(p); n.has(attempt.id) ? n.delete(attempt.id) : n.add(attempt.id); return n })}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${reviewed.has(attempt.id) ? 'text-slate-500 border-slate-200 hover:bg-slate-50' : 'text-indigo-600 border-indigo-200 bg-indigo-50 hover:bg-indigo-100'}`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${reviewed.has(attempt.id) ? 'text-slate-500 border-slate-200 hover:bg-slate-50' : 'text-[#E63E6D] border-[#FFB3C6] bg-[#FFF5F7] hover:bg-[#FFE5EC]'}`}
                   >
                     <Eye className="w-3.5 h-3.5" />
                     {reviewed.has(attempt.id) ? 'Unmark' : 'Mark Reviewed'}

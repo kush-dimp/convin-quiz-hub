@@ -67,24 +67,24 @@ function NavItem({ item }) {
         flex items-center gap-3 px-3 py-[7px] rounded-lg text-[13px] font-medium
         transition-all duration-150 group select-none
         ${isActive
-          ? 'bg-indigo-500/20 text-white'
+          ? 'bg-[#FF6B9D]/20 text-white'
           : 'text-slate-400 hover:bg-white/6 hover:text-slate-200'
         }
       `}
     >
       <item.icon className={`w-[15px] h-[15px] flex-shrink-0 transition-colors ${
-        isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300'
+        isActive ? 'text-[#FF6B9D]' : 'text-slate-500 group-hover:text-slate-300'
       }`} />
       <span className="flex-1 truncate leading-none">{item.label}</span>
       {item.badge > 0 && (
         <span className={`text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1 leading-none flex-shrink-0 ${
-          isActive ? 'bg-indigo-400/40 text-white' : 'bg-red-500 text-white'
+          isActive ? 'bg-[#FF6B9D]/40 text-white' : 'bg-red-500 text-white'
         }`}>
           {item.badge}
         </span>
       )}
       {isActive && (
-        <span className="absolute right-0 top-1 bottom-1 w-0.5 bg-indigo-400 rounded-l-full" />
+        <span className="absolute right-0 top-1 bottom-1 w-0.5 bg-[#FF6B9D] rounded-l-full" />
       )}
     </NavLink>
   )
@@ -102,16 +102,16 @@ export default function Layout() {
     : 'Loading…'
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-transparent">
 
       {/* ── Sidebar ── */}
       <aside className="relative w-[220px] flex-shrink-0 flex flex-col bg-slate-900 overflow-hidden">
         {/* Subtle top gradient accent */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-indigo-900/40 to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#C41E5C]/30 to-transparent pointer-events-none" />
 
         {/* Logo */}
         <div className="relative flex items-center gap-3 px-4 h-[56px] border-b border-white/6 flex-shrink-0">
-          <div className="w-[30px] h-[30px] rounded-[8px] bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-900/50">
+          <div className="w-[30px] h-[30px] rounded-[8px] bg-gradient-to-br from-[#FF6B9D] to-[#E63E6D] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#C41E5C]/40">
             <Zap className="w-[14px] h-[14px] text-white" strokeWidth={2.5} />
           </div>
           <div className="leading-none">
@@ -142,10 +142,10 @@ export default function Layout() {
         <div className="relative flex-shrink-0 border-t border-white/6 p-3">
           <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl">
             <div className="relative flex-shrink-0">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-[11px] font-bold text-white shadow">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#FF6B9D] to-[#E63E6D] flex items-center justify-center text-[11px] font-bold text-white shadow">
                 {initials}
               </div>
-              <span className="absolute -bottom-px -right-px w-[9px] h-[9px] bg-emerald-400 border-[1.5px] border-slate-900 rounded-full" />
+              <span className="absolute -bottom-px -right-px w-[9px] h-[9px] bg-[#48BB78] border-[1.5px] border-slate-900 rounded-full" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[12px] font-semibold text-slate-200 truncate leading-none">

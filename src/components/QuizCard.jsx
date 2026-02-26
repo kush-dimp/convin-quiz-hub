@@ -14,7 +14,7 @@ const STATUS_STYLES = {
 
 /* gradient placeholder bg per category */
 const GRAD = [
-  'from-indigo-500/20 to-violet-600/20',
+  'from-[#FF6B9D]/20 to-[#E63E6D]/20',
   'from-blue-500/20 to-cyan-600/20',
   'from-violet-500/20 to-pink-600/20',
   'from-rose-500/20 to-orange-600/20',
@@ -27,7 +27,7 @@ function CardPlaceholder({ quizId }) {
   return (
     <div className={`flex items-center justify-center w-full h-full bg-gradient-to-br ${gradFor(quizId)} bg-slate-50`}>
       <div className="w-14 h-14 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
-        <Timer className="w-7 h-7 text-indigo-400/80" />
+        <Timer className="w-7 h-7 text-[#FF6B9D]/80" />
       </div>
     </div>
   )
@@ -170,9 +170,9 @@ export default function QuizCard({
         bg-white rounded-2xl group
         transition-all duration-200 cursor-pointer
         ${isHighlighted
-          ? 'shadow-lg shadow-indigo-100 ring-2 ring-indigo-400 ring-offset-2'
+          ? 'shadow-lg shadow-[#FFB3C6] ring-2 ring-[#FF6B9D] ring-offset-2'
           : isSelected
-            ? 'shadow-md shadow-indigo-100 ring-2 ring-indigo-400'
+            ? 'shadow-md shadow-[#FFB3C6] ring-2 ring-[#FF6B9D]'
             : 'shadow-sm hover:shadow-md hover:shadow-slate-200'
         }
         ${isDisabled ? 'opacity-40 pointer-events-none' : ''}
@@ -192,7 +192,7 @@ export default function QuizCard({
               <div
                 onClick={e => { e.stopPropagation(); onToggleSelect?.() }}
                 className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shadow-sm cursor-pointer transition-all ${
-                  isSelected ? 'bg-indigo-600 border-indigo-600' : 'bg-white/90 border-slate-400 hover:border-indigo-500'
+                  isSelected ? 'bg-[#E63E6D] border-[#E63E6D]' : 'bg-white/90 border-slate-400 hover:border-[#FF6B9D]'
                 }`}
               >
                 {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
@@ -223,7 +223,7 @@ export default function QuizCard({
               <button
                 key={label}
                 onClick={e => { e.stopPropagation(); navigate(to) }}
-                className="flex items-center gap-1.5 bg-white text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-md hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                className="flex items-center gap-1.5 bg-white text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-md hover:bg-[#FFF5F7] hover:text-[#E63E6D] transition-colors"
               >
                 <Icon className="w-3 h-3" />
                 {label}

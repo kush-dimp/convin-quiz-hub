@@ -85,11 +85,11 @@ export default function QuestionAnalysis() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <FileText className="w-4 h-4 text-indigo-600" />
+            <FileText className="w-4 h-4 text-[#E63E6D]" />
             <div>
               <h1 className="text-[15px] font-bold text-slate-900 leading-none">Question Performance Analysis</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Per-question metrics and flags</p>
@@ -104,7 +104,7 @@ export default function QuestionAnalysis() {
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />
               <p className="text-sm text-slate-500">Loading question data…</p>
             </div>
           </div>
@@ -136,8 +136,8 @@ export default function QuestionAnalysis() {
                   onClick={() => setFilter(f)}
                   className={`px-3.5 py-2 rounded-xl text-[13px] font-semibold transition-colors capitalize ${
                     filter === f
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300'
+                      ? 'bg-[#E63E6D] text-white'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:border-[#FFB3C6]'
                   }`}
                 >
                   {f === 'review' ? 'Needs Review' : f === 'all' ? 'All Questions' : f === 'easy' ? 'Too Easy' : 'Too Hard'}
@@ -186,7 +186,7 @@ export default function QuestionAnalysis() {
                           <td className="px-3 py-3 text-center">
                             <div className="flex items-center justify-center gap-1">
                               <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div className="h-full bg-indigo-400 rounded-full" style={{ width: `${q.discriminationIndex * 100}%` }} />
+                                <div className="h-full bg-[#FF6B9D] rounded-full" style={{ width: `${q.discriminationIndex * 100}%` }} />
                               </div>
                               <span className="text-[12px] text-slate-400">{q.discriminationIndex.toFixed(2)}</span>
                             </div>

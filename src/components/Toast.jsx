@@ -5,7 +5,7 @@ const ICONS = {
   success: { Icon: CheckCircle, color: 'text-green-400' },
   error:   { Icon: XCircle,     color: 'text-red-400'   },
   warning: { Icon: AlertCircle, color: 'text-yellow-400' },
-  undo:    { Icon: RotateCcw,   color: 'text-indigo-400' },
+  undo:    { Icon: RotateCcw,   color: 'text-[#FF6B9D]' },
 }
 
 /* ── Single toast ──────────────────────────────────────────── */
@@ -50,7 +50,7 @@ function Toast({ id, type, message, undoData, duration = 4000, onRemove, onUndo 
         {type === 'undo' && (
           <button
             onClick={handleUndo}
-            className="text-xs font-semibold text-indigo-300 hover:text-indigo-100 transition-colors whitespace-nowrap border border-indigo-500/40 px-2 py-0.5 rounded-md hover:border-indigo-400"
+            className="text-xs font-semibold text-[#FFB3C6] hover:text-white transition-colors whitespace-nowrap border border-[#FF6B9D]/40 px-2 py-0.5 rounded-md hover:border-[#FF6B9D]"
           >
             Undo
           </button>
@@ -67,7 +67,7 @@ function Toast({ id, type, message, undoData, duration = 4000, onRemove, onUndo 
       {/* Countdown bar */}
       <div className="h-0.5 bg-gray-800">
         <div
-          className="h-full bg-indigo-500 rounded-full"
+          className="h-full bg-[#FF6B9D] rounded-full"
           style={{
             width: `${barWidth}%`,
             transition: `width ${duration}ms linear`,

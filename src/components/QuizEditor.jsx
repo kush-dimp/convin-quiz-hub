@@ -48,7 +48,7 @@ function RichTextEditor({ value, onChange, placeholder = 'Type your question her
     <button
       onMouseDown={e => { e.preventDefault(); exec(cmd, val) }}
       title={title}
-      className={`p-1.5 rounded hover:bg-slate-100 transition-colors ${active ? 'bg-indigo-100 text-indigo-600' : 'text-slate-600'}`}
+      className={`p-1.5 rounded hover:bg-slate-100 transition-colors ${active ? 'bg-[#FFE5EC] text-[#E63E6D]' : 'text-slate-600'}`}
     >
       <Icon className="w-3.5 h-3.5" />
     </button>
@@ -165,14 +165,14 @@ function QuestionTypeEditor({ question, onChange }) {
               value={opt}
               onChange={e => { const o = [...options]; o[i] = e.target.value; update('options', o) }}
               placeholder={`Option ${String.fromCharCode(65+i)}`}
-              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50"
             />
             <button onClick={() => update('options', options.filter((_, j) => j !== i))} className="text-slate-300 hover:text-red-400 transition-colors">
               <X className="w-4 h-4" />
             </button>
           </div>
         ))}
-        <button onClick={() => update('options', [...options, ''])} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
+        <button onClick={() => update('options', [...options, ''])} className="text-xs text-[#E63E6D] hover:text-[#C41E5C] font-medium flex items-center gap-1">
           <Plus className="w-3.5 h-3.5" /> Add Option
         </button>
         {isMulti && <p className="text-[11px] text-slate-400">Click circle to mark correct answers (multiple allowed)</p>}
@@ -194,7 +194,7 @@ function QuestionTypeEditor({ question, onChange }) {
   if (type === 'fill_blank') return (
     <div className="space-y-2 mt-3">
       <p className="text-xs font-semibold text-slate-500">Correct Answer</p>
-      <input value={question.correctAnswer || ''} onChange={e => update('correctAnswer', e.target.value)} placeholder="Enter the correct answer" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50" />
+      <input value={question.correctAnswer || ''} onChange={e => update('correctAnswer', e.target.value)} placeholder="Enter the correct answer" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50" />
       <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
         <input type="checkbox" checked={question.caseSensitive || false} onChange={e => update('caseSensitive', e.target.checked)} className="rounded" />
         Case sensitive
@@ -205,7 +205,7 @@ function QuestionTypeEditor({ question, onChange }) {
   if (type === 'short' || type === 'essay') return (
     <div className="mt-3 space-y-2">
       <p className="text-xs font-semibold text-slate-500">Sample Answer / Rubric</p>
-      <textarea value={question.sampleAnswer || ''} onChange={e => update('sampleAnswer', e.target.value)} rows={3} placeholder="Provide a sample answer or grading rubric…" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 resize-none bg-slate-50" />
+      <textarea value={question.sampleAnswer || ''} onChange={e => update('sampleAnswer', e.target.value)} rows={3} placeholder="Provide a sample answer or grading rubric…" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] resize-none bg-slate-50" />
       <div className="flex gap-4 text-xs text-slate-500">
         <label className="flex items-center gap-1.5 cursor-pointer">
           <input type="number" defaultValue={type === 'short' ? 200 : 1000} className="w-20 border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none bg-slate-50" />
@@ -222,13 +222,13 @@ function QuestionTypeEditor({ question, onChange }) {
         <p className="text-xs font-semibold text-slate-500">Matching Pairs</p>
         {pairs.map((p, i) => (
           <div key={i} className="flex items-center gap-2">
-            <input value={p.left} onChange={e => { const ps = [...pairs]; ps[i] = { ...ps[i], left: e.target.value }; update('pairs', ps) }} placeholder="Left item" className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50" />
+            <input value={p.left} onChange={e => { const ps = [...pairs]; ps[i] = { ...ps[i], left: e.target.value }; update('pairs', ps) }} placeholder="Left item" className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50" />
             <span className="text-slate-300">↔</span>
-            <input value={p.right} onChange={e => { const ps = [...pairs]; ps[i] = { ...ps[i], right: e.target.value }; update('pairs', ps) }} placeholder="Right item" className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50" />
+            <input value={p.right} onChange={e => { const ps = [...pairs]; ps[i] = { ...ps[i], right: e.target.value }; update('pairs', ps) }} placeholder="Right item" className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50" />
             <button onClick={() => update('pairs', pairs.filter((_,j) => j !== i))} className="text-slate-300 hover:text-red-400"><X className="w-4 h-4" /></button>
           </div>
         ))}
-        <button onClick={() => update('pairs', [...pairs, { left: '', right: '' }])} className="text-xs text-indigo-600 font-medium flex items-center gap-1"><Plus className="w-3.5 h-3.5" />Add Pair</button>
+        <button onClick={() => update('pairs', [...pairs, { left: '', right: '' }])} className="text-xs text-[#E63E6D] font-medium flex items-center gap-1"><Plus className="w-3.5 h-3.5" />Add Pair</button>
       </div>
     )
   }
@@ -240,12 +240,12 @@ function QuestionTypeEditor({ question, onChange }) {
         <p className="text-xs font-semibold text-slate-500">Items (correct order top to bottom)</p>
         {items.map((item, i) => (
           <div key={i} className="flex items-center gap-2">
-            <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 text-[11px] font-bold flex items-center justify-center flex-shrink-0">{i+1}</span>
-            <input value={item} onChange={e => { const it = [...items]; it[i] = e.target.value; update('items', it) }} placeholder={`Item ${i+1}`} className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50" />
+            <span className="w-5 h-5 rounded-full bg-[#FFE5EC] text-[#E63E6D] text-[11px] font-bold flex items-center justify-center flex-shrink-0">{i+1}</span>
+            <input value={item} onChange={e => { const it = [...items]; it[i] = e.target.value; update('items', it) }} placeholder={`Item ${i+1}`} className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50" />
             <button onClick={() => update('items', items.filter((_,j) => j !== i))} className="text-slate-300 hover:text-red-400"><X className="w-4 h-4" /></button>
           </div>
         ))}
-        <button onClick={() => update('items', [...items, ''])} className="text-xs text-indigo-600 font-medium flex items-center gap-1"><Plus className="w-3.5 h-3.5" />Add Item</button>
+        <button onClick={() => update('items', [...items, ''])} className="text-xs text-[#E63E6D] font-medium flex items-center gap-1"><Plus className="w-3.5 h-3.5" />Add Item</button>
       </div>
     )
   }
@@ -285,7 +285,7 @@ function QuestionTypeEditor({ question, onChange }) {
                 <button onClick={() => update('rows', rows.filter((_,j)=>j!==i))} className="text-slate-300 hover:text-red-400"><X className="w-3.5 h-3.5" /></button>
               </div>
             ))}
-            <button onClick={() => update('rows', [...rows, `Row ${rows.length+1}`])} className="text-xs text-indigo-600 flex items-center gap-0.5"><Plus className="w-3 h-3" />Add Row</button>
+            <button onClick={() => update('rows', [...rows, `Row ${rows.length+1}`])} className="text-xs text-[#E63E6D] flex items-center gap-0.5"><Plus className="w-3 h-3" />Add Row</button>
           </div>
           <div className="flex-1">
             <p className="text-xs font-semibold text-slate-500 mb-1">Columns</p>
@@ -295,7 +295,7 @@ function QuestionTypeEditor({ question, onChange }) {
                 <button onClick={() => update('columns', cols.filter((_,j)=>j!==i))} className="text-slate-300 hover:text-red-400"><X className="w-3.5 h-3.5" /></button>
               </div>
             ))}
-            <button onClick={() => update('columns', [...cols, `Col ${cols.length+1}`])} className="text-xs text-indigo-600 flex items-center gap-0.5"><Plus className="w-3 h-3" />Add Column</button>
+            <button onClick={() => update('columns', [...cols, `Col ${cols.length+1}`])} className="text-xs text-[#E63E6D] flex items-center gap-0.5"><Plus className="w-3 h-3" />Add Column</button>
           </div>
         </div>
       </div>
@@ -326,7 +326,7 @@ function QuestionBankModal({ onClose, onAdd }) {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
         <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b flex-shrink-0">
-          <Database className="w-5 h-5 text-indigo-600" />
+          <Database className="w-5 h-5 text-[#E63E6D]" />
           <h2 className="text-sm font-bold text-slate-900 flex-1">Add from Question Bank</h2>
           <span className="text-xs text-slate-400">{filtered.length} questions</span>
           <button onClick={onClose}><X className="w-5 h-5 text-slate-400" /></button>
@@ -346,8 +346,8 @@ function QuestionBankModal({ onClose, onAdd }) {
         </div>
         <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
           {filtered.map(q => (
-            <label key={q.id} className={`flex items-start gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors ${selected.has(q.id) ? 'bg-indigo-50/60' : ''}`}>
-              <input type="checkbox" checked={selected.has(q.id)} onChange={() => toggle(q.id)} className="mt-0.5 rounded border-slate-300 accent-indigo-600" />
+            <label key={q.id} className={`flex items-start gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors ${selected.has(q.id) ? 'bg-[#FFF5F7]/60' : ''}`}>
+              <input type="checkbox" checked={selected.has(q.id)} onChange={() => toggle(q.id)} className="mt-0.5 rounded border-slate-300 accent-[#E63E6D]" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-slate-800 leading-snug">{q.text}</p>
                 <div className="flex items-center gap-2 mt-1">
@@ -363,7 +363,7 @@ function QuestionBankModal({ onClose, onAdd }) {
           <span className="text-xs text-slate-500">{selected.size} selected</span>
           <div className="flex gap-2">
             <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">Cancel</button>
-            <button onClick={() => { onAdd([...selected]); onClose() }} disabled={selected.size === 0} className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-40">
+            <button onClick={() => { onAdd([...selected]); onClose() }} disabled={selected.size === 0} className="px-4 py-2 text-sm font-semibold text-white bg-[#E63E6D] rounded-xl hover:bg-[#C41E5C] transition-colors disabled:opacity-40">
               Add {selected.size > 0 ? selected.size : ''} Questions
             </button>
           </div>
@@ -380,7 +380,7 @@ function RandomizationPanel() {
   const [settings, setSettings] = useState({ shuffleAll: false, shuffleSections: false, shuffleOptions: true, poolMode: false, poolSize: 10 })
   const set = (k, v) => setSettings(p => ({ ...p, [k]: v }))
   function Toggle({ checked, onChange }) {
-    return <button type="button" onClick={() => onChange(!checked)} className={`relative inline-flex w-9 h-5 rounded-full transition-colors flex-shrink-0 ${checked ? 'bg-indigo-600' : 'bg-slate-300'}`}><span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-4' : 'translate-x-0.5'}`} /></button>
+    return <button type="button" onClick={() => onChange(!checked)} className={`relative inline-flex w-9 h-5 rounded-full transition-colors flex-shrink-0 ${checked ? 'bg-[#E63E6D]' : 'bg-slate-300'}`}><span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-4' : 'translate-x-0.5'}`} /></button>
   }
   return (
     <div className="space-y-4 py-2">
@@ -400,7 +400,7 @@ function RandomizationPanel() {
           </div>
         ))}
       </div>
-      <div className={`p-4 border rounded-xl space-y-3 transition-colors ${settings.poolMode ? 'border-indigo-200 bg-indigo-50/30' : 'border-slate-200'}`}>
+      <div className={`p-4 border rounded-xl space-y-3 transition-colors ${settings.poolMode ? 'border-[#FFB3C6] bg-[#FFF5F7]/30' : 'border-slate-200'}`}>
         <div className="flex items-center gap-3">
           <div className="flex-1">
             <p className="text-sm font-semibold text-slate-800">Question Pool Mode</p>
@@ -411,7 +411,7 @@ function RandomizationPanel() {
         {settings.poolMode && (
           <div className="flex items-center gap-3 pt-1">
             <label className="text-xs text-slate-600 font-medium whitespace-nowrap">Questions to show:</label>
-            <input type="number" value={settings.poolSize} min={1} max={50} onChange={e => set('poolSize', +e.target.value)} className="w-20 border border-slate-200 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50" />
+            <input type="number" value={settings.poolSize} min={1} max={50} onChange={e => set('poolSize', +e.target.value)} className="w-20 border border-slate-200 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 bg-slate-50" />
             <span className="text-xs text-slate-400">per attempt</span>
           </div>
         )}
@@ -441,14 +441,14 @@ function ScoringPanel({ questions, onUpdate }) {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold text-slate-900">Scoring & Difficulty</h3>
         <div className="flex items-center gap-2 text-sm text-slate-600">
-          Total: <span className="font-bold text-indigo-600 text-base">{totalPts} pts</span>
+          Total: <span className="font-bold text-[#E63E6D] text-base">{totalPts} pts</span>
         </div>
       </div>
       {/* Bulk assign */}
       <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
         <span className="text-xs font-medium text-slate-600 flex-1">Bulk assign points:</span>
         <input type="number" value={bulkPts} min={1} max={100} onChange={e => setBulkPts(+e.target.value)} className="w-16 border border-slate-200 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none bg-slate-50" />
-        <button onClick={applyBulk} className="px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">Apply All</button>
+        <button onClick={applyBulk} className="px-3 py-1.5 text-xs font-semibold text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC] rounded-lg transition-colors">Apply All</button>
       </div>
       {/* Per-question */}
       <div className="space-y-2">
@@ -476,11 +476,11 @@ function ScoringPanel({ questions, onUpdate }) {
       </div>
       <div className="flex gap-4">
         <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
-          <input type="checkbox" checked={negMarking} onChange={e => setNegMarking(e.target.checked)} className="rounded accent-indigo-600" />
+          <input type="checkbox" checked={negMarking} onChange={e => setNegMarking(e.target.checked)} className="rounded accent-[#E63E6D]" />
           Negative marking <span className="text-xs text-slate-400">(-25% for wrong)</span>
         </label>
         <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
-          <input type="checkbox" checked={speedBonus} onChange={e => setSpeedBonus(e.target.checked)} className="rounded accent-indigo-600" />
+          <input type="checkbox" checked={speedBonus} onChange={e => setSpeedBonus(e.target.checked)} className="rounded accent-[#E63E6D]" />
           Speed bonus
         </label>
       </div>
@@ -506,9 +506,9 @@ function MediaPanel() {
       </div>
       {tab === 'upload' && (
         <div>
-          <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/30 transition-colors group">
-            <Image className="w-8 h-8 text-slate-300 group-hover:text-indigo-400 mb-2 transition-colors" />
-            <span className="text-sm font-medium text-slate-500 group-hover:text-indigo-600">Click to upload or drag & drop</span>
+          <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-[#FF6B9D] hover:bg-[#FFF5F7]/30 transition-colors group">
+            <Image className="w-8 h-8 text-slate-300 group-hover:text-[#FF6B9D] mb-2 transition-colors" />
+            <span className="text-sm font-medium text-slate-500 group-hover:text-[#E63E6D]">Click to upload or drag & drop</span>
             <span className="text-xs text-slate-400 mt-1">JPG, PNG, GIF, MP4, MP3, PDF — max 50MB</span>
             <input type="file" accept="image/*,video/*,audio/*,.pdf" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) setPreview(URL.createObjectURL(f)) }} />
           </label>
@@ -517,19 +517,19 @@ function MediaPanel() {
       )}
       {tab === 'url' && (
         <div className="space-y-3">
-          <input value={urlInput} onChange={e => setUrlInput(e.target.value)} placeholder="https://example.com/image.jpg" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50" />
-          <input placeholder="Alt text for accessibility" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50" />
+          <input value={urlInput} onChange={e => setUrlInput(e.target.value)} placeholder="https://example.com/image.jpg" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 bg-slate-50" />
+          <input placeholder="Alt text for accessibility" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 bg-slate-50" />
           {urlInput && <img src={urlInput} alt="preview" className="max-h-40 rounded-xl object-contain border border-slate-200" onError={e => e.target.style.display='none'} />}
         </div>
       )}
       {tab === 'video' && (
         <div className="space-y-3">
-          <input placeholder="YouTube or Vimeo URL" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50" />
+          <input placeholder="YouTube or Vimeo URL" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 bg-slate-50" />
           <div className="grid grid-cols-2 gap-3 text-sm">
-            <label className="flex items-center gap-2 cursor-pointer text-slate-700"><input type="checkbox" className="rounded accent-indigo-600" /> Start at timestamp</label>
-            <label className="flex items-center gap-2 cursor-pointer text-slate-700"><input type="checkbox" className="rounded accent-indigo-600" /> Autoplay</label>
-            <label className="flex items-center gap-2 cursor-pointer text-slate-700"><input type="checkbox" defaultChecked className="rounded accent-indigo-600" /> Show controls</label>
-            <label className="flex items-center gap-2 cursor-pointer text-slate-700"><input type="checkbox" className="rounded accent-indigo-600" /> Loop</label>
+            <label className="flex items-center gap-2 cursor-pointer text-slate-700"><input type="checkbox" className="rounded accent-[#E63E6D]" /> Start at timestamp</label>
+            <label className="flex items-center gap-2 cursor-pointer text-slate-700"><input type="checkbox" className="rounded accent-[#E63E6D]" /> Autoplay</label>
+            <label className="flex items-center gap-2 cursor-pointer text-slate-700"><input type="checkbox" defaultChecked className="rounded accent-[#E63E6D]" /> Show controls</label>
+            <label className="flex items-center gap-2 cursor-pointer text-slate-700"><input type="checkbox" className="rounded accent-[#E63E6D]" /> Loop</label>
           </div>
         </div>
       )}
@@ -552,7 +552,7 @@ function LogicPanel({ questions }) {
     <div className="space-y-4 py-2">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold text-slate-900">Skip Logic / Branching</h3>
-        <button onClick={addRule} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+        <button onClick={addRule} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC] rounded-lg transition-colors">
           <Plus className="w-3.5 h-3.5" /> Add Rule
         </button>
       </div>
@@ -567,7 +567,7 @@ function LogicPanel({ questions }) {
           {rules.map(rule => (
             <div key={rule.id} className="p-3.5 border border-slate-200 rounded-xl space-y-2.5 bg-slate-50/50">
               <div className="flex items-center gap-1.5 flex-wrap text-xs font-medium text-slate-600">
-                <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-md">IF</span>
+                <span className="bg-[#FFE5EC] text-[#C41E5C] px-2 py-1 rounded-md">IF</span>
                 <select value={rule.ifQ} onChange={e => updateRule(rule.id, 'ifQ', e.target.value)} className="border border-slate-200 bg-slate-50 rounded-lg px-2 py-1 text-xs focus:outline-none">
                   <option value="">Question…</option>
                   {questions.map((q,i) => <option key={q.id} value={q.id}>Q{i+1}: {q.text?.slice(0,30) || 'Untitled'}</option>)}
@@ -654,13 +654,13 @@ function ImportExportPanel() {
             <label className="text-xs font-semibold text-slate-600 block mb-1.5">Import Format</label>
             <div className="flex flex-wrap gap-2">
               {['csv','excel','word','moodle_xml','qti','google_forms'].map(f => (
-                <button key={f} onClick={() => setImportFormat(f)} className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${importFormat === f ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'}`}>
+                <button key={f} onClick={() => setImportFormat(f)} className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${importFormat === f ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#C41E5C]' : 'border-slate-200 text-slate-600 hover:border-slate-300'}`}>
                   {f.replace('_',' ').toUpperCase()}
                 </button>
               ))}
             </div>
           </div>
-          <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/20 transition-colors">
+          <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-[#FF6B9D] hover:bg-[#FFF5F7]/20 transition-colors">
             <FileUp className="w-7 h-7 text-slate-300 mb-1.5" />
             <span className="text-sm font-medium text-slate-500">{file ? file.name : 'Choose file to import'}</span>
             <span className="text-xs text-slate-400 mt-0.5">Drag & drop or click</span>
@@ -688,7 +688,7 @@ function ImportExportPanel() {
                   </tbody>
                 </table>
               </div>
-              <button className="mt-3 w-full py-2 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-colors">Import {parsed.length} Questions</button>
+              <button className="mt-3 w-full py-2 bg-[#E63E6D] text-white text-sm font-semibold rounded-xl hover:bg-[#C41E5C] transition-colors">Import {parsed.length} Questions</button>
             </div>
           )}
         </div>
@@ -698,19 +698,19 @@ function ImportExportPanel() {
             <label className="text-xs font-semibold text-slate-600 block mb-1.5">Export Format</label>
             <div className="flex flex-wrap gap-2">
               {['pdf','csv','excel','word'].map(f => (
-                <button key={f} onClick={() => setExportFormat(f)} className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${exportFormat === f ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'}`}>{f.toUpperCase()}</button>
+                <button key={f} onClick={() => setExportFormat(f)} className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${exportFormat === f ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#C41E5C]' : 'border-slate-200 text-slate-600 hover:border-slate-300'}`}>{f.toUpperCase()}</button>
               ))}
             </div>
           </div>
           <div className="space-y-2">
             {[['Include answer key','Include correct answers in export'],['Include explanations','Include feedback for each question'],['Include points','Show point values per question']].map(([label, desc]) => (
               <label key={label} className="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
-                <input type="checkbox" defaultChecked className="rounded accent-indigo-600" />
+                <input type="checkbox" defaultChecked className="rounded accent-[#E63E6D]" />
                 <div><p className="text-sm font-medium text-slate-800">{label}</p><p className="text-xs text-slate-500">{desc}</p></div>
               </label>
             ))}
           </div>
-          <button onClick={handleExport} disabled={exporting} className="w-full py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+          <button onClick={handleExport} disabled={exporting} className="w-full py-2.5 bg-[#E63E6D] text-white text-sm font-semibold rounded-xl hover:bg-[#C41E5C] transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
             <FileDown className="w-4 h-4" />
             {exporting ? 'Exporting…' : `Export as ${exportFormat.toUpperCase()}`}
           </button>
@@ -794,7 +794,7 @@ export default function QuizEditor() {
 
   if (quizLoading) return (
     <div className="flex h-screen items-center justify-center bg-slate-50">
-      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-[#FF6B9D] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
@@ -837,7 +837,7 @@ export default function QuizEditor() {
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
             <Eye className="w-4 h-4" /> Preview
           </button>
-          <button onClick={save} disabled={saving} className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-60">
+          <button onClick={save} disabled={saving} className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-white bg-[#E63E6D] hover:bg-[#C41E5C] rounded-xl transition-colors disabled:opacity-60">
             <Save className="w-4 h-4" /> {saving ? 'Saving…' : 'Save'}
           </button>
         </div>
@@ -849,7 +849,7 @@ export default function QuizEditor() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-3 py-3 text-xs font-semibold border-b-2 transition-colors ${activeTab === tab.id ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`flex items-center gap-1.5 px-3 py-3 text-xs font-semibold border-b-2 transition-colors ${activeTab === tab.id ? 'border-[#E63E6D] text-[#E63E6D]' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
           >
             <tab.icon className="w-3.5 h-3.5" /> {tab.label}
           </button>
@@ -870,7 +870,7 @@ export default function QuizEditor() {
                   <button
                     key={q.id}
                     onClick={() => setSelectedQ(q.id)}
-                    className={`w-full text-left px-3 py-3 border-b border-slate-50 flex items-center gap-2.5 group transition-colors ${selectedQ === q.id ? 'bg-indigo-50 border-l-2 border-l-indigo-500' : 'hover:bg-slate-50'}`}
+                    className={`w-full text-left px-3 py-3 border-b border-slate-50 flex items-center gap-2.5 group transition-colors ${selectedQ === q.id ? 'bg-[#FFF5F7] border-l-2 border-l-[#FF6B9D]' : 'hover:bg-slate-50'}`}
                   >
                     <GripVertical className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
                     <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold flex items-center justify-center flex-shrink-0">{i+1}</span>
@@ -886,11 +886,11 @@ export default function QuizEditor() {
               </div>
               {/* Add question */}
               <div className="p-3 border-t border-slate-100 flex-shrink-0 space-y-2">
-                <select onChange={e => { addQuestion(e.target.value); e.target.value = '' }} defaultValue="" className="w-full border border-slate-200 rounded-lg px-2.5 py-2 text-xs bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                <select onChange={e => { addQuestion(e.target.value); e.target.value = '' }} defaultValue="" className="w-full border border-slate-200 rounded-lg px-2.5 py-2 text-xs bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
                   <option value="" disabled>+ Add question type…</option>
                   {QUESTION_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
                 </select>
-                <button onClick={() => setShowBank(true)} className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold text-indigo-600 border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+                <button onClick={() => setShowBank(true)} className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold text-[#E63E6D] border border-[#FFB3C6] bg-[#FFF5F7] hover:bg-[#FFE5EC] rounded-lg transition-colors">
                   <Database className="w-3.5 h-3.5" /> From Question Bank
                 </button>
               </div>
@@ -904,7 +904,7 @@ export default function QuizEditor() {
                     <select
                       value={selected.type}
                       onChange={e => updateQuestion({ ...selected, type: e.target.value })}
-                      className="border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      className="border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
                     >
                       {QUESTION_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
                     </select>
@@ -921,7 +921,7 @@ export default function QuizEditor() {
                   <div className="border-t border-slate-100 pt-4 space-y-3">
                     <div>
                       <label className="text-xs font-semibold text-slate-600 block mb-1.5">Explanation / Feedback</label>
-                      <textarea value={selected.explanation || ''} onChange={e => updateQuestion({ ...selected, explanation: e.target.value })} rows={2} placeholder="Explain the correct answer…" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 resize-none bg-slate-50" />
+                      <textarea value={selected.explanation || ''} onChange={e => updateQuestion({ ...selected, explanation: e.target.value })} rows={2} placeholder="Explain the correct answer…" className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] resize-none bg-slate-50" />
                     </div>
                   </div>
                 </div>

@@ -45,17 +45,17 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-100 rounded-full opacity-60 blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE5EC] rounded-full opacity-60 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-violet-100 rounded-full opacity-60 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-200 mb-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FF6B9D] to-[#E63E6D] shadow-lg shadow-[#FFB3C6] mb-4">
             <Zap className="w-6 h-6 text-white" strokeWidth={2.5} />
           </div>
           <h1 className="text-[22px] font-bold text-slate-900 leading-tight">QuizPlatform</h1>
@@ -109,7 +109,7 @@ export default function Login() {
                     onChange={e => setName(e.target.value)}
                     placeholder="Alice Johnson"
                     required
-                    className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+                    className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 transition-all"
                   />
                 </div>
               </div>
@@ -126,7 +126,7 @@ export default function Login() {
                   onChange={e => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+                  className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 transition-all"
                 />
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function Login() {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+                  className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 transition-all"
                 />
                 <button
                   type="button"
@@ -158,7 +158,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2.5 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all mt-2"
+              className="w-full bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] disabled:opacity-50 disabled:cursor-not-allowed text-white py-2.5 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all mt-2"
             >
               {loading
                 ? (mode === 'login' ? 'Signing in…' : 'Creating account…')

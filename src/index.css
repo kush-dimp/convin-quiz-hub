@@ -6,20 +6,27 @@
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, #FFF5F7 0%, #F0FFF4 60%, #FFF5F7 100%);
+    background-attachment: fixed;
     color: #0f172a;
+    font-family: 'DM Sans', system-ui, sans-serif;
   }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Syne', system-ui, sans-serif; }
   *::-webkit-scrollbar { width: 5px; height: 5px; }
   *::-webkit-scrollbar-track { background: transparent; }
-  *::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 999px; }
-  *::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
-  * { scrollbar-width: thin; scrollbar-color: #e2e8f0 transparent; }
+  *::-webkit-scrollbar-thumb { background: #FFB3C6; border-radius: 999px; }
+  *::-webkit-scrollbar-thumb:hover { background: #FF6B9D; }
+  * { scrollbar-width: thin; scrollbar-color: #FFB3C6 transparent; }
 }
 
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  .glass { backdrop-filter: blur(12px); background: rgba(255,255,255,0.85); }
+  .glass {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 245, 247, 0.88);
+    border-bottom: 1px solid rgba(255, 107, 157, 0.12);
+  }
 }
 
 @keyframes fadeInUp {

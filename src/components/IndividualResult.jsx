@@ -84,9 +84,9 @@ export default function IndividualResult() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-slate-500">Loading result…</p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function IndividualResult() {
 
   if (!attempt) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <p className="text-sm text-slate-500">Result not found.</p>
       </div>
     )
@@ -126,7 +126,7 @@ export default function IndividualResult() {
   const wrongCount = answers.filter(a => !a.is_correct).length
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-4xl mx-auto px-6 h-[56px] flex items-center gap-4">
           <button onClick={() => navigate('/results')} className="flex items-center gap-1 text-sm text-slate-400 hover:text-slate-700 transition-colors">
@@ -147,7 +147,7 @@ export default function IndividualResult() {
         <div className="grid md:grid-cols-2 gap-5">
           <div className="bg-white rounded-2xl shadow-sm p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-base font-bold text-indigo-600 flex-shrink-0">{initials}</div>
+              <div className="w-12 h-12 rounded-full bg-[#FFE5EC] flex items-center justify-center text-base font-bold text-[#E63E6D] flex-shrink-0">{initials}</div>
               <div>
                 <h2 className="font-bold text-slate-900">{userName}</h2>
                 <p className="text-xs text-slate-500">{email}</p>
@@ -175,7 +175,7 @@ export default function IndividualResult() {
               <div><p className="text-xs text-slate-400">Total</p><p className="text-lg font-bold text-slate-700">{answers.length}</p></div>
             </div>
             <div className="mt-3 text-xs text-slate-500">
-              Better than <span className="font-semibold text-indigo-600">{Math.round(score * 0.6)}%</span> of participants
+              Better than <span className="font-semibold text-[#E63E6D]">{Math.round(score * 0.6)}%</span> of participants
             </div>
           </div>
         </div>
@@ -184,7 +184,7 @@ export default function IndividualResult() {
         <div className="bg-white rounded-2xl shadow-sm p-5">
           <h3 className="text-sm font-bold text-slate-900 mb-3">Score Comparison</h3>
           <div className="space-y-2">
-            {[['This attempt', score, 'bg-indigo-500'], ['Class average', 74, 'bg-slate-300'], ['Top score', 97, 'bg-emerald-500']].map(([label, val, color]) => (
+            {[['This attempt', score, 'bg-[#FF6B9D]'], ['Class average', 74, 'bg-slate-300'], ['Top score', 97, 'bg-emerald-500']].map(([label, val, color]) => (
               <div key={label} className="flex items-center gap-3">
                 <span className="text-xs text-slate-500 w-28">{label}</span>
                 <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -208,9 +208,9 @@ export default function IndividualResult() {
 
         {/* Instructor notes */}
         <div className="bg-white rounded-2xl shadow-sm p-5">
-          <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-indigo-400" /> Instructor Notes</h3>
-          <textarea value={note} onChange={e => setNote(e.target.value)} rows={3} placeholder="Add private notes or comments for this submission…" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 resize-none" />
-          <button onClick={saveNote} className="mt-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 flex items-center gap-1.5">
+          <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#FF6B9D]" /> Instructor Notes</h3>
+          <textarea value={note} onChange={e => setNote(e.target.value)} rows={3} placeholder="Add private notes or comments for this submission…" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 resize-none" />
+          <button onClick={saveNote} className="mt-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] flex items-center gap-1.5">
             {noteSaved ? <><Check className="w-3.5 h-3.5" /> Saved!</> : 'Save Note'}
           </button>
         </div>

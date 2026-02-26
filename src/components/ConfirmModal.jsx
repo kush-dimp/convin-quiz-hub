@@ -35,12 +35,12 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
       confirmClass: 'bg-orange-500 hover:bg-orange-600 text-white',
     },
     move: {
-      icon: <FolderOpen className="w-6 h-6 text-indigo-500" />,
-      bg:   'bg-indigo-50',
+      icon: <FolderOpen className="w-6 h-6 text-[#FF6B9D]" />,
+      bg:   'bg-[#FFF5F7]',
       title: `Move ${count} quiz${count !== 1 ? 'zes' : ''} to folder`,
       body:  'Select the destination folder:',
       confirmLabel: 'Move',
-      confirmClass: 'bg-indigo-600 hover:bg-indigo-700 text-white',
+      confirmClass: 'bg-[#E63E6D] hover:bg-[#C41E5C] text-white',
     },
     changeStatus: {
       icon: <RefreshCw className="w-6 h-6 text-blue-500" />,
@@ -96,7 +96,7 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
                   key={f}
                   className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
                     selectedFolder === f
-                      ? 'border-indigo-400 bg-indigo-50'
+                      ? 'border-[#FF6B9D] bg-[#FFF5F7]'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -106,7 +106,7 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
                     value={f}
                     checked={selectedFolder === f}
                     onChange={() => setSelectedFolder(f)}
-                    className="accent-indigo-600"
+                    className="accent-[#E63E6D]"
                   />
                   <FolderOpen className="w-4 h-4 text-gray-400" />
                   <span className="text-sm font-medium text-gray-700">{f}</span>

@@ -85,11 +85,11 @@ export default function GradeBook() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <BookOpen className="w-4 h-4 text-indigo-600" />
+            <BookOpen className="w-4 h-4 text-[#E63E6D]" />
             <div>
               <h1 className="text-[15px] font-bold text-slate-900 leading-none">Grade Book</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Student grade overview</p>
@@ -102,7 +102,7 @@ export default function GradeBook() {
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />
               <p className="text-sm text-slate-500">Loading gradebook…</p>
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function GradeBook() {
                         <tr key={user.id} className="border-b border-slate-50 hover:bg-slate-50/70 transition-colors">
                           <td className="sticky left-0 bg-white px-4 py-2.5 z-10 border-r border-slate-100">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-[10px] font-bold text-indigo-600 flex-shrink-0">{user.name?.[0] ?? '?'}</div>
+                              <div className="w-6 h-6 rounded-full bg-[#FFE5EC] flex items-center justify-center text-[10px] font-bold text-[#E63E6D] flex-shrink-0">{user.name?.[0] ?? '?'}</div>
                               <span className="text-[13px] font-semibold text-slate-800 whitespace-nowrap">{user.name}</span>
                             </div>
                           </td>
@@ -162,10 +162,10 @@ export default function GradeBook() {
                                     defaultValue={score ?? ''}
                                     onBlur={e => setOverride(user.id, qi, e.target.value)}
                                     onKeyDown={e => { if (e.key === 'Enter') setOverride(user.id, qi, e.target.value); if (e.key === 'Escape') setEditingCell(null) }}
-                                    className="w-14 text-center bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300"
+                                    className="w-14 text-center bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60"
                                   />
                                 ) : (
-                                  <button onClick={() => setEditingCell(key)} className="w-full text-xs rounded px-2 py-1 hover:ring-2 ring-indigo-200 transition-all" title="Click to edit">
+                                  <button onClick={() => setEditingCell(key)} className="w-full text-xs rounded px-2 py-1 hover:ring-2 ring-[#FFB3C6] transition-all" title="Click to edit">
                                     {score !== null ? `${score}%` : '—'}
                                   </button>
                                 )}

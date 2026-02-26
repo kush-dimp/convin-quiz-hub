@@ -74,17 +74,17 @@ export default function AutomatedReports() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-5xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <FileText className="w-4 h-4 text-indigo-600" />
+            <FileText className="w-4 h-4 text-[#E63E6D]" />
             <div>
               <h1 className="text-[15px] font-bold text-slate-900 leading-none">Automated Reports</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Schedule and automate report delivery</p>
             </div>
           </div>
-          <button onClick={() => setShowBuilder(true)} className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all"><Plus className="w-4 h-4" /> New Report</button>
+          <button onClick={() => setShowBuilder(true)} className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all"><Plus className="w-4 h-4" /> New Report</button>
         </div>
       </header>
       <main className="max-w-5xl mx-auto px-6 py-6 space-y-5">
@@ -106,7 +106,7 @@ export default function AutomatedReports() {
                 <p className="text-[12px] text-slate-500">Pass Rate</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-indigo-600">{avgScore}%</p>
+                <p className="text-2xl font-bold text-[#E63E6D]">{avgScore}%</p>
                 <p className="text-[12px] text-slate-500">Avg Score</p>
               </div>
             </div>
@@ -118,7 +118,7 @@ export default function AutomatedReports() {
           <h2 className="text-[13px] font-bold text-slate-900">Scheduled Reports ({reports.length})</h2>
           {reports.map(r => (
             <div key={r.id} className={`bg-white rounded-2xl shadow-sm p-4 flex items-start gap-4 transition-opacity ${r.paused ? 'opacity-60' : ''}`}>
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${r.paused ? 'bg-slate-100 text-slate-400' : 'bg-indigo-50 text-indigo-600'}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${r.paused ? 'bg-slate-100 text-slate-400' : 'bg-[#FFF5F7] text-[#E63E6D]'}`}>
                 <FileText className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -129,7 +129,7 @@ export default function AutomatedReports() {
                   <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-semibold">{r.format}</span>
                 </div>
                 <div className="flex flex-wrap gap-1 mt-1.5">
-                  {r.metrics.map(m => <span key={m} className="text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded font-medium">{m}</span>)}
+                  {r.metrics.map(m => <span key={m} className="text-[10px] bg-[#FFF5F7] text-[#E63E6D] px-1.5 py-0.5 rounded font-medium">{m}</span>)}
                 </div>
                 <div className="flex items-center gap-3 mt-2 text-[12px] text-slate-400">
                   <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Next: {r.nextRun}</span>
@@ -137,7 +137,7 @@ export default function AutomatedReports() {
                 </div>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
-                <button onClick={() => togglePause(r.id)} className={`p-1.5 rounded-lg transition-colors ${r.paused ? 'text-indigo-500 hover:bg-indigo-50' : 'text-amber-500 hover:bg-amber-50'}`} title={r.paused ? 'Resume' : 'Pause'}>
+                <button onClick={() => togglePause(r.id)} className={`p-1.5 rounded-lg transition-colors ${r.paused ? 'text-[#FF6B9D] hover:bg-[#FFF5F7]' : 'text-amber-500 hover:bg-amber-50'}`} title={r.paused ? 'Resume' : 'Pause'}>
                   {r.paused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
                 </button>
                 <button onClick={() => deleteReport(r.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
@@ -153,39 +153,39 @@ export default function AutomatedReports() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={e => e.target===e.currentTarget && setShowBuilder(false)}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
-              <Plus className="w-5 h-5 text-indigo-600" />
+              <Plus className="w-5 h-5 text-[#E63E6D]" />
               <h2 className="text-[13px] font-bold text-slate-900 flex-1">New Automated Report</h2>
             </div>
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
               {/* Real stats preview inside builder */}
               {!resultsLoading && (
-                <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3 flex gap-5 text-xs">
-                  <div><span className="font-bold text-indigo-700">{totalAttempts}</span><span className="text-indigo-500 ml-1">attempts</span></div>
-                  <div><span className="font-bold text-indigo-700">{passRate}%</span><span className="text-indigo-500 ml-1">pass rate</span></div>
-                  <div><span className="font-bold text-indigo-700">{avgScore}%</span><span className="text-indigo-500 ml-1">avg score</span></div>
+                <div className="bg-[#FFF5F7] border border-[#FFE5EC] rounded-xl px-4 py-3 flex gap-5 text-xs">
+                  <div><span className="font-bold text-[#C41E5C]">{totalAttempts}</span><span className="text-[#FF6B9D] ml-1">attempts</span></div>
+                  <div><span className="font-bold text-[#C41E5C]">{passRate}%</span><span className="text-[#FF6B9D] ml-1">pass rate</span></div>
+                  <div><span className="font-bold text-[#C41E5C]">{avgScore}%</span><span className="text-[#FF6B9D] ml-1">avg score</span></div>
                 </div>
               )}
               <div>
                 <label className="text-xs font-semibold text-slate-600 block mb-1.5">Report Name</label>
-                <input value={builder.name} onChange={e => setBuilder(p => ({...p, name: e.target.value}))} placeholder="e.g. Weekly Safety Summary" className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                <input value={builder.name} onChange={e => setBuilder(p => ({...p, name: e.target.value}))} placeholder="e.g. Weekly Safety Summary" className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-slate-600 block mb-1.5">Frequency</label>
-                  <select value={builder.frequency} onChange={e => setBuilder(p=>({...p,frequency:e.target.value}))} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                  <select value={builder.frequency} onChange={e => setBuilder(p=>({...p,frequency:e.target.value}))} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
                     {['Daily','Weekly','Monthly'].map(f => <option key={f}>{f}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-slate-600 block mb-1.5">Format</label>
-                  <select value={builder.format} onChange={e => setBuilder(p=>({...p,format:e.target.value}))} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                  <select value={builder.format} onChange={e => setBuilder(p=>({...p,format:e.target.value}))} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
                     {['PDF','Excel','HTML Email'].map(f => <option key={f}>{f}</option>)}
                   </select>
                 </div>
               </div>
               <div>
                 <label className="text-xs font-semibold text-slate-600 block mb-1.5">Quiz Scope</label>
-                <select value={builder.quiz} onChange={e => setBuilder(p=>({...p,quiz:e.target.value}))} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                <select value={builder.quiz} onChange={e => setBuilder(p=>({...p,quiz:e.target.value}))} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
                   {quizzesLoading
                     ? <option>Loading quizzes…</option>
                     : quizOptions.map(q => <option key={q}>{q}</option>)
@@ -196,13 +196,13 @@ export default function AutomatedReports() {
                 <label className="text-xs font-semibold text-slate-600 block mb-2">Include Metrics</label>
                 <div className="flex flex-wrap gap-2">
                   {METRICS.map(m => (
-                    <button key={m} onClick={() => toggleMetric(m)} className={`px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors ${builder.metrics.includes(m) ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:border-indigo-200'}`}>{m}</button>
+                    <button key={m} onClick={() => toggleMetric(m)} className={`px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors ${builder.metrics.includes(m) ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#C41E5C]' : 'border-slate-200 text-slate-600 hover:border-[#FFB3C6]'}`}>{m}</button>
                   ))}
                 </div>
               </div>
               <div>
                 <label className="text-xs font-semibold text-slate-600 block mb-1.5">Recipients (comma-separated emails)</label>
-                <input value={builder.recipients} onChange={e => setBuilder(p=>({...p,recipients:e.target.value}))} placeholder="alice@corp.com, bob@corp.com" className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                <input value={builder.recipients} onChange={e => setBuilder(p=>({...p,recipients:e.target.value}))} placeholder="alice@corp.com, bob@corp.com" className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]" />
               </div>
             </div>
             <div className="flex justify-end gap-3 px-6 pb-5 flex-shrink-0">
@@ -214,7 +214,7 @@ export default function AutomatedReports() {
               >
                 Generate CSV
               </button>
-              <button onClick={saveReport} disabled={!builder.name.trim() || builder.metrics.length === 0} className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all disabled:opacity-40">
+              <button onClick={saveReport} disabled={!builder.name.trim() || builder.metrics.length === 0} className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all disabled:opacity-40">
                 {saved ? <><Check className="w-4 h-4" /> Saved!</> : 'Create Report'}
               </button>
             </div>

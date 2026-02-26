@@ -46,8 +46,8 @@ function SelectDropdown({ options, value, onChange, align = 'left' }) {
           onClick={toggle}
           className={`flex items-center gap-1.5 px-3.5 py-2 border rounded-lg text-sm font-medium transition-colors whitespace-nowrap shadow-sm ${
             isActive
-              ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-              : 'bg-white border-gray-200 text-gray-700 hover:border-indigo-400 hover:text-indigo-600'
+              ? 'bg-[#FFF5F7] border-[#FFB3C6] text-[#C41E5C]'
+              : 'bg-white border-gray-200 text-gray-700 hover:border-[#FF6B9D] hover:text-[#E63E6D]'
           }`}
         >
           {current?.label}
@@ -64,13 +64,13 @@ function SelectDropdown({ options, value, onChange, align = 'left' }) {
               onClick={() => { onChange(opt.value); close() }}
               className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
                 opt.value === value
-                  ? 'bg-indigo-50 text-indigo-600 font-semibold'
+                  ? 'bg-[#FFF5F7] text-[#E63E6D] font-semibold'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               {opt.label}
               {opt.value === value && (
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B9D] flex-shrink-0" />
               )}
             </button>
           ))}
@@ -92,8 +92,8 @@ function MultiSelectDropdown({ label, options, value, onChange }) {
           onClick={toggle}
           className={`flex items-center gap-1.5 px-3.5 py-2 border rounded-lg text-sm font-medium transition-colors whitespace-nowrap shadow-sm ${
             isActive
-              ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-              : 'bg-white border-gray-200 text-gray-700 hover:border-indigo-400 hover:text-indigo-600'
+              ? 'bg-[#FFF5F7] border-[#FFB3C6] text-[#C41E5C]'
+              : 'bg-white border-gray-200 text-gray-700 hover:border-[#FF6B9D] hover:text-[#E63E6D]'
           }`}
         >
           {display}
@@ -117,7 +117,7 @@ function MultiSelectDropdown({ label, options, value, onChange }) {
                   onChange={() =>
                     onChange(checked ? value.filter((v) => v !== opt) : [...value, opt])
                   }
-                  className="rounded accent-indigo-600"
+                  className="rounded accent-[#E63E6D]"
                 />
                 {opt}
               </label>
@@ -127,7 +127,7 @@ function MultiSelectDropdown({ label, options, value, onChange }) {
             <div className="border-t border-gray-100 mt-1 pt-1 px-4 pb-1">
               <button
                 onClick={() => onChange([])}
-                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                className="text-xs text-[#E63E6D] hover:text-[#C41E5C] font-medium"
               >
                 Clear selection
               </button>
@@ -150,8 +150,8 @@ function DateRangeDropdown({ dateFrom, dateTo, onFromChange, onToChange }) {
           onClick={toggle}
           className={`flex items-center gap-1.5 px-3.5 py-2 border rounded-lg text-sm font-medium transition-colors whitespace-nowrap shadow-sm ${
             isActive
-              ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-              : 'bg-white border-gray-200 text-gray-700 hover:border-indigo-400 hover:text-indigo-600'
+              ? 'bg-[#FFF5F7] border-[#FFB3C6] text-[#C41E5C]'
+              : 'bg-white border-gray-200 text-gray-700 hover:border-[#FF6B9D] hover:text-[#E63E6D]'
           }`}
         >
           <Calendar className="w-3.5 h-3.5" />
@@ -173,7 +173,7 @@ function DateRangeDropdown({ dateFrom, dateTo, onFromChange, onToChange }) {
               value={dateFrom}
               max={dateTo || undefined}
               onChange={(e) => onFromChange(e.target.value)}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 focus:border-[#FF6B9D]"
             />
           </div>
           <div>
@@ -183,13 +183,13 @@ function DateRangeDropdown({ dateFrom, dateTo, onFromChange, onToChange }) {
               value={dateTo}
               min={dateFrom || undefined}
               onChange={(e) => onToChange(e.target.value)}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 focus:border-[#FF6B9D]"
             />
           </div>
           {isActive && (
             <button
               onClick={() => { onFromChange(''); onToChange(''); close() }}
-              className="w-full text-xs text-indigo-600 hover:text-indigo-800 font-medium text-center"
+              className="w-full text-xs text-[#E63E6D] hover:text-[#C41E5C] font-medium text-center"
             >
               Clear dates
             </button>
@@ -203,9 +203,9 @@ function DateRangeDropdown({ dateFrom, dateTo, onFromChange, onToChange }) {
 /* ── Active filter chip ────────────────────────────────────── */
 function FilterChip({ label, onRemove }) {
   return (
-    <span className="inline-flex items-center gap-1 bg-indigo-100 text-indigo-700 text-xs font-medium px-2.5 py-1 rounded-full">
+    <span className="inline-flex items-center gap-1 bg-[#FFE5EC] text-[#C41E5C] text-xs font-medium px-2.5 py-1 rounded-full">
       {label}
-      <button onClick={onRemove} className="ml-0.5 hover:text-indigo-900 transition-colors">
+      <button onClick={onRemove} className="ml-0.5 hover:text-[#2D0A1A] transition-colors">
         <X className="w-3 h-3" />
       </button>
     </span>
@@ -307,10 +307,10 @@ export default function FilterBar({
             placeholder="Search by title, description, instructor…"
             value={searchInput}
             onChange={(e) => onSearchChange(e.target.value)}
-            className={`w-full pl-9 pr-8 py-2 text-sm bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 placeholder-gray-400 transition-colors ${
+            className={`w-full pl-9 pr-8 py-2 text-sm bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 placeholder-gray-400 transition-colors ${
               searchInput.trim()
-                ? 'border-indigo-300 focus:border-indigo-400'
-                : 'border-gray-200 focus:border-indigo-400'
+                ? 'border-[#FF6B9D]/60 focus:border-[#FF6B9D]'
+                : 'border-gray-200 focus:border-[#FF6B9D]'
             }`}
           />
           {searchInput && (
@@ -365,7 +365,7 @@ export default function FilterBar({
         <button
           onClick={() => onSortDirChange(sortDir === 'desc' ? 'asc' : 'desc')}
           title={sortDir === 'desc' ? 'Descending — click to sort ascending' : 'Ascending — click to sort descending'}
-          className="p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition-colors shadow-sm"
+          className="p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:border-[#FF6B9D] hover:text-[#E63E6D] transition-colors shadow-sm"
         >
           {sortDir === 'desc'
             ? <ArrowDown className="w-4 h-4" />
@@ -392,7 +392,7 @@ export default function FilterBar({
               title={title}
               className={`p-1.5 rounded-md transition-all ${
                 view === value
-                  ? 'bg-white shadow-sm text-indigo-600'
+                  ? 'bg-white shadow-sm text-[#E63E6D]'
                   : 'text-gray-400 hover:text-gray-600'
               }`}
             >
@@ -422,8 +422,8 @@ export default function FilterBar({
                 }
                 className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-all duration-150 ${
                   active
-                    ? 'bg-indigo-600 text-white shadow-sm scale-105'
-                    : 'bg-gray-100 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600'
+                    ? 'bg-[#E63E6D] text-white shadow-sm scale-105'
+                    : 'bg-gray-100 text-gray-600 hover:bg-[#FFF5F7] hover:text-[#E63E6D]'
                 }`}
               >
                 {tag}

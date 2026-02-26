@@ -16,7 +16,7 @@ const CATEGORY_THEME = {
   'Assessment':         { gradient: 'from-emerald-500 to-teal-400', light: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-100', icon: ClipboardList },
   'Survey':             { gradient: 'from-rose-500 to-pink-400',    light: 'bg-rose-50',    text: 'text-rose-700',    border: 'border-rose-100',    icon: BarChart2 },
 }
-function theme(category) { return CATEGORY_THEME[category] ?? { gradient: 'from-indigo-500 to-violet-400', light: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-100', icon: Layers } }
+function theme(category) { return CATEGORY_THEME[category] ?? { gradient: 'from-[#FF6B9D] to-[#E63E6D]', light: 'bg-[#FFF5F7]', text: 'text-[#C41E5C]', border: 'border-[#FFE5EC]', icon: Layers } }
 
 /* ── Question type pill config ── */
 const TYPE_META = {
@@ -78,7 +78,7 @@ function TemplateCard({ template, onPreview, onUse, loading }) {
         {/* badges */}
         <div className="absolute top-2.5 left-2.5 flex gap-1">
           {template.isOfficial && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 text-indigo-700 shadow-sm">Official</span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 text-[#C41E5C] shadow-sm">Official</span>
           )}
           {template.isCommunity && (
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 text-emerald-700 shadow-sm">Community</span>
@@ -294,7 +294,7 @@ function SaveAsTemplateModal({ quiz, onClose }) {
         </div>
         <h2 className="text-base font-bold text-slate-900">Template Saved!</h2>
         <p className="text-sm text-slate-500 mt-2">"{name}" is now available in the Template Library.</p>
-        <button onClick={onClose} className="mt-4 w-full py-2 bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold rounded-xl shadow-sm transition-all">Done</button>
+        <button onClick={onClose} className="mt-4 w-full py-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white text-sm font-semibold rounded-xl shadow-sm transition-all">Done</button>
       </div>
     </div>
   )
@@ -303,22 +303,22 @@ function SaveAsTemplateModal({ quiz, onClose }) {
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100">
-          <Plus className="w-5 h-5 text-indigo-600" />
+          <Plus className="w-5 h-5 text-[#E63E6D]" />
           <h2 className="text-base font-bold text-slate-900 flex-1">Save as Template</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
         </div>
         <div className="px-6 py-5 space-y-4">
           <div>
             <label className="text-xs font-semibold text-slate-600 block mb-1.5">Template Name</label>
-            <input value={name} onChange={e => setName(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+            <input value={name} onChange={e => setName(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]" />
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-600 block mb-1.5">Description</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Describe what this template is for…" className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200 resize-none" />
+            <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Describe what this template is for…" className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] resize-none" />
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-600 block mb-1.5">Category</label>
-            <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+            <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
               {TEMPLATE_CATEGORIES.filter(c => c !== 'All').map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
@@ -329,7 +329,7 @@ function SaveAsTemplateModal({ quiz, onClose }) {
         </div>
         <div className="flex justify-end gap-3 px-6 pb-5">
           <button onClick={onClose} className="border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-colors">Cancel</button>
-          <button onClick={() => setSaved(true)} disabled={!name.trim()} className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm transition-all disabled:opacity-40">Save Template</button>
+          <button onClick={() => setSaved(true)} disabled={!name.trim()} className="bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm transition-all disabled:opacity-40">Save Template</button>
         </div>
       </div>
     </div>
@@ -380,11 +380,11 @@ export default function TemplateLibrary() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       {loading && (
         <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl px-8 py-6 shadow-xl flex items-center gap-4">
-            <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-5 h-5 border-2 border-[#E63E6D] border-t-transparent rounded-full animate-spin" />
             <span className="text-sm font-medium text-slate-700">Creating quiz from template…</span>
           </div>
         </div>
@@ -413,7 +413,7 @@ export default function TemplateLibrary() {
             <input
               value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search templates…"
-              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
             />
           </div>
           <div className="flex gap-1.5 flex-wrap">
@@ -426,7 +426,7 @@ export default function TemplateLibrary() {
                   onClick={() => setCategory(c)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     active
-                      ? t ? `bg-gradient-to-r ${t.gradient} text-white shadow-sm` : 'bg-indigo-600 text-white'
+                      ? t ? `bg-gradient-to-r ${t.gradient} text-white shadow-sm` : 'bg-[#E63E6D] text-white'
                       : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300 shadow-sm'
                   }`}
                 >
@@ -442,7 +442,7 @@ export default function TemplateLibrary() {
           <section className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-sm font-bold text-slate-900">Official Templates</h2>
-              <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-semibold border border-indigo-100">Convin Team</span>
+              <span className="text-xs bg-[#FFF5F7] text-[#E63E6D] px-2 py-0.5 rounded-full font-semibold border border-[#FFE5EC]">Convin Team</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {official.map(t => <TemplateCard key={t.id} template={t} onPreview={setPreview} onUse={handleUse} loading={loading} />)}

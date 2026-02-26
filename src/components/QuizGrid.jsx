@@ -60,7 +60,7 @@ function EmptyState({ hasFilters, onClearAll }) {
           </p>
           <button
             onClick={onClearAll}
-            className="mt-4 px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors"
+            className="mt-4 px-4 py-2 text-sm font-semibold text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC] rounded-lg transition-colors"
           >
             Clear all filters
           </button>
@@ -323,7 +323,7 @@ export default function QuizGrid() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       {/* Header */}
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between gap-4">
@@ -334,7 +334,7 @@ export default function QuizGrid() {
           <button
             onClick={handleCreateQuiz}
             disabled={isCreating}
-            className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-indigo-200 flex-shrink-0 disabled:opacity-60"
+            className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-[#FFB3C6] flex-shrink-0 disabled:opacity-60"
           >
             <Plus className="w-3.5 h-3.5" />
             {isCreating ? 'Creating…' : 'Create Quiz'}

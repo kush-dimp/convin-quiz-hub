@@ -61,7 +61,7 @@ function RestoreModal({ version, onConfirm, onCancel }) {
           </p>
           <div className="flex gap-3 mt-5">
             <button onClick={onCancel} className="flex-1 border border-slate-200 text-slate-600 hover:bg-slate-50 py-2 rounded-xl text-[13px] font-medium transition-colors">Cancel</button>
-            <button onClick={onConfirm} className="flex-1 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all flex items-center justify-center gap-1.5">
+            <button onClick={onConfirm} className="flex-1 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all flex items-center justify-center gap-1.5">
               <RotateCcw className="w-4 h-4" /> Restore
             </button>
           </div>
@@ -113,7 +113,7 @@ export default function VersionHistory({ quiz, onClose }) {
       <div className="fixed right-0 top-0 h-full bg-white shadow-2xl flex flex-col w-full max-w-2xl z-40">
         {/* Header */}
         <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
-          <History className="w-5 h-5 text-indigo-600" />
+          <History className="w-5 h-5 text-[#E63E6D]" />
           <div className="flex-1 min-w-0">
             <h2 className="text-sm font-bold text-slate-900">Version History</h2>
             <p className="text-xs text-slate-500 truncate">"{quiz?.title ?? 'Quiz'}" · {versions.length} versions</p>
@@ -159,10 +159,10 @@ export default function VersionHistory({ quiz, onClose }) {
                 )}
                 <button
                   onClick={() => { setSelected(v); setCompare(null) }}
-                  className={`w-full text-left px-4 py-3 border-b border-slate-100 hover:bg-slate-50 transition-colors ${selected?.id === v.id ? 'bg-indigo-50 border-l-2 border-l-indigo-500' : ''}`}
+                  className={`w-full text-left px-4 py-3 border-b border-slate-100 hover:bg-slate-50 transition-colors ${selected?.id === v.id ? 'bg-[#FFF5F7] border-l-2 border-l-[#FF6B9D]' : ''}`}
                 >
                   <div className="flex items-center justify-between mb-0.5">
-                    <span className={`text-xs font-bold ${i === 0 ? 'text-indigo-600' : 'text-slate-700'}`}>
+                    <span className={`text-xs font-bold ${i === 0 ? 'text-[#E63E6D]' : 'text-slate-700'}`}>
                       v{v.version_num} {i === 0 && '· Current'}
                     </span>
                     {v.is_auto_save && (
@@ -198,7 +198,7 @@ export default function VersionHistory({ quiz, onClose }) {
                   {selected.id !== versions[0]?.id && (
                     <button
                       onClick={() => setRestoreTarget(selected)}
-                      className="flex-shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm shadow-indigo-200 transition-all"
+                      className="flex-shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm shadow-[#FFB3C6] transition-all"
                     >
                       <RotateCcw className="w-3.5 h-3.5" /> Restore
                     </button>
@@ -218,7 +218,7 @@ export default function VersionHistory({ quiz, onClose }) {
                   <select
                     value={compare?.id || ''}
                     onChange={e => setCompare(versions.find(v => v.id === e.target.value) || null)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
                   >
                     <option value="">Select a version…</option>
                     {versions.filter(v => v.id !== selected.id).map(v => (

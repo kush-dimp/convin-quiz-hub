@@ -92,7 +92,7 @@ function AnswerEditor({ form, onChange }) {
               value={opt}
               onChange={e => { const o = [...options]; o[i] = e.target.value; upd('options', o) }}
               placeholder={`Option ${String.fromCharCode(65 + i)}`}
-              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50"
             />
             {options.length > 2 && (
               <button onClick={() => upd('options', options.filter((_, j) => j !== i))} className="text-slate-300 hover:text-red-400 transition-colors">
@@ -101,7 +101,7 @@ function AnswerEditor({ form, onChange }) {
             )}
           </div>
         ))}
-        <button onClick={() => upd('options', [...options, ''])} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 mt-1">
+        <button onClick={() => upd('options', [...options, ''])} className="text-xs text-[#E63E6D] hover:text-[#C41E5C] font-medium flex items-center gap-1 mt-1">
           <Plus className="w-3.5 h-3.5" /> Add Option
         </button>
         {isMulti && <p className="text-[11px] text-slate-400">Click the circle to mark correct answers (multiple allowed)</p>}
@@ -135,10 +135,10 @@ function AnswerEditor({ form, onChange }) {
         value={form.correctAnswer ?? ''}
         onChange={e => upd('correctAnswer', e.target.value)}
         placeholder="Enter the correct answer"
-        className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+        className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50"
       />
       <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
-        <input type="checkbox" checked={form.caseSensitive ?? false} onChange={e => upd('caseSensitive', e.target.checked)} className="rounded accent-indigo-600" />
+        <input type="checkbox" checked={form.caseSensitive ?? false} onChange={e => upd('caseSensitive', e.target.checked)} className="rounded accent-[#E63E6D]" />
         Case sensitive
       </label>
     </div>
@@ -154,7 +154,7 @@ function AnswerEditor({ form, onChange }) {
         onChange={e => upd('sampleAnswer', e.target.value)}
         rows={form.type === 'essay' ? 4 : 2}
         placeholder={form.type === 'essay' ? 'Enter a model answer for reference…' : 'Enter the expected short answer…'}
-        className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50 resize-none"
+        className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50 resize-none"
       />
       <p className="text-[11px] text-slate-400">This question type requires manual grading.</p>
     </div>
@@ -170,7 +170,7 @@ function AnswerEditor({ form, onChange }) {
           <select
             value={scale}
             onChange={e => upd('scale', Number(e.target.value))}
-            className="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+            className="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50"
           >
             {[3, 4, 5, 7, 10].map(n => <option key={n} value={n}>{n}</option>)}
           </select>
@@ -178,7 +178,7 @@ function AnswerEditor({ form, onChange }) {
         </div>
         <div className="flex gap-1.5 mt-1 flex-wrap">
           {Array.from({ length: scale }, (_, i) => (
-            <span key={i} className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 text-xs font-bold flex items-center justify-center">
+            <span key={i} className="w-8 h-8 rounded-lg bg-[#FFF5F7] text-[#E63E6D] text-xs font-bold flex items-center justify-center">
               {i + 1}
             </span>
           ))}
@@ -198,14 +198,14 @@ function AnswerEditor({ form, onChange }) {
               value={pair.left}
               onChange={e => { const p = [...pairs]; p[i] = { ...p[i], left: e.target.value }; upd('pairs', p) }}
               placeholder={`Left ${i + 1}`}
-              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50"
             />
             <span className="text-slate-400 text-sm flex-shrink-0">→</span>
             <input
               value={pair.right}
               onChange={e => { const p = [...pairs]; p[i] = { ...p[i], right: e.target.value }; upd('pairs', p) }}
               placeholder={`Right ${i + 1}`}
-              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50"
             />
             {pairs.length > 2 && (
               <button onClick={() => upd('pairs', pairs.filter((_, j) => j !== i))} className="text-slate-300 hover:text-red-400 transition-colors">
@@ -214,7 +214,7 @@ function AnswerEditor({ form, onChange }) {
             )}
           </div>
         ))}
-        <button onClick={() => upd('pairs', [...pairs, { left: '', right: '' }])} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 mt-1">
+        <button onClick={() => upd('pairs', [...pairs, { left: '', right: '' }])} className="text-xs text-[#E63E6D] hover:text-[#C41E5C] font-medium flex items-center gap-1 mt-1">
           <Plus className="w-3.5 h-3.5" /> Add Pair
         </button>
       </div>
@@ -229,12 +229,12 @@ function AnswerEditor({ form, onChange }) {
         <p className="text-[11px] text-slate-400">Add items in the correct order</p>
         {items.map((item, i) => (
           <div key={i} className="flex items-center gap-2">
-            <span className="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+            <span className="w-5 h-5 rounded-full bg-[#FFF5F7] text-[#E63E6D] text-[10px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
             <input
               value={item}
               onChange={e => { const it = [...items]; it[i] = e.target.value; upd('items', it) }}
               placeholder={`Item ${i + 1}`}
-              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+              className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50"
             />
             {items.length > 2 && (
               <button onClick={() => upd('items', items.filter((_, j) => j !== i))} className="text-slate-300 hover:text-red-400 transition-colors">
@@ -243,7 +243,7 @@ function AnswerEditor({ form, onChange }) {
             )}
           </div>
         ))}
-        <button onClick={() => upd('items', [...items, ''])} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 mt-1">
+        <button onClick={() => upd('items', [...items, ''])} className="text-xs text-[#E63E6D] hover:text-[#C41E5C] font-medium flex items-center gap-1 mt-1">
           <Plus className="w-3.5 h-3.5" /> Add Item
         </button>
       </div>
@@ -309,7 +309,7 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
               onChange={e => setForm(p => ({ ...p, text: e.target.value }))}
               rows={3}
               placeholder="Enter your question…"
-              className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50 resize-none"
+              className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50 resize-none"
             />
           </div>
 
@@ -319,7 +319,7 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
             <select
               value={form.type}
               onChange={e => handleTypeChange(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50"
+              className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50"
             >
               {QUESTION_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
             </select>
@@ -333,14 +333,14 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Difficulty</label>
               <select value={form.difficulty} onChange={e => setForm(p => ({ ...p, difficulty: e.target.value }))}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50">
+                className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50">
                 {DIFFICULTY_LEVELS.map(d => <option key={d}>{d}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Topic</label>
               <select value={form.topic} onChange={e => setForm(p => ({ ...p, topic: e.target.value }))}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50">
+                className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50">
                 {TOPICS.map(t => <option key={t}>{t}</option>)}
               </select>
             </div>
@@ -348,7 +348,7 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Points</label>
               <input type="number" min="1" value={form.points}
                 onChange={e => setForm(p => ({ ...p, points: e.target.value }))}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50" />
+                className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50" />
             </div>
           </div>
 
@@ -360,7 +360,7 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
               onChange={e => setForm(p => ({ ...p, explanation: e.target.value }))}
               rows={2}
               placeholder="Explain why this answer is correct…"
-              className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-slate-50 resize-none"
+              className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] bg-slate-50 resize-none"
             />
           </div>
         </div>
@@ -373,7 +373,7 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
           <button
             onClick={handleSave}
             disabled={!form.text.trim() || saving}
-            className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 disabled:opacity-50 transition-all shadow-sm shadow-indigo-200"
+            className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] disabled:opacity-50 transition-all shadow-sm shadow-[#FFB3C6]"
           >
             {saving ? 'Saving…' : isNew ? 'Create Question' : 'Save Changes'}
           </button>
@@ -507,11 +507,11 @@ export default function QuestionBank() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <Database className="w-4 h-4 text-indigo-600" />
+            <Database className="w-4 h-4 text-[#E63E6D]" />
             <div>
               <h1 className="text-[15px] font-bold text-slate-900 leading-none">Question Bank</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">{questions.length} questions total</p>
@@ -534,7 +534,7 @@ export default function QuestionBank() {
             </button>
             <button
               onClick={() => setModal('new')}
-              className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all"
             >
               <Plus className="w-4 h-4" /> New Question
             </button>
@@ -558,21 +558,21 @@ export default function QuestionBank() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search questions…"
-              className="w-full pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-[13px] py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+              className="w-full pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-[13px] py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 transition-all"
             />
           </div>
           <select value={filterType} onChange={e => setFilterType(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all">
+            className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 transition-all">
             <option value="all">All Types</option>
             {QUESTION_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
           </select>
           <select value={filterDiff} onChange={e => setFilterDiff(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all">
+            className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 transition-all">
             <option value="all">All Difficulties</option>
             {DIFFICULTY_LEVELS.map(d => <option key={d}>{d}</option>)}
           </select>
           <select value={filterTopic} onChange={e => setFilterTopic(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all">
+            className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]/60 transition-all">
             <option value="all">All Topics</option>
             {TOPICS.map(t => <option key={t}>{t}</option>)}
           </select>
@@ -609,9 +609,9 @@ export default function QuestionBank() {
               return (
                 <div
                   key={q.id}
-                  className={`grid grid-cols-[2rem_1fr] md:grid-cols-[2rem_1fr_6rem_6rem_5rem_5rem_6rem] items-center gap-3 px-4 py-3 border-b border-slate-50 hover:bg-slate-50/70 transition-colors ${selected.has(q.id) ? 'bg-indigo-50/60' : ''}`}
+                  className={`grid grid-cols-[2rem_1fr] md:grid-cols-[2rem_1fr_6rem_6rem_5rem_5rem_6rem] items-center gap-3 px-4 py-3 border-b border-slate-50 hover:bg-slate-50/70 transition-colors ${selected.has(q.id) ? 'bg-[#FFF5F7]/60' : ''}`}
                 >
-                  <input type="checkbox" checked={selected.has(q.id)} onChange={() => toggle(q.id)} className="rounded accent-indigo-600" />
+                  <input type="checkbox" checked={selected.has(q.id)} onChange={() => toggle(q.id)} className="rounded accent-[#E63E6D]" />
 
                   <div className="min-w-0">
                     <p className="text-[13px] font-semibold text-slate-800 truncate">{q.text}</p>
@@ -631,7 +631,7 @@ export default function QuestionBank() {
                     <button
                       onClick={() => setModal(flattenRow(q))}
                       title="Edit"
-                      className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-[#E63E6D] hover:bg-[#FFF5F7] rounded-lg transition-colors"
                     ><Edit2 className="w-3.5 h-3.5" /></button>
                     <button
                       onClick={() => handleCopy(q)}
@@ -655,7 +655,7 @@ export default function QuestionBank() {
                   {questions.length === 0 ? 'No questions yet — create your first one!' : 'No questions match your filters'}
                 </p>
                 {questions.length === 0 && (
-                  <button onClick={() => setModal('new')} className="mt-3 text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                  <button onClick={() => setModal('new')} className="mt-3 text-sm text-[#E63E6D] hover:text-[#C41E5C] font-medium">
                     + New Question
                   </button>
                 )}

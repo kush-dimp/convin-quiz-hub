@@ -14,7 +14,7 @@ function actionColor(action = '') {
   if (action.includes('login_failed') || action.includes('rate_limit')) return 'text-red-600'
   if (action.includes('login'))    return 'text-emerald-700'
   if (action.includes('publish'))  return 'text-emerald-700'
-  if (action.includes('create') || action.includes('created')) return 'text-indigo-700'
+  if (action.includes('create') || action.includes('created')) return 'text-[#C41E5C]'
   if (action.includes('role'))     return 'text-violet-700'
   if (action.includes('export'))   return 'text-teal-700'
   if (action.includes('settings') || action.includes('changed')) return 'text-amber-700'
@@ -64,11 +64,11 @@ export default function AuditLogs() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Activity className="w-4 h-4 text-indigo-600" />
+            <Activity className="w-4 h-4 text-[#E63E6D]" />
             <div>
               <h1 className="text-[15px] font-bold text-slate-900 leading-none">Audit Logs</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">System activity and security events</p>
@@ -106,7 +106,7 @@ export default function AuditLogs() {
             { sev: 'critical', label: 'Critical',   color: 'text-red-700'    },
           ].map(s => (
             <button key={s.sev} onClick={() => setFilterSev(s.sev)}
-              className={`bg-white rounded-2xl p-4 shadow-sm text-left transition-all ${filterSev === s.sev ? 'ring-2 ring-indigo-200' : ''}`}>
+              className={`bg-white rounded-2xl p-4 shadow-sm text-left transition-all ${filterSev === s.sev ? 'ring-2 ring-[#FFB3C6]' : ''}`}>
               <p className={`text-2xl font-bold ${s.color}`}>{counts[s.sev]}</p>
               <p className="text-[12px] text-slate-500 mt-0.5">{s.label}</p>
             </button>
@@ -118,7 +118,7 @@ export default function AuditLogs() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search by user, action, resource, IP…"
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]" />
         </div>
 
         {/* Log Table */}

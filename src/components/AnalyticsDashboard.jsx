@@ -77,11 +77,11 @@ export default function AnalyticsDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <TrendingUp className="w-4 h-4 text-indigo-600" />
+            <TrendingUp className="w-4 h-4 text-[#E63E6D]" />
             <div>
               <h1 className="text-[15px] font-bold text-slate-900 leading-none">Analytics & Insights</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Quiz performance overview</p>

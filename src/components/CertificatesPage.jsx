@@ -116,7 +116,7 @@ export default function CertificatesPage() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between flex-wrap gap-3">
@@ -157,8 +157,8 @@ export default function CertificatesPage() {
             className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center">
-                <Settings className="w-4 h-4 text-indigo-600" />
+              <div className="w-7 h-7 rounded-lg bg-[#FFE5EC] flex items-center justify-center">
+                <Settings className="w-4 h-4 text-[#E63E6D]" />
               </div>
               <div className="text-left">
                 <p className="text-sm font-semibold text-slate-900">Configure Certificate Templates</p>
@@ -174,7 +174,7 @@ export default function CertificatesPage() {
             <div className="border-t border-slate-100 px-5 py-4">
               {quizzesLoading ? (
                 <div className="flex justify-center py-6">
-                  <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-[#FF6B9D] border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : (() => {
                 const certQuizzes = quizzes.filter(q => q.certificate_enabled)
@@ -199,7 +199,7 @@ export default function CertificatesPage() {
                       const gradClass = TEMPLATE_COLORS[tplKey] || TEMPLATE_COLORS.classic
 
                       return (
-                        <div key={quiz.id} className="rounded-xl border-2 border-indigo-200 bg-indigo-50/30 p-4 flex flex-col gap-3">
+                        <div key={quiz.id} className="rounded-xl border-2 border-[#FFB3C6] bg-[#FFF5F7]/30 p-4 flex flex-col gap-3">
                           {/* Mini template preview */}
                           <div className={`h-14 rounded-lg bg-gradient-to-br ${gradClass} border flex items-center justify-center relative overflow-hidden`}
                                style={{ borderColor: color + '55' }}>
@@ -222,7 +222,7 @@ export default function CertificatesPage() {
                           <Link
                             to={`/quizzes/${quiz.id}/settings`}
                             state={{ tab: 'certificate' }}
-                            className="flex items-center justify-center gap-1.5 w-full py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
+                            className="flex items-center justify-center gap-1.5 w-full py-2 rounded-lg text-xs font-semibold bg-[#E63E6D] hover:bg-[#C41E5C] text-white transition-colors"
                           >
                             <Settings className="w-3.5 h-3.5" />
                             Edit Template
@@ -245,7 +245,7 @@ export default function CertificatesPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by name, email, or quiz…"
-              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40"
             />
           </div>
           <select
@@ -270,7 +270,7 @@ export default function CertificatesPage() {
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[#FF6B9D] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : error ? (
           <div className="text-center py-20 text-red-500 text-sm">{error}</div>
@@ -322,7 +322,7 @@ export default function CertificatesPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setViewCert(cert)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC] transition-colors"
                           >
                             <Eye className="w-3.5 h-3.5" /> View
                           </button>

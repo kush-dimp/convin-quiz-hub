@@ -22,7 +22,7 @@ const TABS = [
 
 function Toggle({ checked, onChange }) {
   return (
-    <button type="button" onClick={() => onChange(!checked)} className={`relative inline-flex w-10 h-5 rounded-full transition-colors flex-shrink-0 ${checked ? 'bg-indigo-600' : 'bg-slate-300'}`}>
+    <button type="button" onClick={() => onChange(!checked)} className={`relative inline-flex w-10 h-5 rounded-full transition-colors flex-shrink-0 ${checked ? 'bg-[#E63E6D]' : 'bg-slate-300'}`}>
       <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
     </button>
   )
@@ -77,7 +77,7 @@ function TimingSettings({ settings, onSettingChange }) {
                 value={settings.time_limit_mins ?? 45}
                 min={1} max={480}
                 onChange={e => onSettingChange('time_limit_mins', +e.target.value)}
-                className="w-20 border border-slate-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50"
+                className="w-20 border border-slate-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 bg-slate-50"
               />
               <span className="text-sm text-slate-500">minutes</span>
             </div>
@@ -89,7 +89,7 @@ function TimingSettings({ settings, onSettingChange }) {
         {perQ && (
           <Row label="Default per-question time" description="Seconds per question">
             <div className="flex items-center gap-2">
-              <input type="number" value={perQTime} min={5} max={600} onChange={e => setPerQTime(+e.target.value)} className="w-20 border border-slate-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50" />
+              <input type="number" value={perQTime} min={5} max={600} onChange={e => setPerQTime(+e.target.value)} className="w-20 border border-slate-200 rounded-lg px-2.5 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 bg-slate-50" />
               <span className="text-sm text-slate-500">seconds</span>
             </div>
           </Row>
@@ -214,8 +214,8 @@ function PresentationSettings({ settings, onSettingChange }) {
       <Section title="Presentation Mode">
         <div className="grid grid-cols-2 gap-2">
           {modes.map(m => (
-            <button key={m.id} onClick={() => setMode(m.id)} className={`text-left p-3 rounded-xl border-2 transition-all ${mode === m.id ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`}>
-              <p className={`text-sm font-semibold ${mode === m.id ? 'text-indigo-700' : 'text-slate-800'}`}>{m.label}</p>
+            <button key={m.id} onClick={() => setMode(m.id)} className={`text-left p-3 rounded-xl border-2 transition-all ${mode === m.id ? 'border-[#FF6B9D] bg-[#FFF5F7]' : 'border-slate-200 hover:border-slate-300'}`}>
+              <p className={`text-sm font-semibold ${mode === m.id ? 'text-[#C41E5C]' : 'text-slate-800'}`}>{m.label}</p>
               <p className="text-xs text-slate-500 mt-0.5">{m.desc}</p>
             </button>
           ))}
@@ -276,8 +276,8 @@ function ScoringRules({ settings, onSettingChange }) {
       <Section title="Scoring Method">
         <div className="grid grid-cols-2 gap-2">
           {methods.map(m => (
-            <button key={m.id} onClick={() => setMethod(m.id)} className={`text-left p-3 rounded-xl border-2 transition-all ${method === m.id ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`}>
-              <p className={`text-sm font-semibold ${method === m.id ? 'text-indigo-700' : 'text-slate-800'}`}>{m.label}</p>
+            <button key={m.id} onClick={() => setMethod(m.id)} className={`text-left p-3 rounded-xl border-2 transition-all ${method === m.id ? 'border-[#FF6B9D] bg-[#FFF5F7]' : 'border-slate-200 hover:border-slate-300'}`}>
+              <p className={`text-sm font-semibold ${method === m.id ? 'text-[#C41E5C]' : 'text-slate-800'}`}>{m.label}</p>
               <p className="text-xs text-slate-500 mt-0.5">{m.desc}</p>
             </button>
           ))}
@@ -367,7 +367,7 @@ function SecuritySettings({ settings, onSettingChange }) {
               />
               <button
                 onClick={() => onSettingChange('access_password', Math.random().toString(36).slice(2,10).toUpperCase())}
-                className="text-xs text-indigo-600 hover:text-indigo-700"
+                className="text-xs text-[#E63E6D] hover:text-[#C41E5C]"
               >
                 Regenerate
               </button>
@@ -437,8 +437,8 @@ function FeedbackSettings({ settings, onSettingChange }) {
       <Section title="Feedback Timing">
         <div className="grid grid-cols-2 gap-2">
           {[{ id: 'immediate', label: 'Immediate', desc: 'Show after each question' }, { id: 'deferred', label: 'Deferred', desc: 'Show after full submission' }].map(m => (
-            <button key={m.id} onClick={() => setFeedbackMode(m.id)} className={`text-left p-3 rounded-xl border-2 transition-all ${feedbackMode === m.id ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`}>
-              <p className={`text-sm font-semibold ${feedbackMode === m.id ? 'text-indigo-700' : 'text-slate-800'}`}>{m.label}</p>
+            <button key={m.id} onClick={() => setFeedbackMode(m.id)} className={`text-left p-3 rounded-xl border-2 transition-all ${feedbackMode === m.id ? 'border-[#FF6B9D] bg-[#FFF5F7]' : 'border-slate-200 hover:border-slate-300'}`}>
+              <p className={`text-sm font-semibold ${feedbackMode === m.id ? 'text-[#C41E5C]' : 'text-slate-800'}`}>{m.label}</p>
               <p className="text-xs text-slate-500 mt-0.5">{m.desc}</p>
             </button>
           ))}
@@ -507,7 +507,7 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
 
   const templates = [
     { id: 'classic',    label: 'Classic',    preview: 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-300'  },
-    { id: 'modern',     label: 'Modern',     preview: 'bg-gradient-to-br from-indigo-50 to-blue-100 border-indigo-300' },
+    { id: 'modern',     label: 'Modern',     preview: 'bg-gradient-to-br from-indigo-50 to-blue-100 border-[#FF6B9D]/60' },
     { id: 'minimalist', label: 'Minimalist', preview: 'bg-white border-slate-300'                                       },
     { id: 'corporate',  label: 'Corporate',  preview: 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-300'  },
   ]
@@ -526,11 +526,11 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
             <div className="grid grid-cols-2 gap-2">
               {templates.map(t => (
                 <button key={t.id} onClick={() => { setTemplate(t.id); updateTpl({ template: t.id }) }}
-                  className={`p-3 rounded-xl border-2 transition-all ${template === t.id ? 'border-indigo-500' : 'border-transparent hover:border-slate-200'}`}>
+                  className={`p-3 rounded-xl border-2 transition-all ${template === t.id ? 'border-[#FF6B9D]' : 'border-transparent hover:border-slate-200'}`}>
                   <div className={`h-16 rounded-lg border-2 flex items-center justify-center ${t.preview}`}>
                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Certificate</span>
                   </div>
-                  <p className={`text-xs font-semibold mt-1.5 ${template === t.id ? 'text-indigo-600' : 'text-slate-600'}`}>{t.label}</p>
+                  <p className={`text-xs font-semibold mt-1.5 ${template === t.id ? 'text-[#E63E6D]' : 'text-slate-600'}`}>{t.label}</p>
                 </button>
               ))}
             </div>
@@ -570,13 +570,13 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
             <p className="text-xs text-slate-500">Available placeholders in certificate text:</p>
             <div className="flex flex-wrap gap-2 mt-2">
               {dynamicFields.map(f => (
-                <code key={f} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg border border-indigo-100 font-mono">{f}</code>
+                <code key={f} className="text-xs bg-[#FFF5F7] text-[#C41E5C] px-2 py-1 rounded-lg border border-[#FFE5EC] font-mono">{f}</code>
               ))}
             </div>
           </Section>
           <button
             onClick={() => setShowPreview(true)}
-            className="w-full py-2.5 rounded-xl border-2 border-dashed border-indigo-300 text-indigo-600 text-sm font-semibold hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-xl border-2 border-dashed border-[#FF6B9D]/60 text-[#E63E6D] text-sm font-semibold hover:bg-[#FFF5F7] transition-colors flex items-center justify-center gap-2"
           >
             <Eye className="w-4 h-4" /> Preview Certificate
           </button>
@@ -661,7 +661,7 @@ function IntegrationSettings({ settings, onSettingChange }) {
       <Section title="Embed Code">
         <div className="flex gap-2 mb-3">
           {['iframe','javascript'].map(t => (
-            <button key={t} onClick={() => setEmbedType(t)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${embedType === t ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{t === 'iframe' ? 'iFrame' : 'JS Widget'}</button>
+            <button key={t} onClick={() => setEmbedType(t)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${embedType === t ? 'bg-[#E63E6D] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{t === 'iframe' ? 'iFrame' : 'JS Widget'}</button>
           ))}
         </div>
         <div className="relative">
@@ -673,14 +673,14 @@ function IntegrationSettings({ settings, onSettingChange }) {
       </Section>
       <Section title="SCORM Export">
         <div className="flex items-center gap-3 p-4 border border-slate-200 rounded-xl">
-          <FileText className="w-8 h-8 text-indigo-400 flex-shrink-0" />
+          <FileText className="w-8 h-8 text-[#FF6B9D] flex-shrink-0" />
           <div className="flex-1">
             <p className="text-sm font-semibold text-slate-800">Export as SCORM Package</p>
             <p className="text-xs text-slate-500 mt-0.5">Compatible with Moodle, Canvas, Blackboard, and other LMS platforms</p>
           </div>
           <div className="flex gap-2">
-            <button className="px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">SCORM 1.2</button>
-            <button className="px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">SCORM 2004</button>
+            <button className="px-3 py-1.5 text-xs font-semibold text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC] rounded-lg transition-colors">SCORM 1.2</button>
+            <button className="px-3 py-1.5 text-xs font-semibold text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC] rounded-lg transition-colors">SCORM 2004</button>
           </div>
         </div>
       </Section>
@@ -693,7 +693,7 @@ function IntegrationSettings({ settings, onSettingChange }) {
                 value={h.url}
                 onChange={e => { const hs = [...hooks]; hs[i] = { ...h, url: e.target.value }; setHooks(hs) }}
                 placeholder="https://your-server.com/webhook"
-                className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300 font-mono bg-slate-50"
+                className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]/40 font-mono bg-slate-50"
               />
             </div>
           ))}
@@ -705,7 +705,7 @@ function IntegrationSettings({ settings, onSettingChange }) {
             <div key={int.name} className={`flex items-center gap-2.5 p-3 rounded-xl border transition-colors ${int.connected ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200'}`}>
               <span className="text-lg">{int.icon}</span>
               <span className="text-xs font-medium text-slate-700 flex-1 truncate">{int.name}</span>
-              <button className={`text-xs font-semibold px-2 py-1 rounded-lg transition-colors ${int.connected ? 'text-red-500 hover:bg-red-50' : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'}`}>
+              <button className={`text-xs font-semibold px-2 py-1 rounded-lg transition-colors ${int.connected ? 'text-red-500 hover:bg-red-50' : 'text-[#E63E6D] bg-[#FFF5F7] hover:bg-[#FFE5EC]'}`}>
                 {int.connected ? 'Disconnect' : 'Connect'}
               </button>
             </div>
@@ -823,7 +823,7 @@ export default function QuizSettings() {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-[#FFB3C6] border-t-[#E63E6D] rounded-full animate-spin" />
           <p className="text-sm text-slate-500 font-medium">Loading settings…</p>
         </div>
       </div>
@@ -852,9 +852,9 @@ export default function QuizSettings() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-0.5 ${activeTab === tab.id ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100'}`}
+              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-0.5 ${activeTab === tab.id ? 'bg-[#FFF5F7] text-[#C41E5C]' : 'text-slate-600 hover:bg-slate-100'}`}
             >
-              <tab.icon className={`w-4 h-4 flex-shrink-0 ${activeTab === tab.id ? 'text-indigo-500' : 'text-slate-400'}`} />
+              <tab.icon className={`w-4 h-4 flex-shrink-0 ${activeTab === tab.id ? 'text-[#FF6B9D]' : 'text-slate-400'}`} />
               {tab.label}
             </button>
           ))}
@@ -863,7 +863,7 @@ export default function QuizSettings() {
           {saveError && (
             <p className="text-xs text-red-500 text-center">{saveError}</p>
           )}
-          <button onClick={save} disabled={saving} className="w-full flex items-center justify-center gap-2 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-60">
+          <button onClick={save} disabled={saving} className="w-full flex items-center justify-center gap-2 py-2 bg-[#E63E6D] hover:bg-[#C41E5C] text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-60">
             {saved ? <><Check className="w-4 h-4" /> Saved!</> : saving ? 'Saving…' : <><Save className="w-4 h-4" /> Save Settings</>}
           </button>
         </div>
@@ -872,7 +872,7 @@ export default function QuizSettings() {
       <main className="flex-1 overflow-y-auto p-6">
         <div className="max-w-xl mx-auto">
           <h1 className="text-base font-bold text-slate-900 mb-5 flex items-center gap-2">
-            {(() => { const t = TABS.find(t => t.id === activeTab); return t ? <><t.icon className="w-5 h-5 text-indigo-500" />{t.label}</> : null })()}
+            {(() => { const t = TABS.find(t => t.id === activeTab); return t ? <><t.icon className="w-5 h-5 text-[#FF6B9D]" />{t.label}</> : null })()}
           </h1>
           <Panel {...panelProps} />
         </div>

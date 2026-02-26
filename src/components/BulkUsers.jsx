@@ -10,7 +10,7 @@ const DEPARTMENTS = ['Engineering', 'Sales', 'Marketing', 'HR', 'Finance', 'Oper
 const STATUSES    = ['active', 'inactive', 'pending']
 
 const statusColor = { active: 'bg-emerald-50 text-emerald-700', inactive: 'bg-slate-100 text-slate-500', pending: 'bg-amber-50 text-amber-700' }
-const roleColor   = { 'Super Admin': 'bg-violet-50 text-violet-600', Admin: 'bg-rose-50 text-rose-600', Instructor: 'bg-indigo-50 text-indigo-600', Reviewer: 'bg-blue-50 text-blue-600', Student: 'bg-emerald-50 text-emerald-700', Guest: 'bg-slate-100 text-slate-500' }
+const roleColor   = { 'Super Admin': 'bg-violet-50 text-violet-600', Admin: 'bg-rose-50 text-rose-600', Instructor: 'bg-[#FFF5F7] text-[#E63E6D]', Reviewer: 'bg-blue-50 text-blue-600', Student: 'bg-emerald-50 text-emerald-700', Guest: 'bg-slate-100 text-slate-500' }
 
 export default function BulkUsers() {
   const { users, loading, updateUser, deactivateUser, activateUser, inviteUser } = useUsers()
@@ -57,11 +57,11 @@ export default function BulkUsers() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Users className="w-4 h-4 text-indigo-600" />
+            <Users className="w-4 h-4 text-[#E63E6D]" />
             <div>
               <h1 className="text-[15px] font-bold text-slate-900 leading-none">Users</h1>
               <p className="text-[11px] text-slate-400 mt-0.5">Manage and invite team members</p>
@@ -82,7 +82,7 @@ export default function BulkUsers() {
                 const department = window.prompt('Department (optional):') || ''
                 inviteUser({ email, name, role, department })
               }}
-              className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-indigo-200 transition-all"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all"
             >
               <Plus className="w-4 h-4" /> Add User
             </button>
@@ -94,15 +94,15 @@ export default function BulkUsers() {
         <div className="bg-white rounded-2xl shadow-sm px-4 py-3 flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-44">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search users…" className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search users…" className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]" />
           </div>
-          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
             <option value="all">All Roles</option>{ROLES.map(r => <option key={r}>{r}</option>)}
           </select>
-          <select value={deptFilter} onChange={e => setDeptFilter(e.target.value)} className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <select value={deptFilter} onChange={e => setDeptFilter(e.target.value)} className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
             <option value="all">All Depts</option>{DEPARTMENTS.map(d => <option key={d}>{d}</option>)}
           </select>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]">
             <option value="all">All Status</option>{STATUSES.map(s => <option key={s} className="capitalize">{s}</option>)}
           </select>
           {selected.size > 0 && (
@@ -145,7 +145,7 @@ export default function BulkUsers() {
               <thead>
                 <tr className="border-b border-slate-100">
                   <th className="w-10 px-4 py-3.5">
-                    <input type="checkbox" checked={allSelected} onChange={e => setSelected(e.target.checked ? new Set(filtered.map(u => u.id)) : new Set())} className="rounded accent-indigo-600" />
+                    <input type="checkbox" checked={allSelected} onChange={e => setSelected(e.target.checked ? new Set(filtered.map(u => u.id)) : new Set())} className="rounded accent-[#E63E6D]" />
                   </th>
                   <th className="text-left px-4 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">User</th>
                   <th className="text-left px-4 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Role</th>
@@ -159,8 +159,8 @@ export default function BulkUsers() {
               </thead>
               <tbody>
                 {filtered.map(u => (
-                  <tr key={u.id} className={`border-b border-slate-50 hover:bg-slate-50/70 transition-colors ${selected.has(u.id) ? 'bg-indigo-50/40' : ''}`}>
-                    <td className="px-4 py-3"><input type="checkbox" checked={selected.has(u.id)} onChange={() => toggle(u.id)} className="rounded accent-indigo-600" /></td>
+                  <tr key={u.id} className={`border-b border-slate-50 hover:bg-slate-50/70 transition-colors ${selected.has(u.id) ? 'bg-[#FFF5F7]/40' : ''}`}>
+                    <td className="px-4 py-3"><input type="checkbox" checked={selected.has(u.id)} onChange={() => toggle(u.id)} className="rounded accent-[#E63E6D]" /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-[11px] font-bold text-slate-500 flex-shrink-0">
@@ -176,7 +176,7 @@ export default function BulkUsers() {
                       <select
                         value={u.role || ''}
                         onChange={e => updateUser(u.id, { role: e.target.value })}
-                        className={`text-xs px-2 py-0.5 rounded-full font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-200 ${roleColor[u.role] || 'bg-slate-100 text-slate-500'}`}
+                        className={`text-xs px-2 py-0.5 rounded-full font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] ${roleColor[u.role] || 'bg-slate-100 text-slate-500'}`}
                       >
                         {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                       </select>
@@ -212,7 +212,7 @@ export default function BulkUsers() {
                             const name = window.prompt('Full name:', u.name)
                             if (name !== null && name.trim()) updateUser(u.id, { name: name.trim() })
                           }}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
+                          className="p-1.5 text-slate-400 hover:text-[#E63E6D] hover:bg-[#FFF5F7] rounded-lg transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
                   </tr>
