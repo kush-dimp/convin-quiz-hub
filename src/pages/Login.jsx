@@ -58,7 +58,7 @@ export default function Login() {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FF6B9D] to-[#E63E6D] shadow-lg shadow-[#FFB3C6] mb-4">
             <Zap className="w-6 h-6 text-white" strokeWidth={2.5} />
           </div>
-          <h1 className="text-[22px] font-bold text-slate-900 leading-tight">QuizPlatform</h1>
+          <h1 className="text-[22px] font-bold text-slate-900 leading-tight">Convin Assess</h1>
           <p className="text-[13px] text-slate-400 mt-1">
             {mode === 'login' ? 'Sign in to your workspace' : 'Create your account'}
           </p>

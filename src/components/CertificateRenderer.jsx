@@ -313,7 +313,7 @@ function CorporateTemplate({ cert, quizTitle, userName, scorePct, instructorName
             </svg>
           </div>
           <div>
-            <p style={{ color: 'white', fontSize: 14, fontWeight: 700, margin: 0 }}>QuizPlatform</p>
+            <p style={{ color: 'white', fontSize: 14, fontWeight: 700, margin: 0 }}>Convin Assess</p>
             <p style={{ color: '#94a3b8', fontSize: 10, margin: 0, letterSpacing: 1.5, textTransform: 'uppercase' }}>Professional Certification</p>
           </div>
         </div>
@@ -380,7 +380,7 @@ function CorporateTemplate({ cert, quizTitle, userName, scorePct, instructorName
             border: '1px solid #e2e8f0',
           }}>
             <p style={{ fontSize: 10, color: '#94a3b8', margin: '0 0 2px', letterSpacing: 1, textTransform: 'uppercase' }}>Verified</p>
-            <p style={{ fontSize: 12, fontWeight: 600, color: '#334155', margin: 0 }}>QuizPlatform</p>
+            <p style={{ fontSize: 12, fontWeight: 600, color: '#334155', margin: 0 }}>Convin Assess</p>
           </div>
         </div>
       </div>

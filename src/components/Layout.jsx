@@ -138,7 +138,7 @@ export default function Layout() {
           {!collapsed && (
             <>
               <div className="leading-none ml-3 flex-1 min-w-0">
-                <p className="text-[13px] font-bold text-white tracking-tight">QuizPlatform</p>
+                <p className="text-[13px] font-bold text-white tracking-tight">Convin Assess</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">Workspace</p>
               </div>
               <button

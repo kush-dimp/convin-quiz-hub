@@ -637,8 +637,8 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
 function IntegrationSettings({ settings, onSettingChange }) {
   const [embedType, setEmbedType] = useState('iframe')
   const quizId = 'quiz_abc123'
-  const iframeCode = `<iframe src="https://quizplatform.com/embed/${quizId}" width="100%" height="600" frameborder="0"></iframe>`
-  const jsCode     = `<div id="quiz-embed" data-quiz="${quizId}"></div>\n<script src="https://quizplatform.com/embed.js"></script>`
+  const iframeCode = `<iframe src="https://convinassess.com/embed/${quizId}" width="100%" height="600" frameborder="0"></iframe>`
+  const jsCode     = `<div id="quiz-embed" data-quiz="${quizId}"></div>\n<script src="https://convinassess.com/embed.js"></script>`
 
   const webhooks = [
     { event: 'quiz_started',   url: '' },
