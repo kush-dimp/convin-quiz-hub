@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { GraduationCap, Search, Printer, Trash2, Eye, X, RefreshCw } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { GraduationCap, Search, Printer, Trash2, Eye, X, RefreshCw, Settings, ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import CertificateRenderer, { CERT_W, CERT_H } from './CertificateRenderer'
 
 function formatDate(iso) {
@@ -20,20 +21,27 @@ function isExpiringSoon(expiresAt) {
   return diff > 0 && diff < 30 * 24 * 60 * 60 * 1000
 }
 
+const TEMPLATE_LABELS = { classic: 'Classic', modern: 'Modern', minimalist: 'Minimalist', corporate: 'Corporate' }
+const TEMPLATE_COLORS = { classic: 'from-amber-50 to-amber-100', modern: 'from-indigo-50 to-blue-100', minimalist: 'from-white to-slate-50', corporate: 'from-slate-50 to-slate-100' }
+
 export default function CertificatesPage() {
   const [certs, setCerts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  const [quizzes, setQuizzes] = useState([])
+  const [quizzesLoading, setQuizzesLoading] = useState(true)
+  const [configOpen, setConfigOpen] = useState(true)
+
   const [search, setSearch] = useState('')
   const [quizFilter, setQuizFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
 
-  const [viewCert, setViewCert] = useState(null) // cert object for the modal
-  const [revokeTarget, setRevokeTarget] = useState(null) // cert to confirm revoke
+  const [viewCert, setViewCert] = useState(null)
+  const [revokeTarget, setRevokeTarget] = useState(null)
   const [revoking, setRevoking] = useState(false)
 
-  useEffect(() => { fetchCerts() }, [])
+  useEffect(() => { fetchCerts(); fetchQuizzes() }, [])
 
   async function fetchCerts() {
     setLoading(true)
@@ -47,6 +55,20 @@ export default function CertificatesPage() {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function fetchQuizzes() {
+    setQuizzesLoading(true)
+    try {
+      const res = await fetch('/api/quizzes')
+      if (!res.ok) throw new Error()
+      const data = await res.json()
+      setQuizzes(data)
+    } catch {
+      // non-fatal
+    } finally {
+      setQuizzesLoading(false)
     }
   }
 
@@ -131,6 +153,94 @@ export default function CertificatesPage() {
       </div>
 
       <div className="px-6 py-6 max-w-6xl mx-auto">
+
+        {/* ── Configure Templates section ── */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 overflow-hidden">
+          <button
+            onClick={() => setConfigOpen(v => !v)}
+            className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <Settings className="w-4 h-4 text-indigo-600" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-slate-900">Configure Certificate Templates</p>
+                <p className="text-xs text-slate-400">Jump to certificate settings for quizzes with templates configured</p>
+              </div>
+            </div>
+            {configOpen
+              ? <ChevronUp className="w-4 h-4 text-slate-400" />
+              : <ChevronDown className="w-4 h-4 text-slate-400" />}
+          </button>
+
+          {configOpen && (
+            <div className="border-t border-slate-100 px-5 py-4">
+              {quizzesLoading ? (
+                <div className="flex justify-center py-6">
+                  <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (() => {
+                const certQuizzes = quizzes.filter(q => q.certificate_enabled)
+                if (certQuizzes.length === 0) {
+                  return (
+                    <div className="text-center py-6">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
+                        <Settings className="w-5 h-5 text-slate-400" />
+                      </div>
+                      <p className="text-sm font-medium text-slate-600 mb-1">No quizzes have certificates enabled</p>
+                      <p className="text-xs text-slate-400">Go to any quiz's Settings → Certificate tab to enable and design a template.</p>
+                    </div>
+                  )
+                }
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    {certQuizzes.map(quiz => {
+                      let tpl = {}
+                      try { tpl = JSON.parse(quiz.certificate_template || '{}') } catch {}
+                      const tplKey    = tpl.template || 'classic'
+                      const color     = tpl.primaryColor || '#4F46E5'
+                      const gradClass = TEMPLATE_COLORS[tplKey] || TEMPLATE_COLORS.classic
+
+                      return (
+                        <div key={quiz.id} className="rounded-xl border-2 border-indigo-200 bg-indigo-50/30 p-4 flex flex-col gap-3">
+                          {/* Mini template preview */}
+                          <div className={`h-14 rounded-lg bg-gradient-to-br ${gradClass} border flex items-center justify-center relative overflow-hidden`}
+                               style={{ borderColor: color + '55' }}>
+                            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-lg" style={{ background: color }} />
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                              {TEMPLATE_LABELS[tplKey]}
+                            </span>
+                          </div>
+
+                          {/* Quiz info */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-slate-800 truncate" title={quiz.title}>{quiz.title}</p>
+                            <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-500 mt-1">
+                              <span className="w-3 h-3 rounded-full inline-block border border-white shadow-sm flex-shrink-0" style={{ background: color }} />
+                              {TEMPLATE_LABELS[tplKey]}
+                            </span>
+                          </div>
+
+                          {/* Configure button */}
+                          <Link
+                            to={`/quizzes/${quiz.id}/settings`}
+                            state={{ tab: 'certificate' }}
+                            className="flex items-center justify-center gap-1.5 w-full py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
+                          >
+                            <Settings className="w-3.5 h-3.5" />
+                            Edit Template
+                          </Link>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })()}
+            </div>
+          )}
+        </div>
+
         {/* Filters */}
         <div className="flex flex-wrap gap-3 mb-5">
           <div className="relative flex-1 min-w-[200px]">

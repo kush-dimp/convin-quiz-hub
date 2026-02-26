@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom'
 import {
   ChevronLeft, Timer, RefreshCw, Layout, BarChart2, Shield,
   MessageSquare, Award, Link as LinkIcon, Save, Check,
@@ -720,10 +720,11 @@ function SaveToast({ visible }) {
 export default function QuizSettings() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { quiz, loading } = useQuiz(id)
   const { updateQuiz } = useQuizzes()
 
-  const [activeTab, setActiveTab] = useState('timing')
+  const [activeTab, setActiveTab] = useState(location.state?.tab ?? 'timing')
   const [saving,    setSaving]    = useState(false)
   const [saved,     setSaved]     = useState(false)
   const [saveError, setSaveError] = useState(null)
