@@ -100,7 +100,7 @@ export default async function handler(req, res) {
         LEFT JOIN quiz_stats qs ON qs.quiz_id = q.id
         LEFT JOIN profiles p ON p.id = q.instructor_id
         WHERE q.status = ${status} AND q.instructor_id = ${instructorId}
-        ORDER BY q.created_at DESC
+        ORDER BY q.updated_at DESC
       `
     } else if (status) {
       rows = await sql`
@@ -109,7 +109,7 @@ export default async function handler(req, res) {
         LEFT JOIN quiz_stats qs ON qs.quiz_id = q.id
         LEFT JOIN profiles p ON p.id = q.instructor_id
         WHERE q.status = ${status}
-        ORDER BY q.created_at DESC
+        ORDER BY q.updated_at DESC
       `
     } else if (instructorId) {
       rows = await sql`
@@ -118,7 +118,7 @@ export default async function handler(req, res) {
         LEFT JOIN quiz_stats qs ON qs.quiz_id = q.id
         LEFT JOIN profiles p ON p.id = q.instructor_id
         WHERE q.instructor_id = ${instructorId}
-        ORDER BY q.created_at DESC
+        ORDER BY q.updated_at DESC
       `
     } else {
       rows = await sql`
@@ -126,7 +126,7 @@ export default async function handler(req, res) {
         FROM quizzes q
         LEFT JOIN quiz_stats qs ON qs.quiz_id = q.id
         LEFT JOIN profiles p ON p.id = q.instructor_id
-        ORDER BY q.created_at DESC
+        ORDER BY q.updated_at DESC
       `
     }
     return res.status(200).json(rows)
