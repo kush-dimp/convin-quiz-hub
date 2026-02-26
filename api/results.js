@@ -69,7 +69,9 @@ export default async function handler(req, res) {
             INSERT INTO certificates (user_id, quiz_id, attempt_id, expires_at)
             VALUES (${updatedAttempt.user_id}, ${updatedAttempt.quiz_id},
                     ${updatedAttempt.id}, ${expiresAt})
-            ON CONFLICT (user_id, quiz_id) DO NOTHING
+            ON CONFLICT (user_id, quiz_id) DO UPDATE
+              SET expires_at = COALESCE(certificates.expires_at, EXCLUDED.expires_at),
+                  attempt_id = EXCLUDED.attempt_id
           `
           const certRows = await sql`
             SELECT * FROM certificates
