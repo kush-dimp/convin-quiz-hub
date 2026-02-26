@@ -181,10 +181,10 @@ export default function QuizGrid() {
 
     const dir = sortDir === 'asc' ? 1 : -1
     switch (sort) {
-      case 'date':   list.sort((a, b) => dir * (new Date(b.updated_at) - new Date(a.updated_at))); break
+      case 'date':   list.sort((a, b) => dir * (new Date(a.updated_at) - new Date(b.updated_at))); break
       case 'title':  list.sort((a, b) => dir * a.title.localeCompare(b.title)); break
-      case 'views':  list.sort((a, b) => dir * ((b.quiz_stats?.views ?? 0) - (a.quiz_stats?.views ?? 0))); break
-      case 'taken':  list.sort((a, b) => dir * ((b.quiz_stats?.previews ?? 0) - (a.quiz_stats?.previews ?? 0))); break
+      case 'views':  list.sort((a, b) => dir * ((a.quiz_stats?.views ?? 0) - (b.quiz_stats?.views ?? 0))); break
+      case 'taken':  list.sort((a, b) => dir * ((a.quiz_stats?.previews ?? 0) - (b.quiz_stats?.previews ?? 0))); break
     }
     return list
   }, [localQuizzes, debouncedSearch, filters, sort, sortDir])
