@@ -330,14 +330,15 @@ export default function QuizTaker() {
   const [certificate, setCertificate] = useState(null)
   const [showCertModal, setShowCertModal] = useState(false)
 
-  // ── Visibility / cheat detection ────────────────────────────────────────
+  // ── Visibility / cheat detection (only while quiz is active) ────────────
   useEffect(() => {
+    if (results) return // stop counting after submission
     const handleVisibility = () => {
       if (document.hidden) setTabSwitches((n) => n + 1)
     }
     document.addEventListener('visibilitychange', handleVisibility)
     return () => document.removeEventListener('visibilitychange', handleVisibility)
-  }, [])
+  }, [results])
 
   // ── Load quiz data ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -361,17 +362,42 @@ export default function QuizTaker() {
       const questionData = await qRes.json()
 
       setQuiz(quizData)
-      setQuestions(questionData ?? [])
 
-      // Create attempt row (server uses DEMO_USER_ID)
+      // Normalize MCQ options: editors store options as plain strings ['A text', 'B text']
+      // but QuizTaker needs {id, text} objects to key answers and score correctly.
+      const normalizedQuestions = (questionData ?? []).map((q) => {
+        if (
+          (q.type === 'mcq_single' || q.type === 'mcq_multi') &&
+          Array.isArray(q.payload?.options)
+        ) {
+          const opts = q.payload.options.map((opt, i) =>
+            typeof opt === 'string'
+              ? { id: String.fromCharCode(97 + i), text: opt } // 'a','b','c'...
+              : opt // already an object — pass through
+          )
+          return { ...q, payload: { ...q.payload, options: opts } }
+        }
+        return q
+      })
+      setQuestions(normalizedQuestions)
+
+      // Fetch current attempt count to set the correct attempt_number
+      const prevRes = await fetch(
+        `/api/results?quizId=${id}&userId=${profile.id}&limit=100`
+      )
+      const prevAttempts = prevRes.ok ? await prevRes.json() : []
+      const attemptNumber = (Array.isArray(prevAttempts) ? prevAttempts.length : 0) + 1
+
+      // Create attempt row
       const attRes = await fetch('/api/results/attempts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          quiz_id:    id,
-          user_id:    profile.id,
-          status:     'in_progress',
-          started_at: new Date().toISOString(),
+          quiz_id:        id,
+          user_id:        profile.id,
+          attempt_number: attemptNumber,
+          status:         'in_progress',
+          started_at:     new Date().toISOString(),
         }),
       })
       if (!attRes.ok) throw new Error('Failed to create attempt')
