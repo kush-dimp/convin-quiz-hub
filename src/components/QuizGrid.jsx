@@ -10,6 +10,7 @@ import ConfirmModal from './ConfirmModal'
 import Pagination from './Pagination'
 import { ToastContainer } from './Toast'
 import DuplicateModal from './DuplicateModal'
+import SyncButton from './SyncButton'
 import { useQuizzes } from '../hooks/useQuizzes'
 import { useDebounce } from '../hooks/useDebounce'
 
@@ -78,8 +79,8 @@ export default function QuizGrid() {
   const init = readUrlParams()
   const navigate = useNavigate()
 
-  /* ── Real data from Supabase ── */
-  const { quizzes: rawQuizzes, loading: dataLoading, createQuiz, deleteQuiz, publishQuiz } = useQuizzes()
+  /* ── Real data from Neon ── */
+  const { quizzes: rawQuizzes, loading: dataLoading, lastSynced, syncing, refetch, createQuiz, deleteQuiz, publishQuiz } = useQuizzes()
 
   /* ── Local quizzes state (mirrors hook but allows optimistic UI) ── */
   const [localQuizzes, setLocalQuizzes] = useState([])
@@ -331,14 +332,17 @@ export default function QuizGrid() {
             <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">My Quizzes</h1>
             <p className="font-body text-[11px] text-slate-400 mt-0.5">{localQuizzes.length} quizzes total</p>
           </div>
-          <button
-            onClick={handleCreateQuiz}
-            disabled={isCreating}
-            className="btn-shine flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-[#FFB3C6] flex-shrink-0 disabled:opacity-60"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            {isCreating ? 'Creating…' : 'Create Quiz'}
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <SyncButton lastSynced={lastSynced} syncing={syncing} onSync={refetch} />
+            <button
+              onClick={handleCreateQuiz}
+              disabled={isCreating}
+              className="btn-shine flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-[#FFB3C6] disabled:opacity-60"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              {isCreating ? 'Creating…' : 'Create Quiz'}
+            </button>
+          </div>
         </div>
       </header>
 

@@ -6,12 +6,15 @@ import { logAudit } from '../lib/audit'
  * @param {{ status?: string, instructorId?: string }} filters
  */
 export function useQuizzes(filters = {}) {
-  const [quizzes, setQuizzes] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState(null)
+  const [quizzes,    setQuizzes]    = useState([])
+  const [loading,    setLoading]    = useState(true)
+  const [error,      setError]      = useState(null)
+  const [lastSynced, setLastSynced] = useState(null)
+  const [syncing,    setSyncing]    = useState(false)
 
-  const fetchQuizzes = useCallback(async () => {
-    setLoading(true)
+  const fetchQuizzes = useCallback(async (silent = false) => {
+    if (silent) setSyncing(true)
+    else setLoading(true)
     setError(null)
     try {
       const params = new URLSearchParams()
@@ -21,14 +24,23 @@ export function useQuizzes(filters = {}) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to fetch quizzes')
       setQuizzes(data)
+      setLastSynced(new Date())
     } catch (err) {
       setError(err.message)
     } finally {
-      setLoading(false)
+      if (silent) setSyncing(false)
+      else setLoading(false)
     }
   }, [filters.status, filters.instructorId])
 
+  // Initial load
   useEffect(() => { fetchQuizzes() }, [fetchQuizzes])
+
+  // Silent auto-sync every 30s
+  useEffect(() => {
+    const id = setInterval(() => fetchQuizzes(true), 30000)
+    return () => clearInterval(id)
+  }, [fetchQuizzes])
 
   async function createQuiz(payload) {
     const res  = await fetch('/api/quizzes', {
@@ -83,7 +95,7 @@ export function useQuizzes(filters = {}) {
     return updateQuiz(id, { status: 'archived' })
   }
 
-  return { quizzes, loading, error, refetch: fetchQuizzes, createQuiz, updateQuiz, deleteQuiz, publishQuiz, archiveQuiz }
+  return { quizzes, loading, error, lastSynced, syncing, refetch: () => fetchQuizzes(true), createQuiz, updateQuiz, deleteQuiz, publishQuiz, archiveQuiz }
 }
 
 // DB columns that exist on the questions table

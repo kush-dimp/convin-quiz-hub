@@ -5,6 +5,7 @@ import {
   Mail, Eye, Search, ChevronDown, ChevronUp, AlertTriangle,
 } from 'lucide-react'
 import { useResults, useResultStats } from '../hooks/useResults'
+import SyncButton from './SyncButton'
 
 function StatCard({ icon: Icon, label, value, sub, iconBg, iconColor }) {
   return (
@@ -41,7 +42,7 @@ export default function ResultsDashboard() {
   const [page,       setPage]       = useState(1)
   const [selected,   setSelected]   = useState(new Set())
 
-  const { results, loading: resultsLoading, refetch } = useResults()
+  const { results, loading: resultsLoading, lastSynced, syncing, refetch } = useResults()
   const { stats } = useResultStats(null)
 
   async function deleteAttempt(id) {
@@ -114,10 +115,13 @@ export default function ResultsDashboard() {
             <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">Results</h1>
             <p className="text-[11px] text-slate-400 mt-0.5">{results.length} total attempts</p>
           </div>
-          <button onClick={exportCSV}
-            className="flex items-center gap-2 px-3.5 py-2 text-[13px] font-medium text-slate-600 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl transition-colors shadow-sm">
-            <Download className="w-3.5 h-3.5" /> Export CSV
-          </button>
+          <div className="flex items-center gap-2">
+            <SyncButton lastSynced={lastSynced} syncing={syncing} onSync={refetch} />
+            <button onClick={exportCSV}
+              className="flex items-center gap-2 px-3.5 py-2 text-[13px] font-medium text-slate-600 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl transition-colors shadow-sm">
+              <Download className="w-3.5 h-3.5" /> Export CSV
+            </button>
+          </div>
         </div>
       </header>
 

@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
 
 export function useResults(filters = {}) {
-  const [results, setResults] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState(null)
+  const [results,    setResults]    = useState([])
+  const [loading,    setLoading]    = useState(true)
+  const [error,      setError]      = useState(null)
+  const [lastSynced, setLastSynced] = useState(null)
+  const [syncing,    setSyncing]    = useState(false)
 
-  const fetchResults = useCallback(async () => {
-    setLoading(true)
+  const fetchResults = useCallback(async (silent = false) => {
+    if (silent) setSyncing(true)
+    else setLoading(true)
     setError(null)
     try {
       const params = new URLSearchParams()
@@ -18,16 +21,25 @@ export function useResults(filters = {}) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to fetch results')
       setResults(data)
+      setLastSynced(new Date())
     } catch (err) {
       setError(err.message)
     } finally {
-      setLoading(false)
+      if (silent) setSyncing(false)
+      else setLoading(false)
     }
   }, [filters.quizId, filters.userId, filters.flagged, filters.limit])
 
+  // Initial load
   useEffect(() => { fetchResults() }, [fetchResults])
 
-  return { results, loading, error, refetch: fetchResults }
+  // Silent auto-sync every 30s
+  useEffect(() => {
+    const id = setInterval(() => fetchResults(true), 30000)
+    return () => clearInterval(id)
+  }, [fetchResults])
+
+  return { results, loading, error, lastSynced, syncing, refetch: () => fetchResults(true) }
 }
 
 /** Single attempt detail including answers. */

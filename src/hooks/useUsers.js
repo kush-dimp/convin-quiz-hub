@@ -1,13 +1,16 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { logAudit } from '../lib/audit'
 
 export function useUsers(filters = {}) {
-  const [users,   setUsers]   = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState(null)
+  const [users,       setUsers]       = useState([])
+  const [loading,     setLoading]     = useState(true)
+  const [error,       setError]       = useState(null)
+  const [lastSynced,  setLastSynced]  = useState(null)
+  const [syncing,     setSyncing]     = useState(false)
 
-  const fetchUsers = useCallback(async () => {
-    setLoading(true)
+  const fetchUsers = useCallback(async (silent = false) => {
+    if (silent) setSyncing(true)
+    else setLoading(true)
     setError(null)
     try {
       const params = new URLSearchParams()
@@ -17,14 +20,23 @@ export function useUsers(filters = {}) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to fetch users')
       setUsers(data)
+      setLastSynced(new Date())
     } catch (err) {
       setError(err.message)
     } finally {
-      setLoading(false)
+      if (silent) setSyncing(false)
+      else setLoading(false)
     }
   }, [filters.role, filters.status])
 
+  // Initial load
   useEffect(() => { fetchUsers() }, [fetchUsers])
+
+  // Silent auto-sync every 30s
+  useEffect(() => {
+    const id = setInterval(() => fetchUsers(true), 30000)
+    return () => clearInterval(id)
+  }, [fetchUsers])
 
   async function updateUser(id, patch) {
     const res  = await fetch(`/api/users/${id}`, {
@@ -64,7 +76,7 @@ export function useUsers(filters = {}) {
     return { data: res.ok ? data : null, error: res.ok ? null : { message: data.error } }
   }
 
-  return { users, loading, error, refetch: fetchUsers, updateUser, deactivateUser, activateUser, inviteUser }
+  return { users, loading, error, lastSynced, syncing, refetch: () => fetchUsers(true), updateUser, deactivateUser, activateUser, inviteUser }
 }
 
 export function useUser(userId) {

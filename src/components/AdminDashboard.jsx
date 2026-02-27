@@ -18,6 +18,7 @@ import {
   usePopularQuizzes,
 } from '../hooks/useAnalytics'
 import { useAuditLogs } from '../hooks/useAuditLogs'
+import SyncButton from './SyncButton'
 
 const SYSTEM = [
   { label: 'Database',     value: '2.4 GB',  pct: 48, status: 'ok',   icon: Database     },
@@ -86,9 +87,8 @@ export default function AdminDashboard() {
   const navigate = useNavigate()
   const [widgets, setWidgets] = useState(DEFAULT_WIDGETS)
   const [showCustomize, setShowCustomize] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
 
-  const { stats, loading: statsLoading } = useAdminStats()
+  const { stats, loading: statsLoading, lastSynced, syncing, refetch } = useAdminStats()
   const { data: signupData }             = useSignupOverTime()
   const { data: popularQuizzes }         = usePopularQuizzes(5)
   const { logs: auditLogs }              = useAuditLogs({ live: false })
@@ -118,10 +118,7 @@ export default function AdminDashboard() {
             <p className="text-[11px] text-slate-400 mt-0.5">Platform overview &amp; health</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => { setRefreshing(true); setTimeout(() => setRefreshing(false), 1100) }}
-              className={`p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors ${refreshing ? 'animate-spin' : ''}`}>
-              <RefreshCw className="w-4 h-4" />
-            </button>
+            <SyncButton lastSynced={lastSynced} syncing={syncing} onSync={refetch} />
             <button onClick={() => setShowCustomize(p => !p)}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium border rounded-xl transition-colors ${
                 showCustomize ? 'border-[#FFB3C6] bg-[#FFF5F7] text-[#C41E5C]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'

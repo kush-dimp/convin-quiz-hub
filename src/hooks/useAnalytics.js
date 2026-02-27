@@ -1,17 +1,33 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 export function useAdminStats() {
-  const [stats,   setStats]   = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [stats,      setStats]      = useState(null)
+  const [loading,    setLoading]    = useState(true)
+  const [lastSynced, setLastSynced] = useState(null)
+  const [syncing,    setSyncing]    = useState(false)
 
-  useEffect(() => {
-    fetch('/api/analytics/admin-stats')
-      .then(r => r.json())
-      .then(data => { setStats(data); setLoading(false) })
-      .catch(() => setLoading(false))
+  const fetchStats = useCallback(async (silent = false) => {
+    if (silent) setSyncing(true)
+    try {
+      const data = await fetch('/api/analytics/admin-stats').then(r => r.json())
+      setStats(data)
+      setLastSynced(new Date())
+    } catch {}
+    finally {
+      if (silent) setSyncing(false)
+      else setLoading(false)
+    }
   }, [])
 
-  return { stats, loading }
+  useEffect(() => { fetchStats() }, [fetchStats])
+
+  // Silent auto-sync every 30s
+  useEffect(() => {
+    const id = setInterval(() => fetchStats(true), 30000)
+    return () => clearInterval(id)
+  }, [fetchStats])
+
+  return { stats, loading, lastSynced, syncing, refetch: () => fetchStats(true) }
 }
 
 export function useScoreDistribution(quizId) {
