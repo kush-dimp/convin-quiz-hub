@@ -75,7 +75,7 @@ export default function UserProgressPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
+      <header className="glass sticky top-0 z-50 border-b border-slate-200/70">
         <div className="max-w-5xl mx-auto px-6 h-[56px] flex items-center gap-3">
           <Award className="w-4 h-4 text-[#E63E6D]" />
           <div>

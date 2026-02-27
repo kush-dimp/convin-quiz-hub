@@ -65,7 +65,7 @@ export default function AuditLogs() {
 
   return (
     <div className="min-h-screen">
-      <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
+      <header className="glass sticky top-0 z-50 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[56px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Activity className="w-4 h-4 text-[#E63E6D]" />

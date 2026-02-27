@@ -65,7 +65,7 @@ export default function NotificationCenter() {
 
   return (
     <div className="min-h-screen">
-      <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
+      <header className="glass sticky top-0 z-50 border-b border-slate-200/70">
         <div className="max-w-3xl mx-auto px-6 h-[56px] flex items-center justify-between">
           <div>
             <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">

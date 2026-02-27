@@ -325,7 +325,7 @@ export default function QuizGrid() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="glass sticky top-0 z-10 border-b border-slate-200/70">
+      <header className="glass sticky top-0 z-50 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 h-[60px] flex items-center justify-between gap-4">
           <div>
             <h1 className="font-heading text-xl font-bold text-slate-900 leading-none">My Quizzes</h1>
