@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import {
   Eye, Play, BarChart2, Lock, MoreVertical,
-  Pencil, Copy, Share2, Trash2, Timer, Check, History,
+  Pencil, Copy, Share2, Trash2, Check, History,
 } from 'lucide-react'
 
 const STATUS_STYLES = {
@@ -12,16 +12,16 @@ const STATUS_STYLES = {
   archived:  'bg-amber-500/20    text-amber-300   border-amber-500/30',
 }
 
-/* gradient placeholder bg per category */
-const GRAD = [
-  'from-[#FF6B9D]/40 to-[#E63E6D]/40',
-  'from-blue-500/40 to-cyan-600/40',
-  'from-violet-500/40 to-pink-600/40',
-  'from-rose-500/40 to-orange-600/40',
-  'from-teal-500/40 to-emerald-600/40',
-  'from-amber-500/40 to-yellow-600/40',
+/* Per-card color palette — vibrant gradient thumbnail + matching tinted body */
+const PALETTE = [
+  { grad: 'from-[#FF6B9D] to-[#C41E5C]', bg: 'bg-pink-50',   border: 'border-pink-200',   statBorder: 'border-pink-100',   icon: 'text-[#E63E6D]',  hover: 'hover:bg-pink-100'   },
+  { grad: 'from-blue-500 to-cyan-600',    bg: 'bg-blue-50',   border: 'border-blue-200',   statBorder: 'border-blue-100',   icon: 'text-blue-500',   hover: 'hover:bg-blue-100'   },
+  { grad: 'from-violet-500 to-purple-600',bg: 'bg-violet-50', border: 'border-violet-200', statBorder: 'border-violet-100', icon: 'text-violet-500', hover: 'hover:bg-violet-100' },
+  { grad: 'from-rose-500 to-orange-500',  bg: 'bg-rose-50',   border: 'border-rose-200',   statBorder: 'border-rose-100',   icon: 'text-rose-500',   hover: 'hover:bg-rose-100'   },
+  { grad: 'from-teal-500 to-emerald-600', bg: 'bg-teal-50',   border: 'border-teal-200',   statBorder: 'border-teal-100',   icon: 'text-teal-500',   hover: 'hover:bg-teal-100'   },
+  { grad: 'from-amber-500 to-orange-400', bg: 'bg-amber-50',  border: 'border-amber-200',  statBorder: 'border-amber-100',  icon: 'text-amber-500',  hover: 'hover:bg-amber-100'  },
 ]
-function gradFor(id) { return GRAD[id % GRAD.length] }
+function paletteFor(id) { return PALETTE[id % PALETTE.length] }
 
 const CATEGORY_ICON = {
   'General': '📚', 'Technology': '💻', 'Science': '🔬',
@@ -32,12 +32,13 @@ const CATEGORY_ICON = {
 }
 
 function CardPlaceholder({ quiz }) {
-  const icon  = CATEGORY_ICON[quiz.category] || '📝'
+  const p    = paletteFor(quiz.id)
+  const icon = CATEGORY_ICON[quiz.category] || '📝'
   const first = (quiz.title || '?')[0].toUpperCase()
   return (
-    <div className={`relative flex items-center justify-center w-full h-full bg-gradient-to-br ${gradFor(quiz.id)}`}>
+    <div className={`relative flex items-center justify-center w-full h-full bg-gradient-to-br ${p.grad}`}>
       {/* Giant backdrop letter */}
-      <span className="absolute font-heading text-[96px] font-black text-white/[0.10] select-none leading-none pointer-events-none">
+      <span className="absolute font-heading text-[96px] font-black text-white/[0.12] select-none leading-none pointer-events-none">
         {first}
       </span>
       {/* Category badge */}
@@ -47,7 +48,7 @@ function CardPlaceholder({ quiz }) {
         </span>
       )}
       {/* Floating icon */}
-      <div className="relative z-10 w-14 h-14 rounded-2xl bg-white/70 backdrop-blur-sm flex items-center justify-center shadow-md animate-float text-2xl">
+      <div className="relative z-10 w-14 h-14 rounded-2xl bg-white/25 backdrop-blur-sm flex items-center justify-center shadow-lg animate-float text-2xl">
         {icon}
       </div>
     </div>
@@ -57,8 +58,8 @@ function CardPlaceholder({ quiz }) {
 /* ── Skeleton ── */
 export function SkeletonCard() {
   return (
-    <div className="glass-card rounded-2xl overflow-hidden animate-pulse">
-      <div className="h-40 bg-slate-100" />
+    <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden animate-pulse shadow-sm">
+      <div className="h-44 bg-slate-100" />
       <div className="p-4 space-y-3">
         <div className="h-4 bg-slate-100 rounded-full w-4/5" />
         <div className="h-3 bg-slate-100 rounded-full w-2/5" />
@@ -73,7 +74,7 @@ export function SkeletonCard() {
 }
 
 /* ── Three-dot menu ── */
-function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
+function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, hoverClass }) {
   const [open, setOpen] = useState(false)
   const [menuPos, setMenuPos] = useState({ top: 0, right: 0 })
   const btnRef = useRef(null)
@@ -120,7 +121,7 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete }) {
       <button
         ref={btnRef}
         onClick={handleOpen}
-        className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+        className={`p-1.5 rounded-lg ${hoverClass} text-slate-400 hover:text-slate-600 transition-colors`}
       >
         <MoreVertical className="w-4 h-4" />
       </button>
@@ -174,6 +175,7 @@ export default function QuizCard({
     status = 'published',
   } = quiz
   const instructor = profiles?.name
+  const p = paletteFor(quiz.id)
 
   const formattedDate = new Date(updated_at).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
@@ -199,10 +201,12 @@ export default function QuizCard({
     <div
       onClick={handleClick}
       className={`
-        glass-card card-accent-bar rounded-2xl group
-        transition-all duration-200 cursor-pointer hover:-translate-y-0.5
+        card-accent-bar rounded-2xl overflow-hidden group
+        border ${p.border} ${p.bg}
+        shadow-md hover:shadow-xl hover:shadow-black/10
+        transition-all duration-200 cursor-pointer hover:-translate-y-1
         ${isHighlighted
-          ? 'ring-2 ring-[#FF6B9D] ring-offset-2'
+          ? 'ring-2 ring-[#FF6B9D] ring-offset-2 ring-offset-transparent'
           : isSelected
             ? 'ring-2 ring-[#FF6B9D]'
             : ''
@@ -211,7 +215,7 @@ export default function QuizCard({
       `}
     >
       {/* Thumbnail */}
-      <div className="relative h-40 overflow-hidden">
+      <div className="relative h-44 overflow-hidden">
         {thumbnail
           ? <img src={thumbnail} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           : <CardPlaceholder quiz={quiz} />
@@ -246,16 +250,16 @@ export default function QuizCard({
 
         {/* Hover overlay */}
         {!isSelectionMode && (
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-center pb-4 gap-2">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-center pb-4 gap-2">
             {[
-              { icon: Eye,       label: 'Preview', to: `/quiz/${quiz.id}/take`          },
-              { icon: Pencil,    label: 'Edit',    to: `/quizzes/${quiz.id}/editor`     },
-              { icon: BarChart2, label: 'Reports', to: `/results`                       },
+              { icon: Eye,       label: 'Preview', to: `/quiz/${quiz.id}/take`      },
+              { icon: Pencil,    label: 'Edit',    to: `/quizzes/${quiz.id}/editor` },
+              { icon: BarChart2, label: 'Reports', to: `/results`                   },
             ].map(({ icon: Icon, label, to }) => (
               <button
                 key={label}
                 onClick={e => { e.stopPropagation(); navigate(to) }}
-                className="flex items-center gap-1.5 bg-white text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-md hover:bg-[#FFF5F7] hover:text-[#E63E6D] transition-colors"
+                className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-lg hover:bg-white transition-colors"
               >
                 <Icon className="w-3 h-3" />
                 {label}
@@ -266,9 +270,9 @@ export default function QuizCard({
       </div>
 
       {/* Body */}
-      <div className="px-4 pt-3.5 pb-4">
+      <div className="px-4 pt-3.5 pb-1">
         <div className="flex items-start gap-1.5 mb-1">
-          <h3 className="flex-1 font-heading font-semibold text-slate-900 text-[14px] leading-snug line-clamp-2 min-w-0">
+          <h3 className="flex-1 font-heading font-bold text-slate-800 text-[14px] leading-snug line-clamp-2 min-w-0">
             {title}
           </h3>
           <ThreeDotMenu
@@ -277,27 +281,29 @@ export default function QuizCard({
             quizId={quiz.id}
             onHistory={onHistory}
             onDelete={onDelete}
+            hoverClass={p.hover}
           />
         </div>
 
         <p className="text-[12px] text-slate-500 font-medium">{instructor}</p>
         <p className="text-[11px] text-slate-400 mt-0.5">Updated {formattedDate}</p>
+      </div>
 
-        <div className="flex items-center gap-4 mt-3.5 pt-3 border-t border-slate-100">
-          {[
-            { icon: Eye,       val: stats?.views    ?? 0, label: 'views'    },
-            { icon: Play,      val: stats?.previews ?? 0, label: 'plays'    },
-            { icon: BarChart2, val: stats?.reports  ?? 0, label: 'reports'  },
-          ].map(({ icon: Icon, val, label }) => (
-            <div key={label} className="flex items-center gap-1 text-[11px] text-slate-400">
-              <Icon className="w-3 h-3" />
-              <span className="font-semibold text-slate-600">
-                {val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
-              </span>
-              <span>{label}</span>
-            </div>
-          ))}
-        </div>
+      {/* Stats band */}
+      <div className={`flex items-center gap-4 mx-0 px-4 py-2.5 mt-2 border-t ${p.statBorder}`}>
+        {[
+          { icon: Eye,       val: stats?.views    ?? 0, label: 'views'   },
+          { icon: Play,      val: stats?.previews ?? 0, label: 'plays'   },
+          { icon: BarChart2, val: stats?.reports  ?? 0, label: 'reports' },
+        ].map(({ icon: Icon, val, label }) => (
+          <div key={label} className="flex items-center gap-1 text-[11px]">
+            <Icon className={`w-3 h-3 ${p.icon}`} />
+            <span className="font-bold text-slate-700">
+              {val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
+            </span>
+            <span className="text-slate-400">{label}</span>
+          </div>
+        ))}
       </div>
     </div>
   )
