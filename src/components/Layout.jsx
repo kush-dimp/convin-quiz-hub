@@ -100,6 +100,7 @@ function NavItem({ item, collapsed }) {
 
 export default function Layout() {
   const { profile, signOut } = useAuth()
+  const location = useLocation()
 
   const [collapsed, setCollapsed] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sidebar_collapsed') || 'false') }
@@ -218,7 +219,9 @@ export default function Layout() {
 
       {/* ── Main ── */}
       <main className="flex-1 overflow-y-auto min-w-0">
-        <Outlet />
+        <div key={location.pathname} className="page-enter">
+          <Outlet />
+        </div>
       </main>
     </div>
   )

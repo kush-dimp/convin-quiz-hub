@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { GraduationCap, Search, Printer, Trash2, Eye, X, RefreshCw, Settings, ChevronDown, ChevronUp, Plus } from 'lucide-react'
+import { GraduationCap, Search, Printer, Trash2, Eye, X, RefreshCw, Settings, ChevronDown, ChevronUp, Plus, Palette } from 'lucide-react'
 import CertificateRenderer, { CERT_W, CERT_H } from './CertificateRenderer'
+import CertificateBuilder from './CertificateBuilder'
 
 function formatDate(iso) {
   if (!iso) return '—'
@@ -40,6 +41,7 @@ export default function CertificatesPage() {
   const [viewCert, setViewCert] = useState(null)
   const [revokeTarget, setRevokeTarget] = useState(null)
   const [revoking, setRevoking] = useState(false)
+  const [builderOpen, setBuilderOpen] = useState(false)
 
   useEffect(() => { fetchCerts(); fetchQuizzes() }, [])
 
@@ -129,13 +131,13 @@ export default function CertificatesPage() {
               <p className="text-xs text-slate-400 mt-0.5">Issued completion certificates</p>
             </div>
           </div>
-          {/* Stats chips */}
+          {/* Stats chips + actions */}
           <div className="flex items-center gap-2 flex-wrap">
             {[
-              { label: 'Total',        value: stats.total,    color: 'bg-slate-100 text-slate-700' },
-              { label: 'Active',       value: stats.active,   color: 'bg-emerald-100 text-emerald-700' },
-              { label: 'Expiring',     value: stats.expiring, color: 'bg-amber-100 text-amber-700' },
-              { label: 'Expired',      value: stats.expired,  color: 'bg-red-100 text-red-700' },
+              { label: 'Total',    value: stats.total,    color: 'bg-slate-100 text-slate-700' },
+              { label: 'Active',   value: stats.active,   color: 'bg-emerald-100 text-emerald-700' },
+              { label: 'Expiring', value: stats.expiring, color: 'bg-amber-100 text-amber-700' },
+              { label: 'Expired',  value: stats.expired,  color: 'bg-red-100 text-red-700' },
             ].map(s => (
               <span key={s.label} className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${s.color}`}>
                 {s.value} {s.label}
@@ -143,6 +145,13 @@ export default function CertificatesPage() {
             ))}
             <button onClick={fetchCerts} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
               <RefreshCw className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setBuilderOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white hover:from-[#E63E6D] hover:to-[#C41E5C] transition-all shadow-sm shadow-[#FFB3C6]/40"
+            >
+              <Palette className="w-3.5 h-3.5" />
+              Design Certificate
             </button>
           </div>
         </div>
@@ -393,12 +402,24 @@ export default function CertificatesPage() {
                   scorePct={viewCert.score_pct != null ? Math.round(Number(viewCert.score_pct)) : null}
                   template={tpl.template}
                   primaryColor={tpl.primaryColor}
+                  customConfig={tpl.customConfig}
                 />
               </div>
             </div>
           </div>
         )
       })()}
+
+      {/* Certificate Builder */}
+      {builderOpen && (
+        <CertificateBuilder
+          quizzes={quizzes}
+          onClose={(config) => {
+            setBuilderOpen(false)
+            if (config) fetchQuizzes() // refresh quiz list to show updated template
+          }}
+        />
+      )}
 
       {/* Revoke Confirm Dialog */}
       {revokeTarget && (

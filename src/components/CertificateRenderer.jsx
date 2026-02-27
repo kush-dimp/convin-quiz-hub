@@ -3,6 +3,8 @@
 // Parent scales with transform: scale(factor) from outside.
 // @media print hides siblings and shows only the cert div.
 
+import { getBackgroundStyle, BorderLayer } from './CertificateBuilder'
+
 const CERT_W = 1056
 const CERT_H = 748
 
@@ -391,6 +393,51 @@ function CorporateTemplate({ cert, quizTitle, userName, scorePct, instructorName
   )
 }
 
+// ── Custom Template (user-designed) ───────────────────────────────────────
+function getFontFamilyR(f) {
+  if (f === 'Georgia')   return 'Georgia, "Times New Roman", serif'
+  if (f === 'monospace') return '"Courier New", Courier, monospace'
+  return '"Inter", "DM Sans", system-ui, sans-serif'
+}
+
+function CustomTemplate({ cert, quizTitle, userName, scorePct, config }) {
+  if (!config) return null
+  const bg     = config.background || {}
+  const border = config.border     || {}
+  const values = {
+    userName:  userName   || 'Recipient Name',
+    quizTitle: quizTitle  || 'Quiz Title',
+    score:     scorePct != null ? `Score: ${scorePct}%` : '—',
+    date:      formatDate(cert?.issued_at),
+    certId:    `#${shortId(cert?.id)}`,
+  }
+  return (
+    <div style={{ width: CERT_W, height: CERT_H, position: 'relative', ...getBackgroundStyle(bg), overflow: 'hidden', boxSizing: 'border-box' }}>
+      <BorderLayer style={border.style} color={border.color} />
+      {config.logoDataUrl && (
+        <img src={config.logoDataUrl} alt="Logo" style={{ position: 'absolute', left: `${config.logoPos?.x ?? 50}%`, top: `${config.logoPos?.y ?? 6}%`, transform: 'translateX(-50%)', maxHeight: `${config.logoPos?.height ?? 50}px`, maxWidth: 220, objectFit: 'contain', pointerEvents: 'none', zIndex: 2 }} />
+      )}
+      {(config.elements || []).filter(e => e.visible !== false).map(el => {
+        const text = el.type === 'variable' ? (values[el.variable] ?? '') : (el.text || '')
+        return (
+          <div key={el.id} style={{
+            position: 'absolute', left: `${el.x}%`, top: `${el.y}%`,
+            transform: `translate(${el.align === 'center' ? '-50%' : el.align === 'right' ? '-100%' : '0'}, -50%)`,
+            fontSize: el.fontSize, fontFamily: getFontFamilyR(el.fontFamily),
+            fontWeight: el.fontWeight || 400, color: el.color || '#000',
+            textAlign: el.align || 'left',
+            letterSpacing: el.letterSpacing ? `${el.letterSpacing}px` : 'normal',
+            textTransform: el.uppercase ? 'uppercase' : 'none',
+            pointerEvents: 'none', userSelect: 'none', whiteSpace: 'nowrap', zIndex: 3,
+          }}>
+            {text}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ── Main exported component ────────────────────────────────────────────────
 export default function CertificateRenderer({
   cert,
@@ -400,14 +447,16 @@ export default function CertificateRenderer({
   instructorName = 'Quiz Instructor',
   template = 'classic',
   primaryColor,
+  customConfig,
 }) {
   const props = { cert, quizTitle, userName, scorePct, instructorName, primaryColor }
 
   let inner
-  if (template === 'modern')     inner = <ModernTemplate {...props} />
+  if (template === 'custom')          inner = <CustomTemplate cert={cert} quizTitle={quizTitle} userName={userName} scorePct={scorePct} config={customConfig} />
+  else if (template === 'modern')     inner = <ModernTemplate {...props} />
   else if (template === 'minimalist') inner = <MinimalistTemplate {...props} />
   else if (template === 'corporate')  inner = <CorporateTemplate {...props} />
-  else                           inner = <ClassicTemplate {...props} />
+  else                                inner = <ClassicTemplate {...props} />
 
   return (
     <>

@@ -79,6 +79,9 @@
     border-right: 1px solid rgba(255, 107, 157, 0.15);
   }
 
+  /* GPU compositing for sticky glass headers — reduces scroll repaint */
+  .glass { transform: translateZ(0); will-change: transform; }
+
   /* Glass inputs */
   .glass-input {
     backdrop-filter: blur(8px);
@@ -152,6 +155,14 @@
 .animate-fade-in-up {
   animation: fadeInUp 0.32s cubic-bezier(.22,1,.36,1) forwards;
   opacity: 0;
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+.page-enter {
+  animation: pageEnter 0.16s ease-out forwards;
 }
 
 @keyframes float {

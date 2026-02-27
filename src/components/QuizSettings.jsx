@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { useQuiz, useQuizzes } from '../hooks/useQuizzes'
 import CertificateRenderer, { CERT_W, CERT_H } from './CertificateRenderer'
+import CertificateBuilder from './CertificateBuilder'
 
 const TABS = [
   { id: 'timing',      label: 'Timing',        icon: Timer         },
@@ -473,7 +474,7 @@ function FeedbackSettings({ settings, onSettingChange }) {
 }
 
 /* ── Prompt 23: Certificate ──────────────────────────────────── */
-function CertificateSettings({ settings, onSettingChange, quizTitle }) {
+function CertificateSettings({ settings, onSettingChange, quizTitle, quizId }) {
   const enabled = settings.certificate_enabled
 
   // Parse stored JSON on mount / when settings.certificate_template changes
@@ -488,6 +489,7 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
   const [qrCode, setQrCode]             = useState(tpl.qrCode        ?? true)
   const [autoEmail, setAutoEmail]       = useState(tpl.autoEmail      ?? true)
   const [showPreview, setShowPreview]   = useState(false)
+  const [builderOpen, setBuilderOpen]   = useState(false)
 
   // Re-sync local state when the quiz first loads (tpl object reference changes once)
   useEffect(() => {
@@ -510,6 +512,7 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
     { id: 'modern',     label: 'Modern',     preview: 'bg-gradient-to-br from-indigo-50 to-blue-100 border-[#FF6B9D]/60' },
     { id: 'minimalist', label: 'Minimalist', preview: 'bg-white border-slate-300'                                       },
     { id: 'corporate',  label: 'Corporate',  preview: 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-300'  },
+    { id: 'custom',     label: 'Custom',     preview: 'bg-gradient-to-br from-[#FFF5F7] to-[#FFE5EC] border-[#FFB3C6]' },
   ]
 
   const dynamicFields = ['{name}', '{quiz_title}', '{score}', '{date}', '{certificate_id}', '{instructor}']
@@ -528,13 +531,32 @@ function CertificateSettings({ settings, onSettingChange, quizTitle }) {
                 <button key={t.id} onClick={() => { setTemplate(t.id); updateTpl({ template: t.id }) }}
                   className={`p-3 rounded-xl border-2 transition-all ${template === t.id ? 'border-[#FF6B9D]' : 'border-transparent hover:border-slate-200'}`}>
                   <div className={`h-16 rounded-lg border-2 flex items-center justify-center ${t.preview}`}>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Certificate</span>
+                    {t.id === 'custom'
+                      ? <span className="text-[10px] font-bold text-[#E63E6D] uppercase tracking-wide">✦ Custom</span>
+                      : <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Certificate</span>
+                    }
                   </div>
                   <p className={`text-xs font-semibold mt-1.5 ${template === t.id ? 'text-[#E63E6D]' : 'text-slate-600'}`}>{t.label}</p>
                 </button>
               ))}
             </div>
+            {template === 'custom' && (
+              <button
+                onClick={() => setBuilderOpen(true)}
+                className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white text-sm font-semibold hover:from-[#E63E6D] hover:to-[#C41E5C] transition-all shadow-sm"
+              >
+                Open Certificate Builder
+                {tpl.customConfig && <span className="text-xs opacity-70 ml-1">(edit existing)</span>}
+              </button>
+            )}
           </Section>
+
+          {builderOpen && (
+            <CertificateBuilder
+              quizzes={quizId ? [{ id: quizId, title: quizTitle }] : []}
+              onClose={() => setBuilderOpen(false)}
+            />
+          )}
           <Section title="Customization">
             <Row label="Primary color">
               <input type="color" value={primaryColor}
@@ -834,7 +856,7 @@ export default function QuizSettings() {
 
   const PANELS = { timing: TimingSettings, attempts: AttemptSettings, presentation: PresentationSettings, scoring: ScoringRules, security: SecuritySettings, feedback: FeedbackSettings, certificate: CertificateSettings, integration: IntegrationSettings }
   const Panel = PANELS[activeTab]
-  const panelProps = activeTab === 'certificate' ? { settings, onSettingChange: setSetting, quizTitle } : { settings, onSettingChange: setSetting }
+  const panelProps = activeTab === 'certificate' ? { settings, onSettingChange: setSetting, quizTitle, quizId: id } : { settings, onSettingChange: setSetting }
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
