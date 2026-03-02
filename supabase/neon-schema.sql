@@ -327,16 +327,33 @@ create index idx_audit_action_trgm on audit_logs using gin(action gin_trgm_ops);
 
 
 -- ══════════════════════════════════════════════════════════════
+-- CERTIFICATE TEMPLATES (pre-designed or uploaded)
+-- ══════════════════════════════════════════════════════════════
+create table certificate_templates (
+  id           uuid primary key default gen_random_uuid(),
+  name         text not null,
+  content_type text not null,
+  data         bytea not null,
+  file_size    int not null,
+  uploaded_by  uuid references profiles(id) on delete set null,
+  created_at   timestamptz not null default now()
+);
+
+create index idx_cert_templates_uploaded on certificate_templates(uploaded_by);
+
+
+-- ══════════════════════════════════════════════════════════════
 -- CERTIFICATES
 -- ══════════════════════════════════════════════════════════════
 create table certificates (
-  id         uuid primary key default gen_random_uuid(),
-  user_id    uuid not null references profiles(id)      on delete cascade,
-  quiz_id    uuid not null references quizzes(id)       on delete cascade,
-  attempt_id uuid not null references quiz_attempts(id) on delete cascade,
-  issued_at  timestamptz not null default now(),
-  expires_at timestamptz,
-  cert_url   text,
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references profiles(id)      on delete cascade,
+  quiz_id      uuid not null references quizzes(id)       on delete cascade,
+  attempt_id   uuid not null references quiz_attempts(id) on delete cascade,
+  template_id  uuid references certificate_templates(id) on delete set null,
+  issued_at    timestamptz not null default now(),
+  expires_at   timestamptz,
+  cert_url     text,
   unique(user_id, quiz_id)
 );
 

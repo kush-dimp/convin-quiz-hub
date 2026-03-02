@@ -1,8 +1,5 @@
 import { sql } from './_db.js'
 
-// Store templates in memory (in production, use blob storage or database)
-const templates = new Map()
-
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
   const path = req.query.sub
@@ -14,32 +11,54 @@ export default async function handler(req, res) {
   if (templateMatch) {
     const templateId = templateMatch[1]
     if (req.method === 'GET') {
-      const tmpl = templates.get(templateId)
-      if (!tmpl) return res.status(404).json({ error: 'Template not found' })
-      res.setHeader('Content-Type', tmpl.contentType)
-      return res.status(200).send(Buffer.from(tmpl.data, 'base64'))
+      try {
+        const rows = await sql`SELECT name, content_type, data FROM certificate_templates WHERE id = ${templateId}`
+        if (!rows.length) return res.status(404).json({ error: 'Template not found' })
+        const tmpl = rows[0]
+        res.setHeader('Content-Type', tmpl.content_type)
+        res.setHeader('Content-Disposition', `attachment; filename="${tmpl.name}"`)
+        return res.status(200).send(tmpl.data)
+      } catch (err) {
+        return res.status(500).json({ error: 'Failed to download template' })
+      }
     }
     if (req.method === 'DELETE') {
-      templates.delete(templateId)
-      return res.status(204).end()
+      try {
+        await sql`DELETE FROM certificate_templates WHERE id = ${templateId}`
+        return res.status(204).end()
+      } catch (err) {
+        return res.status(500).json({ error: 'Failed to delete template' })
+      }
     }
   }
 
   // List templates
   if (path === '/api/certificates/templates' && req.method === 'GET') {
-    const list = Array.from(templates.entries()).map(([id, tmpl]) => ({
-      id, name: tmpl.name, contentType: tmpl.contentType, size: tmpl.size, uploadedAt: tmpl.uploadedAt
-    }))
-    return res.status(200).json(list)
+    try {
+      const rows = await sql`SELECT id, name, content_type, file_size, created_at FROM certificate_templates ORDER BY created_at DESC`
+      return res.status(200).json(rows.map(r => ({
+        id: r.id, name: r.name, contentType: r.content_type, size: r.file_size, uploadedAt: r.created_at
+      })))
+    } catch (err) {
+      return res.status(500).json({ error: 'Failed to fetch templates' })
+    }
   }
 
   // Upload template
   if (path === '/api/certificates/templates' && req.method === 'POST') {
     const { name, data, contentType } = req.body
     if (!name || !data || !contentType) return res.status(400).json({ error: 'Missing required fields' })
-    const id = `tpl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    templates.set(id, { id, name, data, contentType, size: Buffer.byteLength(data, 'base64'), uploadedAt: new Date().toISOString() })
-    return res.status(201).json({ id, name, contentType })
+    try {
+      const buf = Buffer.from(data, 'base64')
+      const rows = await sql`
+        INSERT INTO certificate_templates (name, content_type, data, file_size)
+        VALUES (${name}, ${contentType}, ${buf}, ${buf.length})
+        RETURNING id, name, content_type
+      `
+      return res.status(201).json({ id: rows[0].id, name: rows[0].name, contentType: rows[0].content_type })
+    } catch (err) {
+      return res.status(500).json({ error: 'Failed to upload template: ' + err.message })
+    }
   }
 
   // DELETE /api/certificates/:id  (revoke)
