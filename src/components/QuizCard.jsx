@@ -37,7 +37,7 @@ function CardPlaceholder({ quiz }) {
   const icon = CATEGORY_ICON[quiz.category] || '📝'
   const first = (quiz.title || '?')[0].toUpperCase()
   return (
-    <div className={`relative flex items-center justify-center w-full h-full bg-gradient-to-br ${p.grad}`}>
+    <div className={`relative flex items-center justify-center w-full h-full bg-gradient-to-br ${p?.grad || 'from-slate-300 to-slate-400'}`}>
       {/* Giant backdrop letter */}
       <span className="absolute font-heading text-[96px] font-black text-white/[0.12] select-none leading-none pointer-events-none">
         {first}
@@ -205,7 +205,7 @@ export default function QuizCard({
       onClick={handleClick}
       className={`
         card-accent-bar rounded-2xl overflow-hidden group
-        border ${p.border} ${p.bg}
+        border ${p?.border || 'border-slate-200'} ${p?.bg || 'bg-slate-50'}
         shadow-md hover:shadow-xl hover:shadow-black/10
         transition-all duration-200 cursor-pointer hover:-translate-y-1
         ${isHighlighted
@@ -285,7 +285,7 @@ export default function QuizCard({
             onHistory={onHistory}
             onDelete={onDelete}
             onPreview={() => onPreview?.(quiz)}
-            hoverClass={p.hover}
+            hoverClass={p?.hover || 'hover:bg-slate-100'}
           />
         </div>
 
@@ -294,14 +294,14 @@ export default function QuizCard({
       </div>
 
       {/* Stats band */}
-      <div className={`flex items-center gap-4 mx-0 px-4 py-2.5 mt-2 border-t ${p.statBorder}`}>
+      <div className={`flex items-center gap-4 mx-0 px-4 py-2.5 mt-2 border-t ${p?.statBorder || 'border-slate-100'}`}>
         {[
           { icon: Eye,       val: stats?.views    ?? 0, label: 'views'   },
           { icon: Play,      val: stats?.previews ?? 0, label: 'plays'   },
           { icon: BarChart2, val: stats?.reports  ?? 0, label: 'reports' },
         ].map(({ icon: Icon, val, label }) => (
           <div key={label} className="flex items-center gap-1 text-[11px]">
-            <Icon className={`w-3 h-3 ${p.icon}`} />
+            <Icon className={`w-3 h-3 ${p?.icon || 'text-slate-400'}`} />
             <span className="font-bold text-slate-700">
               {val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
             </span>
