@@ -3,7 +3,7 @@ import { RefreshCw } from 'lucide-react'
 function fmtSynced(date) {
   if (!date) return null
   const s = Math.floor((Date.now() - date.getTime()) / 1000)
-  if (s < 10) return 'Just synced'
+  if (s < 10) return 'now'
   if (s < 60) return `${s}s ago`
   const m = Math.floor(s / 60)
   if (m < 60) return `${m}m ago`

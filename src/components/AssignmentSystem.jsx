@@ -66,6 +66,8 @@ export default function AssignmentSystem() {
       quiz_id:    form.quizId,
       quizTitle:  quiz?.title || 'Untitled Quiz',
       assign_type: form.assignTo,
+      target_user_id: form.assignTo === 'user' ? form.selectedUsers?.[0] : null,
+      target_group_id: form.assignTo === 'group' ? form.selectedGroups?.[0] : null,
       due_date:   form.dueDate || '2026-03-31',
       required:   form.required,
       recurring:  form.recurring,

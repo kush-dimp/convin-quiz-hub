@@ -22,8 +22,24 @@ export function AuthProvider({ children }) {
     user:         DEMO_PROFILE,
     isAdmin:      true,
     isInstructor: true,
-    signIn:       async () => ({ data: null, error: null }),
-    signUp:       async () => ({ data: null, error: null }),
+    signIn:       async (email, password) => {
+      try {
+        const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
+        const data = await res.json()
+        return res.ok ? { data, error: null } : { data: null, error: { message: data.error || 'Login failed' } }
+      } catch (e) {
+        return { data: null, error: { message: 'Login failed' } }
+      }
+    },
+    signUp:       async (email, password, name) => {
+      try {
+        const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, name }) })
+        const data = await res.json()
+        return res.ok ? { data, error: null } : { data: null, error: { message: data.error || 'Signup failed' } }
+      } catch (e) {
+        return { data: null, error: { message: 'Signup failed' } }
+      }
+    },
     signOut:      async () => {},
     updateProfile: async () => ({ data: null, error: null }),
     refetchProfile: () => {},

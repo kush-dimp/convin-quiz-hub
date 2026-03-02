@@ -16,7 +16,7 @@ const roleColor   = { 'Super Admin': 'bg-violet-50 text-violet-600', Admin: 'bg-
 function fmtSynced(date) {
   if (!date) return null
   const secs = Math.floor((Date.now() - date) / 1000)
-  if (secs < 10)  return 'Just synced'
+  if (secs < 10)  return 'now'
   if (secs < 60)  return `${secs}s ago`
   if (secs < 3600) return `${Math.floor(secs / 60)}m ago`
   return `${Math.floor(secs / 3600)}h ago`
@@ -43,7 +43,7 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(form.email.trim())) { setFormError('Invalid email address'); return }
     setSaving(true); setFormError('')
-    const normalizedRole = form.role.toLowerCase()
+    const normalizedRole = form.role.toLowerCase().replace(/\s+/g, '_')
     const { error } = await inviteUser({ ...form, role: normalizedRole })
     setSaving(false)
     if (error) { setFormError(error.message || 'Failed to create user — email may already exist'); return }
