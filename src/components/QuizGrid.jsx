@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, LayoutGrid } from 'lucide-react'
+import { Plus, LayoutGrid, AlertCircle } from 'lucide-react'
 import VersionHistory from './VersionHistory'
 import QuizCard, { SkeletonCard } from './QuizCard'
 import { QuizListCard, QuizCompactView } from './QuizListViews'
+import QuizPreview from './QuizPreview'
 import FilterBar from './FilterBar'
 import BulkActionBar from './BulkActionBar'
 import ConfirmModal from './ConfirmModal'
@@ -80,7 +81,7 @@ export default function QuizGrid() {
   const navigate = useNavigate()
 
   /* ── Real data from Neon ── */
-  const { quizzes: rawQuizzes, loading: dataLoading, lastSynced, syncing, refetch, createQuiz, deleteQuiz, publishQuiz } = useQuizzes()
+  const { quizzes: rawQuizzes, loading: dataLoading, error: apiError, lastSynced, syncing, refetch, createQuiz, deleteQuiz, publishQuiz } = useQuizzes()
 
   /* ── Local quizzes state (mirrors hook but allows optimistic UI) ── */
   const [localQuizzes, setLocalQuizzes] = useState([])
@@ -115,6 +116,7 @@ export default function QuizGrid() {
   const [duplicateTarget, setDuplicateTarget] = useState(null)
   const [highlightedId,   setHighlightedId]   = useState(null)
   const [historyQuiz,     setHistoryQuiz]     = useState(null)
+  const [previewQuiz,     setPreviewQuiz]     = useState(null)
   const [isCreating,      setIsCreating]      = useState(false)
 
   const debouncedSearch = useDebounce(searchInput, 300)
@@ -321,6 +323,7 @@ export default function QuizGrid() {
     isHighlighted:  quiz.id === highlightedId,
     onHistory:      () => setHistoryQuiz(quiz),
     onDelete:       () => setModal({ type: 'delete', items: [quiz] }),
+    onPreview:      () => setPreviewQuiz(quiz),
   })
 
   return (
@@ -358,6 +361,17 @@ export default function QuizGrid() {
           resultCount={filteredQuizzes.length}
           isLoading={dataLoading}
         />
+
+        {/* ── API Error Display ── */}
+        {apiError && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-red-900">Failed to load quizzes</p>
+              <p className="text-xs text-red-700 mt-1">{apiError}</p>
+            </div>
+          </div>
+        )}
 
         {/* ── Skeleton (data loading) ── */}
         {dataLoading ? (
@@ -456,6 +470,10 @@ export default function QuizGrid() {
 
       {historyQuiz && (
         <VersionHistory quiz={historyQuiz} onClose={() => setHistoryQuiz(null)} />
+      )}
+
+      {previewQuiz && (
+        <QuizPreview quiz={previewQuiz} onClose={() => setPreviewQuiz(null)} />
       )}
     </div>
   )

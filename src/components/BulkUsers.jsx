@@ -40,11 +40,15 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!form.email.trim() || !form.name.trim()) { setFormError('Name and email are required'); return }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(form.email.trim())) { setFormError('Invalid email address'); return }
     setSaving(true); setFormError('')
-    const { error } = await inviteUser(form)
+    const normalizedRole = form.role.toLowerCase()
+    const { error } = await inviteUser({ ...form, role: normalizedRole })
     setSaving(false)
     if (error) { setFormError(error.message || 'Failed to create user — email may already exist'); return }
     setSuccess({ name: form.name, email: form.email })
+    setForm({ name: '', email: '', role: 'Student', department: '' })
     onSuccess()
   }
 

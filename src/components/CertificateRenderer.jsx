@@ -401,9 +401,9 @@ function getFontFamilyR(f) {
 }
 
 function CustomTemplate({ cert, quizTitle, userName, scorePct, config }) {
-  if (!config) return null
-  const bg     = config.background || {}
-  const border = config.border     || {}
+  if (!config || typeof config !== 'object') return null
+  const bg     = config?.background || {}
+  const border = config?.border     || {}
   const values = {
     userName:  userName   || 'Recipient Name',
     quizTitle: quizTitle  || 'Quiz Title',
@@ -414,10 +414,10 @@ function CustomTemplate({ cert, quizTitle, userName, scorePct, config }) {
   return (
     <div style={{ width: CERT_W, height: CERT_H, position: 'relative', ...getBackgroundStyle(bg), overflow: 'hidden', boxSizing: 'border-box' }}>
       <BorderLayer style={border.style} color={border.color} />
-      {config.logoDataUrl && (
-        <img src={config.logoDataUrl} alt="Logo" style={{ position: 'absolute', left: `${config.logoPos?.x ?? 50}%`, top: `${config.logoPos?.y ?? 6}%`, transform: 'translateX(-50%)', maxHeight: `${config.logoPos?.height ?? 50}px`, maxWidth: 220, objectFit: 'contain', pointerEvents: 'none', zIndex: 2 }} />
+      {config?.logoDataUrl && (
+        <img src={config.logoDataUrl} alt="Logo" style={{ position: 'absolute', left: `${config?.logoPos?.x ?? 50}%`, top: `${config?.logoPos?.y ?? 6}%`, transform: 'translateX(-50%)', maxHeight: `${config?.logoPos?.height ?? 50}px`, maxWidth: 220, objectFit: 'contain', pointerEvents: 'none', zIndex: 2 }} />
       )}
-      {(config.elements || []).filter(e => e.visible !== false).map(el => {
+      {(config?.elements || []).filter(e => e.visible !== false).map(el => {
         const text = el.type === 'variable' ? (values[el.variable] ?? '') : (el.text || '')
         return (
           <div key={el.id} style={{

@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { GraduationCap, Search, Printer, Trash2, Eye, X, RefreshCw, Settings, ChevronDown, ChevronUp, Plus, Palette } from 'lucide-react'
+import { GraduationCap, Search, Printer, Trash2, Eye, X, RefreshCw, Settings, ChevronDown, ChevronUp, Plus, Palette, FileUp, Download } from 'lucide-react'
 import CertificateRenderer, { CERT_W, CERT_H } from './CertificateRenderer'
 import CertificateBuilder from './CertificateBuilder'
 
@@ -42,8 +42,20 @@ export default function CertificatesPage() {
   const [revokeTarget, setRevokeTarget] = useState(null)
   const [revoking, setRevoking] = useState(false)
   const [builderOpen, setBuilderOpen] = useState(false)
+  const [templates, setTemplates] = useState([])
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef(null)
 
-  useEffect(() => { fetchCerts(); fetchQuizzes() }, [])
+  useEffect(() => { fetchCerts(); fetchQuizzes(); fetchTemplates() }, [])
+
+  async function fetchTemplates() {
+    try {
+      const res = await fetch('/api/certificates/templates')
+      if (res.ok) setTemplates(await res.json())
+    } catch (err) {
+      console.error('Failed to load templates:', err)
+    }
+  }
 
   async function fetchCerts() {
     setLoading(true)
@@ -85,6 +97,34 @@ export default function CertificatesPage() {
       alert(err.message)
     } finally {
       setRevoking(false)
+    }
+  }
+
+  async function uploadTemplate(file) {
+    if (!file) return
+    setUploading(true)
+    try {
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const data = e.target.result.split(',')[1]
+        const res = await fetch('/api/certificates/templates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: file.name,
+            data,
+            contentType: file.type
+          })
+        })
+        if (!res.ok) throw new Error('Upload failed')
+        await fetchTemplates()
+        if (fileRef.current) fileRef.current.value = ''
+      }
+      reader.readAsDataURL(file)
+    } catch (err) {
+      alert('Failed to upload template: ' + err.message)
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -158,6 +198,62 @@ export default function CertificatesPage() {
       </div>
 
       <div className="px-6 py-6 max-w-6xl mx-auto">
+
+        {/* ── Upload Custom Templates ── */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 overflow-hidden">
+          <div className="px-5 py-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <FileUp className="w-4 h-4 text-indigo-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Upload Certificate Templates</p>
+                <p className="text-xs text-slate-400">Add pre-designed PNG or PDF templates</p>
+              </div>
+            </div>
+
+            {templates.length > 0 && (
+              <div className="mb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {templates.map(t => (
+                  <div key={t.id} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <p className="text-xs font-medium text-slate-700 truncate">{t.name}</p>
+                    <div className="flex gap-2 mt-2">
+                      <a href={`/api/certificates/templates/${t.id}`} download className="flex-1 text-xs px-2 py-1 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors">
+                        <Download className="w-3 h-3 inline mr-1" />Download
+                      </a>
+                      <button onClick={() => {
+                        fetch(`/api/certificates/templates/${t.id}`, { method: 'DELETE' })
+                        setTemplates(prev => prev.filter(x => x.id !== t.id))
+                      }} className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors">
+                        <Trash2 className="w-3 h-3 inline" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center gap-3">
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".png,.pdf,.jpg,.jpeg"
+                disabled={uploading}
+                onChange={(e) => uploadTemplate(e.target.files?.[0])}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium disabled:opacity-50"
+              >
+                <FileUp className="w-4 h-4" />
+                {uploading ? 'Uploading...' : 'Choose File'}
+              </button>
+              <p className="text-xs text-slate-500">PNG, PDF, or JPG (max 10MB)</p>
+            </div>
+          </div>
+        </div>
 
         {/* ── Configure Templates section ── */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 overflow-hidden">

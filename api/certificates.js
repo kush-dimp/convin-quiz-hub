@@ -1,10 +1,46 @@
 import { sql } from './_db.js'
 
+// Store templates in memory (in production, use blob storage or database)
+const templates = new Map()
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
   const path = req.query.sub
     ? `/api/certificates/${req.query.sub.split('?')[0]}`
     : req.url
+
+  // Template upload/download routes
+  const templateMatch = path.match(/\/api\/certificates\/templates\/([^/?]+)$/)
+  if (templateMatch) {
+    const templateId = templateMatch[1]
+    if (req.method === 'GET') {
+      const tmpl = templates.get(templateId)
+      if (!tmpl) return res.status(404).json({ error: 'Template not found' })
+      res.setHeader('Content-Type', tmpl.contentType)
+      return res.status(200).send(Buffer.from(tmpl.data, 'base64'))
+    }
+    if (req.method === 'DELETE') {
+      templates.delete(templateId)
+      return res.status(204).end()
+    }
+  }
+
+  // List templates
+  if (path === '/api/certificates/templates' && req.method === 'GET') {
+    const list = Array.from(templates.entries()).map(([id, tmpl]) => ({
+      id, name: tmpl.name, contentType: tmpl.contentType, size: tmpl.size, uploadedAt: tmpl.uploadedAt
+    }))
+    return res.status(200).json(list)
+  }
+
+  // Upload template
+  if (path === '/api/certificates/templates' && req.method === 'POST') {
+    const { name, data, contentType } = req.body
+    if (!name || !data || !contentType) return res.status(400).json({ error: 'Missing required fields' })
+    const id = `tpl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    templates.set(id, { id, name, data, contentType, size: Buffer.byteLength(data, 'base64'), uploadedAt: new Date().toISOString() })
+    return res.status(201).json({ id, name, contentType })
+  }
 
   // DELETE /api/certificates/:id  (revoke)
   // GET    /api/certificates/:id  (single)

@@ -74,7 +74,7 @@ export function SkeletonCard() {
 }
 
 /* ── Three-dot menu ── */
-function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, hoverClass }) {
+function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, onPreview, hoverClass }) {
   const [open, setOpen] = useState(false)
   const [menuPos, setMenuPos] = useState({ top: 0, right: 0 })
   const btnRef = useRef(null)
@@ -96,6 +96,7 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, hove
   if (disabled) return <div className="w-7 h-7" />
 
   const actions = [
+    { icon: Eye,     label: 'Preview',   onClick: () => onPreview?.() },
     { icon: Pencil,  label: 'Edit',      onClick: () => navigate(`/quizzes/${quizId}/editor`) },
     { icon: Copy,    label: 'Duplicate', onClick: onDuplicate },
     { icon: History, label: 'History',   onClick: () => onHistory?.() },
@@ -163,6 +164,7 @@ export default function QuizCard({
   isHighlighted = false,
   onHistory,
   onDelete,
+  onPreview,
 }) {
   const navigate = useNavigate()
   const {
@@ -281,6 +283,7 @@ export default function QuizCard({
             quizId={quiz.id}
             onHistory={onHistory}
             onDelete={onDelete}
+            onPreview={() => onPreview?.(quiz)}
             hoverClass={p.hover}
           />
         </div>

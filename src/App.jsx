@@ -23,6 +23,8 @@ import AuditLogs from './components/AuditLogs'
 import AdminDashboard from './components/AdminDashboard'
 import QuizTaker from './components/QuizTaker'
 import CertificatesPage from './components/CertificatesPage'
+import LiveSessionHost from './components/LiveSessionHost'
+import LiveSessionJoin from './components/LiveSessionJoin'
 
 // Redirects to /login if not authenticated; shows a loading state while checking
 function ProtectedRoute({ children }) {
@@ -88,6 +90,7 @@ function AppRoutes() {
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="audit-logs" element={<AuditLogs />} />
         <Route path="certificates" element={<CertificatesPage />} />
+        <Route path="live" element={<LiveSessionHost />} />
       </Route>
 
       {/* Full-screen quiz taking — outside Layout, still protected */}
@@ -99,6 +102,10 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Public live session join — no auth required */}
+      <Route path="/join" element={<LiveSessionJoin />} />
+      <Route path="/join/:code" element={<LiveSessionJoin />} />
 
       {/* Catch-all */}
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -4,7 +4,7 @@ import {
   LayoutGrid, Layers, Database, BarChart2, TrendingUp,
   BookOpen, Award, FileText, Shield, Users, Calendar,
   Bell, Key, LogOut, Activity, LayoutDashboard, ClipboardList,
-  Zap, GraduationCap, PanelLeftClose, PanelLeftOpen,
+  Zap, GraduationCap, PanelLeftClose, PanelLeftOpen, Radio,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -49,6 +49,12 @@ const NAV = [
     group: 'Admin',
     items: [
       { to: '/admin', icon: LayoutDashboard, label: 'Admin Dashboard' },
+    ],
+  },
+  {
+    group: 'Live',
+    items: [
+      { to: '/live', icon: Radio, label: 'Live Session' },
     ],
   },
 ]
