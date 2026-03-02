@@ -178,8 +178,8 @@ function PreviewModal({ template, onClose, onUse, loading }) {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-1.5">
-            {template.tags.map(tag => (
-              <span key={tag} className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${t.light} ${t.text} border ${t.border}`}>{tag}</span>
+            {(template.tags || []).map(tag => (
+              <span key={tag} className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${t?.light} ${t?.text} border ${t?.border}`}>{tag}</span>
             ))}
           </div>
 

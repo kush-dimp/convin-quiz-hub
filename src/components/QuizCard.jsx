@@ -13,6 +13,7 @@ const STATUS_STYLES = {
 }
 
 /* Per-card color palette — vibrant gradient thumbnail + matching tinted body */
+const DEFAULT_PALETTE = { grad: 'from-slate-300 to-slate-400', bg: 'bg-slate-50', border: 'border-slate-200', statBorder: 'border-slate-100', icon: 'text-slate-400', hover: 'hover:bg-slate-100' }
 const PALETTE = [
   { grad: 'from-[#FF6B9D] to-[#C41E5C]', bg: 'bg-pink-50',   border: 'border-pink-200',   statBorder: 'border-pink-100',   icon: 'text-[#E63E6D]',  hover: 'hover:bg-pink-100'   },
   { grad: 'from-blue-500 to-cyan-600',    bg: 'bg-blue-50',   border: 'border-blue-200',   statBorder: 'border-blue-100',   icon: 'text-blue-500',   hover: 'hover:bg-blue-100'   },
@@ -21,7 +22,7 @@ const PALETTE = [
   { grad: 'from-teal-500 to-emerald-600', bg: 'bg-teal-50',   border: 'border-teal-200',   statBorder: 'border-teal-100',   icon: 'text-teal-500',   hover: 'hover:bg-teal-100'   },
   { grad: 'from-amber-500 to-orange-400', bg: 'bg-amber-50',  border: 'border-amber-200',  statBorder: 'border-amber-100',  icon: 'text-amber-500',  hover: 'hover:bg-amber-100'  },
 ]
-function paletteFor(id) { return PALETTE[id % PALETTE.length] }
+function paletteFor(id) { return (id != null) ? PALETTE[id % PALETTE.length] : DEFAULT_PALETTE }
 
 const CATEGORY_ICON = {
   'General': '📚', 'Technology': '💻', 'Science': '🔬',
@@ -155,7 +156,7 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, onPr
 
 /* ── Card ── */
 export default function QuizCard({
-  quiz,
+  quiz = {},
   isSelected = false,
   onToggleSelect,
   isDisabled = false,
@@ -168,8 +169,8 @@ export default function QuizCard({
 }) {
   const navigate = useNavigate()
   const {
-    title,
-    updated_at,
+    title = 'Untitled Quiz',
+    updated_at = new Date().toISOString(),
     thumbnail,
     is_private: isPrivate,
     quiz_stats: stats,
@@ -177,7 +178,7 @@ export default function QuizCard({
     status = 'published',
   } = quiz
   const instructor = profiles?.name
-  const p = paletteFor(quiz.id)
+  const p = paletteFor(quiz?.id)
 
   const formattedDate = new Date(updated_at).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
