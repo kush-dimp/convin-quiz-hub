@@ -364,23 +364,44 @@ export default function QuizGrid() {
 
         {/* ── API Error Display ── */}
         {apiError && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-red-900">Failed to load quizzes</p>
-              <p className="text-xs text-red-700 mt-1">{apiError}</p>
+          <div className="mb-6 p-6 bg-red-50 border-2 border-red-300 rounded-2xl shadow-sm">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h2 className="text-base font-bold text-red-900 mb-2">⚠️ Failed to Load Quizzes</h2>
+                <p className="text-sm text-red-700 mb-4 font-mono bg-red-100 p-3 rounded-lg break-all">
+                  {apiError}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={refetch}
+                    className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    ↻ Retry
+                  </button>
+                  <p className="text-xs text-red-600 mt-2">
+                    Check that DATABASE_URL is set in Vercel environment variables.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {/* ── Skeleton (data loading) ── */}
-        {dataLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
+        {dataLoading && !apiError ? (
+          <div>
+            <div className="flex items-center gap-3 mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+              <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm font-medium text-blue-700">Loading quizzes...</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
           </div>
-        ) : filteredQuizzes.length === 0 ? (
+        ) : !apiError && filteredQuizzes.length === 0 ? (
           <EmptyState
             hasFilters={hasActiveFilters}
             onClearAll={() => { setSearchInput(''); setFilters(DEFAULT_FILTERS) }}
