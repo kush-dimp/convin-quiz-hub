@@ -11,7 +11,8 @@ function calcExpiry(expiry) {
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
-  const path = req.query.sub ? `/api/results/${req.query.sub.split('?')[0]}` : req.url
+  try {
+    const path = req.query.sub ? `/api/results/${req.query.sub.split('?')[0]}` : req.url
 
   // POST /api/results/attempts/:id/answers
   const answersMatch = path.match(/\/api\/results\/attempts\/([^/?]+)\/answers/)
@@ -224,5 +225,9 @@ export default async function handler(req, res) {
     return res.status(200).json(normalised)
   }
 
-  res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({ error: 'Method not allowed' })
+  } catch (err) {
+    console.error('Results API Error:', err)
+    return res.status(500).json({ error: 'Database error: ' + (err.message || 'unknown') })
+  }
 }

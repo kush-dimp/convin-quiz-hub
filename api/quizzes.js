@@ -2,8 +2,9 @@ import { sql, DEMO_USER_ID } from './_db.js'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
-  // Reconstruct full path from sub-path query param (added by vercel.json rewrite)
-  const path = req.query.sub ? `/api/quizzes/${req.query.sub.split('?')[0]}` : req.url
+  try {
+    // Reconstruct full path from sub-path query param (added by vercel.json rewrite)
+    const path = req.query.sub ? `/api/quizzes/${req.query.sub.split('?')[0]}` : req.url
 
   // Route: /api/quizzes/:id/questions
   const questionsMatch = path.match(/\/api\/quizzes\/([^/?]+)\/questions/)
@@ -152,5 +153,9 @@ export default async function handler(req, res) {
     return res.status(201).json(rows[0])
   }
 
-  res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({ error: 'Method not allowed' })
+  } catch (err) {
+    console.error('Quizzes API Error:', err)
+    return res.status(500).json({ error: 'Database error: ' + (err.message || 'unknown') })
+  }
 }

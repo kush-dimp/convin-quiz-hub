@@ -3,7 +3,8 @@ import { sql, DEMO_USER_ID } from './_db.js'
 // Question bank: questions where quiz_id IS NULL
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
-  const path = req.query.sub ? `/api/questions/${req.query.sub.split('?')[0]}` : req.url
+  try {
+    const path = req.query.sub ? `/api/questions/${req.query.sub.split('?')[0]}` : req.url
 
   // /api/questions/:id
   const idMatch = path.match(/\/api\/questions\/([^/?]+)$/)
@@ -54,5 +55,9 @@ export default async function handler(req, res) {
     return res.status(201).json(rows[0])
   }
 
-  res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({ error: 'Method not allowed' })
+  } catch (err) {
+    console.error('Questions API Error:', err)
+    return res.status(500).json({ error: 'Database error: ' + (err.message || 'unknown') })
+  }
 }

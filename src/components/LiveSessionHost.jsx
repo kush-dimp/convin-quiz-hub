@@ -260,12 +260,9 @@ export default function LiveSessionHost() {
               Create a real-time quiz session for your participants. They join via a shareable code — no account needed.
             </p>
           </div>
-          <button
-            onClick={createRoom}
-            className="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold hover:from-indigo-700 hover:to-violet-700 transition-all shadow-md hover:shadow-lg"
-          >
-            Create Room
-          </button>
+          <div className="w-full py-3 bg-slate-100 text-slate-500 rounded-xl font-semibold text-center transition-all shadow-sm" title="Coming soon">
+            <span>🚀 Amazing features coming soon!</span>
+          </div>
         </div>
       </div>
     )
