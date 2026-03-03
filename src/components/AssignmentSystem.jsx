@@ -256,8 +256,8 @@ export default function AssignmentSystem() {
 
       {/* New Assignment Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-hidden" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-auto flex flex-col">
             <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
               <Plus className="w-5 h-5 text-[#E63E6D]" />
               <h2 className="font-heading text-sm font-bold text-slate-900 flex-1">New Assignment</h2>

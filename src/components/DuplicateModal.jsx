@@ -145,10 +145,10 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
   /* ── Render phases ── */
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-hidden"
       onClick={handleBackdrop}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-auto">
 
         {/* ── IDLE: options form ── */}
         {phase === 'idle' && (

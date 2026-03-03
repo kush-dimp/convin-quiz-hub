@@ -126,16 +126,16 @@ export default function GradeBook() {
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead>
+                  <thead className="bg-gray-100">
                     <tr className="border-b border-slate-100">
-                      <th className="sticky left-0 bg-white text-left px-4 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider min-w-36 z-10">Student</th>
+                      <th className="sticky left-0 bg-gray-100 text-left px-4 py-3.5 text-[11px] font-semibold text-gray-700 uppercase tracking-wider min-w-36 z-10">Student</th>
                       {quizCols.map(q => (
-                        <th key={q.id} className="px-4 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap max-w-20">
-                          <div className="truncate max-w-20" title={q.title}>{q.title.slice(0, 15)}</div>
+                        <th key={q.id} className="px-4 py-3.5 text-[11px] font-semibold text-gray-700 uppercase tracking-wider whitespace-nowrap min-w-[200px]">
+                          <div className="truncate max-w-[250px]" title={q.title}>{q.title}</div>
                         </th>
                       ))}
-                      <th className="px-4 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Avg</th>
-                      <th className="px-4 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Grade</th>
+                      <th className="px-4 py-3.5 text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Avg</th>
+                      <th className="px-4 py-3.5 text-[11px] font-semibold text-gray-700 uppercase tracking-wider">Grade</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
