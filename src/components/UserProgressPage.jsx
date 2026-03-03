@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Award, TrendingUp, Calendar, Star, Zap, Target, BookOpen } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useUsers } from '../hooks/useUsers'
@@ -36,6 +36,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function UserProgressPage() {
   const { users, loading: usersLoading } = useUsers()
   const [selectedUserId, setSelectedUserId] = useState(null)
+  const [editingRole, setEditingRole] = useState(false)
+  const [newRole, setNewRole] = useState('')
 
   // Default to first active user once loaded
   const activeUsers = users.filter(u => u.status === 'active' || !u.status)
@@ -46,6 +48,28 @@ export default function UserProgressPage() {
   )
 
   const user = users.find(u => u.id === effectiveUserId) ?? null
+
+  // Update newRole when user changes
+  useEffect(() => {
+    if (user?.role) setNewRole(user.role)
+  }, [user?.role])
+
+  async function handleSaveRole() {
+    if (!user?.id) return
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole }),
+      })
+      if (res.ok) {
+        setEditingRole(false)
+        window.location.reload()
+      }
+    } catch (err) {
+      console.error('Failed to update role:', err)
+    }
+  }
 
   // Build score history chart data from real attempts
   const scoreHistory = useMemo(() => {
@@ -114,7 +138,30 @@ export default function UserProgressPage() {
           <div className="w-16 h-16 rounded-2xl bg-[#FFE5EC] flex items-center justify-center text-xl font-bold text-[#E63E6D] flex-shrink-0">{initials}</div>
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold text-slate-900">{userName}</h2>
-            <p className="text-sm text-slate-500">{email}{department ? ` · ${department}` : ''}{role ? ` · ${role}` : ''}</p>
+            <div className="text-sm text-slate-500">
+              {email}{department ? ` · ${department}` : ''}
+              {role && (
+                <div className="flex items-center gap-2 mt-2">
+                  {editingRole ? (
+                    <div className="flex gap-1 items-center">
+                      <select value={newRole} onChange={e => setNewRole(e.target.value)}
+                        className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1">
+                        {['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'].map(r => (
+                          <option key={r} value={r}>{r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>
+                        ))}
+                      </select>
+                      <button onClick={() => { setEditingRole(false); setNewRole(role); }} className="text-xs text-slate-400 hover:text-slate-600 px-1.5 py-1">Cancel</button>
+                      <button onClick={handleSaveRole} className="text-xs bg-[#E63E6D] text-white px-2.5 py-1 rounded hover:bg-[#C41E5C]">Save</button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span>Role: <strong>{role.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</strong></span>
+                      <button onClick={() => setEditingRole(true)} className="text-xs text-slate-400 hover:text-[#E63E6D] transition-colors">Edit</button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-4 text-center flex-shrink-0">
             <div><p className="text-2xl font-bold text-[#E63E6D]">{quizzesTaken}</p><p className="text-xs text-slate-500">Quizzes</p></div>

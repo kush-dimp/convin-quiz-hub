@@ -6,7 +6,7 @@ const DEMO_PROFILE = {
   id:         '00000000-0000-0000-0000-000000000001',
   name:       'Demo Admin',
   email:      'admin@demo.local',
-  role:       'super_admin',
+  role:       'student',
   status:     'active',
   department: null,
   avatar_url: null,
@@ -41,7 +41,19 @@ export function AuthProvider({ children }) {
       }
     },
     signOut:      async () => {},
-    updateProfile: async () => ({ data: null, error: null }),
+    updateProfile: async (userId, updates) => {
+      try {
+        const res = await fetch(`/api/users/${userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates),
+        })
+        const data = await res.json()
+        return res.ok ? { data, error: null } : { data: null, error: { message: data.error || 'Update failed' } }
+      } catch (e) {
+        return { data: null, error: { message: 'Update failed' } }
+      }
+    },
     refetchProfile: () => {},
   }
 

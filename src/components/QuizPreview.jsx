@@ -21,24 +21,24 @@ export default function QuizPreview({ quiz, onClose }) {
   }, [quiz.id])
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-slate-200">
-          <div>
+        <div className="flex items-start justify-between p-6 border-b border-slate-200 flex-shrink-0">
+          <div className="flex-1">
             <h2 className="font-heading text-xl font-bold text-slate-900">{quiz.title}</h2>
             <p className="text-sm text-slate-500 mt-1">{quiz.description}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0 ml-4"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Quiz Info */}
-        <div className="grid grid-cols-2 gap-4 px-6 py-4 bg-slate-50 border-b border-slate-200">
+        <div className="grid grid-cols-2 gap-4 px-6 py-4 bg-slate-50 border-b border-slate-200 flex-shrink-0">
           <div>
             <p className="text-xs font-semibold text-slate-600">Questions</p>
             <p className="text-lg font-bold text-slate-900">{questions.length}</p>
@@ -61,7 +61,7 @@ export default function QuizPreview({ quiz, onClose }) {
         </div>
 
         {/* Questions */}
-        <div className="max-h-96 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="w-5 h-5 border-2 border-[#FF6B9D] border-t-transparent rounded-full animate-spin" />
@@ -111,7 +111,7 @@ export default function QuizPreview({ quiz, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-200 flex justify-end">
+        <div className="px-6 py-4 border-t border-slate-200 flex justify-end flex-shrink-0">
           <button
             onClick={onClose}
             className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium"

@@ -4,7 +4,7 @@ import {
   LayoutGrid, Layers, Database, BarChart2, TrendingUp,
   BookOpen, Award, FileText, Shield, Users, Calendar,
   Bell, Key, LogOut, Activity, LayoutDashboard, ClipboardList,
-  Zap, GraduationCap, PanelLeftClose, PanelLeftOpen, Radio,
+  Zap, GraduationCap, PanelLeftClose, PanelLeftOpen, Radio, ChevronDown,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -113,9 +113,18 @@ export default function Layout() {
     catch { return false }
   })
 
+  const [expandedGroup, setExpandedGroup] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sidebar_expanded_group') || 'null') }
+    catch { return null }
+  })
+
   useEffect(() => {
     localStorage.setItem('sidebar_collapsed', JSON.stringify(collapsed))
   }, [collapsed])
+
+  useEffect(() => {
+    localStorage.setItem('sidebar_expanded_group', JSON.stringify(expandedGroup))
+  }, [expandedGroup])
 
   const initials = profile?.name
     ? profile.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
@@ -130,28 +139,24 @@ export default function Layout() {
 
       {/* ── Sidebar ── */}
       <aside className={`
-        relative flex-shrink-0 flex flex-col bg-slate-900 overflow-hidden
+        relative flex-shrink-0 flex flex-col bg-gradient-to-b from-slate-950 to-slate-900 border-r border-white/5 overflow-hidden
         transition-all duration-300 ease-in-out
-        ${collapsed ? 'w-[60px]' : 'w-[220px]'}
+        ${collapsed ? 'w-[72px]' : 'w-[240px]'}
       `}>
-        {/* Top gradient accent */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#C41E5C]/30 to-transparent pointer-events-none" />
-
         {/* Logo + toggle */}
-        <div className="relative flex items-center h-[56px] border-b border-white/6 flex-shrink-0 px-4">
-          <div className={`w-[30px] h-[30px] rounded-[8px] bg-gradient-to-br from-[#FF6B9D] to-[#E63E6D] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#C41E5C]/40 ${collapsed ? 'mx-auto' : ''}`}>
-            <Zap className="w-[14px] h-[14px] text-white" strokeWidth={2.5} />
+        <div className="relative flex items-center h-16 border-b border-white/5 flex-shrink-0 px-4">
+          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF6B9D] to-[#E63E6D] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#C41E5C]/40 ${collapsed ? 'mx-auto' : ''}`}>
+            <Zap className="w-4 h-4 text-white" strokeWidth={3} />
           </div>
           {!collapsed && (
             <>
-              <div className="leading-none ml-3 flex-1 min-w-0">
-                <p className="text-[13px] font-bold text-white tracking-tight">Convin Assess</p>
-                <p className="text-[10px] text-slate-500 mt-0.5">Workspace</p>
+              <div className="ml-3 flex-1 min-w-0">
+                <p className="text-sm font-bold text-white">Convin Assess</p>
               </div>
               <button
                 onClick={() => setCollapsed(true)}
                 title="Collapse sidebar"
-                className="p-1 text-slate-600 hover:text-slate-300 transition-colors flex-shrink-0"
+                className="p-1.5 text-slate-500 hover:text-slate-300 hover:bg-white/5 rounded-lg transition-all flex-shrink-0"
               >
                 <PanelLeftClose className="w-4 h-4" />
               </button>
@@ -159,34 +164,55 @@ export default function Layout() {
           )}
         </div>
 
-        {/* Nav */}
-        <nav className="relative flex-1 overflow-y-auto py-4 space-y-6 scrollbar-hide px-3">
-          {NAV.map(({ group, items }) => (
-            <section key={group}>
-              {!collapsed && (
-                <p className="mb-2 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-slate-600">
-                  {group}
-                </p>
-              )}
-              {collapsed && <div className="mb-2 mx-3 h-px bg-white/6" />}
-              <ul className="space-y-0.5">
-                {items.map(item => (
-                  <li key={item.to} className="relative">
-                    <NavItem item={item} collapsed={collapsed} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
+        {/* Nav with accordion groups */}
+        <nav className="relative flex-1 overflow-y-auto py-3 space-y-2 scrollbar-hide px-2">
+          {NAV.map(({ group, items }) => {
+            const isExpanded = !collapsed && (expandedGroup === group || expandedGroup === null)
+            return (
+              <section key={group}>
+                {!collapsed ? (
+                  <>
+                    <button
+                      onClick={() => setExpandedGroup(expandedGroup === group ? null : group)}
+                      className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors group"
+                    >
+                      <span className="uppercase tracking-wider">{group}</span>
+                      <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isExpanded && (
+                      <ul className="space-y-1 mt-1">
+                        {items.map(item => (
+                          <li key={item.to}>
+                            <NavItem item={item} collapsed={false} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div className="h-px bg-white/5 my-2" />
+                    <ul className="space-y-1">
+                      {items.map(item => (
+                        <li key={item.to}>
+                          <NavItem item={item} collapsed={true} />
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </section>
+            )
+          })}
         </nav>
 
         {/* Expand button (collapsed state only) */}
         {collapsed && (
-          <div className="relative flex-shrink-0 border-t border-white/6 px-3 py-3">
+          <div className="flex-shrink-0 border-t border-white/5 px-2 py-3">
             <button
               onClick={() => setCollapsed(false)}
               title="Expand sidebar"
-              className="w-full flex items-center justify-center p-2 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-white/6 transition-all"
+              className="w-full flex items-center justify-center p-2 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all"
             >
               <PanelLeftOpen className="w-4 h-4" />
             </button>
@@ -194,18 +220,18 @@ export default function Layout() {
         )}
 
         {/* User pill */}
-        <div className="relative flex-shrink-0 border-t border-white/6 p-3">
-          <div className={`flex items-center rounded-xl ${collapsed ? 'justify-center px-0 py-2' : 'gap-2.5 px-2.5 py-2'}`}>
+        <div className="flex-shrink-0 border-t border-white/5 p-3">
+          <div className={`flex items-center rounded-xl transition-colors hover:bg-white/5 ${collapsed ? 'justify-center px-0 py-2' : 'gap-3 px-3 py-2'}`}>
             <div className="relative flex-shrink-0">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#FF6B9D] to-[#E63E6D] flex items-center justify-center text-[11px] font-bold text-white shadow">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF6B9D] to-[#E63E6D] flex items-center justify-center text-xs font-bold text-white shadow">
                 {initials}
               </div>
-              <span className="absolute -bottom-px -right-px w-[9px] h-[9px] bg-[#48BB78] border-[1.5px] border-slate-900 rounded-full" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-[#48BB78] border border-slate-900 rounded-full" />
             </div>
             {!collapsed && (
               <>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-semibold text-slate-200 truncate leading-none">
+                  <p className="text-xs font-semibold text-slate-100 truncate">
                     {profile?.name ?? 'Loading…'}
                   </p>
                   <p className="text-[10px] text-slate-500 mt-0.5 truncate">{roleLabel}</p>
@@ -213,7 +239,7 @@ export default function Layout() {
                 <button
                   onClick={signOut}
                   title="Sign out"
-                  className="p-1 text-slate-600 hover:text-slate-300 transition-colors flex-shrink-0"
+                  className="p-1 text-slate-500 hover:text-slate-300 hover:bg-white/5 rounded transition-colors flex-shrink-0"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                 </button>

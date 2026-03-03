@@ -257,14 +257,14 @@ export default function AssignmentSystem() {
               <div>
                 <label className="text-xs font-semibold text-slate-600 block mb-1.5">Assign To</label>
                 <div className="flex gap-2">
-                  {['all','users'].map(t => (
+                  {['all','user'].map(t => (
                     <button key={t} onClick={() => setForm(p => ({ ...p, assignTo: t }))}
                       className={`flex-1 py-2 text-xs font-semibold rounded-lg border capitalize transition-colors ${form.assignTo === t ? 'border-[#FF6B9D] bg-[#FFF5F7] text-[#C41E5C]' : 'border-slate-200 text-slate-600 hover:border-[#FFB3C6]'}`}>
                       {t === 'all' ? 'All Users' : 'Specific Users'}
                     </button>
                   ))}
                 </div>
-                {form.assignTo === 'users' && (
+                {form.assignTo === 'user' && (
                   <div className="mt-2 max-h-28 overflow-y-auto border border-slate-200 rounded-xl divide-y divide-slate-100">
                     {dbUsers.map(u => (
                       <label key={u.id} className="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 cursor-pointer">
