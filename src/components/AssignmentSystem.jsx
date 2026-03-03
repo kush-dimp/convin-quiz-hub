@@ -86,15 +86,16 @@ export default function AssignmentSystem() {
         prerequisite_id: form.prerequisiteId ? form.prerequisiteId : null,
       }
       const res = await createAssignment(payload)
-      if (res?.success || res?.id) {
+      if (!res?.error && res?.data) {
         addToast('success', 'Assignment created successfully')
         setShowModal(false)
         setForm(p => ({ ...p, assignTo: 'all', selectedUsers: [], selectedGroups: [], dueDate: '', required: true, recurring: false, recurringInterval: 'weekly', prerequisiteId: '' }))
-      } else {
-        addToast('error', 'Failed to create assignment')
+        return
       }
+      addToast('error', 'Failed to create assignment')
     } catch (err) {
-      addToast('error', 'Something went wrong')
+      console.error('Assignment creation error:', err)
+      addToast('error', 'Failed to create assignment')
     }
   }
 
