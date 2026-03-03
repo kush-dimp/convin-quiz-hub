@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import { Database, Search, Plus, Edit2, Trash2, Copy, Download, X, Check, Upload } from 'lucide-react'
 import { QUESTION_TYPES, DIFFICULTY_LEVELS, TOPICS } from '../data/mockQuestions'
 import QuestionImportModal from './QuestionImport'
@@ -258,6 +259,11 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
   const isNew = !initial?.id
   const [form, setForm] = useState(initial ?? emptyForm())
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
   function handleTypeChange(type) {
     setForm(p => ({
       ...p, type,
@@ -284,9 +290,9 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
     })
   }
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm overflow-hidden"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
@@ -381,6 +387,8 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(modalContent, document.body)
 }
 
 /* ── Main component ── */

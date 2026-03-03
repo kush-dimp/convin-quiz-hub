@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import { X, ChevronDown, ChevronUp } from 'lucide-react'
 
 export default function QuizPreview({ quiz, onClose }) {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
   const [questions, setQuestions] = useState([])
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState(null)
@@ -20,8 +25,8 @@ export default function QuizPreview({ quiz, onClose }) {
     fetchQuestions()
   }, [quiz.id])
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-hidden">
+  const modalContent = (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-hidden">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-slate-200 flex-shrink-0">
@@ -122,4 +127,6 @@ export default function QuizPreview({ quiz, onClose }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(modalContent, document.body)
 }

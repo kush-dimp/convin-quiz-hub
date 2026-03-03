@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
+import ReactDOM from 'react-dom'
 import { Link } from 'react-router-dom'
 import { GraduationCap, Search, Printer, Trash2, Eye, X, RefreshCw, Settings, ChevronDown, ChevronUp, Plus, Palette, FileUp, Download } from 'lucide-react'
 import CertificateRenderer, { CERT_W, CERT_H } from './CertificateRenderer'
@@ -449,7 +450,7 @@ export default function CertificatesPage() {
       </div>
 
       {/* View Certificate Modal */}
-      {viewCert && (() => {
+      {viewCert && ReactDOM.createPortal((() => {
         let tpl = {}
         try { tpl = JSON.parse(viewCert.certificate_template || '{}') } catch {}
         // Reserve space for button bar (≈52px) + gaps + padding
@@ -459,7 +460,7 @@ export default function CertificatesPage() {
         const scaledW = Math.round(CERT_W * scale)
         const scaledH = Math.round(CERT_H * scale)
         return (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm p-4 gap-4">
+          <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm p-4 gap-4 overflow-hidden">
             {/* Buttons — always visible above cert */}
             <div className="flex items-center gap-3 flex-shrink-0">
               <button
@@ -504,7 +505,7 @@ export default function CertificatesPage() {
             </div>
           </div>
         )
-      })()}
+      })(), document.body)}
 
       {/* Certificate Builder */}
       {builderOpen && (
@@ -518,8 +519,8 @@ export default function CertificatesPage() {
       )}
 
       {/* Revoke Confirm Dialog */}
-      {revokeTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      {revokeTarget && ReactDOM.createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-hidden">
           <div className="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full mx-4">
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
               <Trash2 className="w-6 h-6 text-red-500" />
@@ -545,7 +546,8 @@ export default function CertificatesPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

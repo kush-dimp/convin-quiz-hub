@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { Bell, Check, CheckCheck, Trash2, Settings, ClipboardList, Award, AlertTriangle, Info, Clock, X } from 'lucide-react'
 import { useNotifications } from '../hooks/useNotifications'
@@ -182,8 +183,8 @@ export default function NotificationCenter() {
       </main>
 
       {/* Preferences Panel */}
-      {showPrefs && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-end" onClick={e => e.target === e.currentTarget && setShowPrefs(false)}>
+      {showPrefs && ReactDOM.createPortal(
+        <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-end overflow-hidden" onClick={e => e.target === e.currentTarget && setShowPrefs(false)}>
           <div className="bg-white h-full w-full max-w-sm shadow-2xl flex flex-col">
             <div className="flex items-center gap-3 px-5 py-4 bg-slate-50 border-b border-slate-100">
               <Settings className="w-4 h-4 text-[#E63E6D]" />
@@ -232,7 +233,8 @@ export default function NotificationCenter() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

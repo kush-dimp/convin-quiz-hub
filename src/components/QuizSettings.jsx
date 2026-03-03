@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import ReactDOM from 'react-dom'
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom'
 import {
   ChevronLeft, Timer, RefreshCw, Layout, BarChart2, Shield,
@@ -606,14 +607,14 @@ function CertificateSettings({ settings, onSettingChange, quizTitle, quizId }) {
       )}
 
       {/* Preview Modal */}
-      {showPreview && (() => {
+      {showPreview && ReactDOM.createPortal((() => {
         const availW = window.innerWidth  * 0.92
         const availH = window.innerHeight * 0.92 - 64
         const scale   = Math.min(availW / CERT_W, availH / CERT_H, 1)
         const scaledW = Math.round(CERT_W * scale)
         const scaledH = Math.round(CERT_H * scale)
         return (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm p-4 gap-4"
+          <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm p-4 gap-4 overflow-hidden"
                onClick={() => setShowPreview(false)}>
             {/* Close button — always visible above cert */}
             <div className="flex-shrink-0" onClick={e => e.stopPropagation()}>
@@ -650,7 +651,7 @@ function CertificateSettings({ settings, onSettingChange, quizTitle, quizId }) {
             </div>
           </div>
         )
-      })()}
+      })(), document.body)}
     </div>
   )
 }

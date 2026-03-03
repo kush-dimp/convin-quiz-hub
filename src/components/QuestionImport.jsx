@@ -4,7 +4,8 @@
  * Accepts: CSV (any column order), TSV/Excel paste, JSON array, plain text
  * Converts everything to the internal question format automatically.
  */
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import {
   Upload, X, FileText, AlertTriangle, CheckCircle2,
   Trash2, RefreshCw, ChevronDown, Info,
@@ -590,6 +591,11 @@ export default function QuestionImportModal({ onClose, onImported }) {
   const [importing, setImporting] = useState(false)
   const [importError, setImportError] = useState('')
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
   function handleParsed(questions) {
     setParsed(questions)
     setStep('preview')
@@ -643,9 +649,9 @@ export default function QuestionImportModal({ onClose, onImported }) {
     setImporting(false)
   }
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm overflow-hidden"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
@@ -688,4 +694,6 @@ export default function QuestionImportModal({ onClose, onImported }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(modalContent, document.body)
 }

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import { FileText, Plus, Play, Pause, Trash2, Mail, Calendar, Check } from 'lucide-react'
 import { useResults } from '../hooks/useResults'
 import { useQuizzes } from '../hooks/useQuizzes'
@@ -149,8 +150,8 @@ export default function AutomatedReports() {
       </main>
 
       {/* Report Builder Modal */}
-      {showBuilder && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={e => e.target===e.currentTarget && setShowBuilder(false)}>
+      {showBuilder && ReactDOM.createPortal(
+        <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-hidden" onClick={e => e.target===e.currentTarget && setShowBuilder(false)}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
               <Plus className="w-5 h-5 text-[#E63E6D]" />
@@ -219,7 +220,8 @@ export default function AutomatedReports() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

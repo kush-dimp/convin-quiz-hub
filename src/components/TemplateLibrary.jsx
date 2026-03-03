@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import {
   Layers, Search, Star, Clock, HelpCircle, Users, X, ChevronRight,
@@ -140,12 +141,18 @@ function PreviewModal({ template, onClose, onUse, loading }) {
   const [userRating, setUserRating] = useState(0)
   const [hover, setHover] = useState(0)
   const [rated, setRated] = useState(false)
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
   if (!template) return null
   const t = theme(template.category)
   const Icon = t.icon
 
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && onClose()}>
+  const modalContent = (
+    <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-hidden" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden">
         {/* Hero header */}
         <div className={`bg-gradient-to-br ${t.gradient} px-6 py-5 flex-shrink-0 relative overflow-hidden`}>
@@ -277,17 +284,23 @@ function PreviewModal({ template, onClose, onUse, loading }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(modalContent, document.body)
 }
 
 /* ── Save-as-template modal ── */
 function SaveAsTemplateModal({ quiz, onClose }) {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
   const [name, setName] = useState(`Template: ${quiz.title}`)
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('Education')
   const [saved, setSaved] = useState(false)
 
-  if (saved) return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+  if (saved) return ReactDOM.createPortal(
+    <div className="fixed inset-0 bg-black/40 z-[9999] flex items-center justify-center p-4 overflow-hidden" onClick={onClose}>
       <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
         <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <Award className="w-7 h-7 text-emerald-500" />
@@ -296,11 +309,12 @@ function SaveAsTemplateModal({ quiz, onClose }) {
         <p className="text-sm text-slate-500 mt-2">"{name}" is now available in the Template Library.</p>
         <button onClick={onClose} className="mt-4 w-full py-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white text-sm font-semibold rounded-xl shadow-sm transition-all">Done</button>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 
-  return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && onClose()}>
+  const formContent = (
+    <div className="fixed inset-0 bg-black/40 z-[9999] flex items-center justify-center p-4 overflow-hidden" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100">
           <Plus className="w-5 h-5 text-[#E63E6D]" />
@@ -334,6 +348,8 @@ function SaveAsTemplateModal({ quiz, onClose }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(formContent, document.body)
 }
 
 /* ── Main page ── */

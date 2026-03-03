@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import {
   Users, Search, Plus, Upload, Download, Edit2,
   Mail, UserCheck, UserX, X, Check, RefreshCw,
@@ -36,6 +37,11 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
   const [importing,  setImporting]  = useState(false)
   const [importDone, setImportDone] = useState(null)   // { success, failed }
   const fileRef = useRef(null)
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -105,8 +111,8 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
     a.click()
   }
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && onClose()}>
+  const modalContent = (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-hidden" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
 
         {/* Header */}
@@ -339,6 +345,8 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(modalContent, document.body)
 }
 
 /* ── Edit user modal ── */
@@ -365,6 +373,11 @@ function EditUserModal({ user, onClose, onSave }) {
     })
   }, [user?.id])
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
   async function handleSave() {
     setError('')
     if (!form.name?.trim()) { setError('Name required'); return }
@@ -387,8 +400,8 @@ function EditUserModal({ user, onClose, onSave }) {
     onClose()
   }
 
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && onClose()}>
+  const modalContent = (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-hidden" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-y-auto max-h-[90vh] animate-fade-in-up">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 sticky top-0 bg-white">
           <h2 className="font-heading text-[14px] font-bold text-slate-900">Edit User</h2>
@@ -473,6 +486,8 @@ function EditUserModal({ user, onClose, onSave }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(modalContent, document.body)
 }
 
 /* ── Sync button ── */
