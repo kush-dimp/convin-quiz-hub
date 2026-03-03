@@ -408,6 +408,8 @@ export default function QuestionBank() {
   const [saving, setSaving] = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [toasts, setToasts] = useState([])
+  const [perPage, setPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
 
   function addToast(type, message, duration = 4000) {
     const id = ++toastCounter
@@ -438,6 +440,10 @@ export default function QuestionBank() {
     (filterTopic === 'all' || q.topic      === filterTopic) &&
     (q.text ?? '').toLowerCase().includes(search.toLowerCase())
   )
+
+  const totalPages = Math.ceil(filtered.length / perPage)
+  const startIdx = (currentPage - 1) * perPage
+  const paged = filtered.slice(startIdx, startIdx + perPage)
 
   function toggle(id) {
     setSelected(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n })
@@ -651,7 +657,7 @@ export default function QuestionBank() {
               </div>
             ))}
 
-            {!loading && filtered.map(q => {
+            {!loading && paged.map(q => {
               const typeLabel = QUESTION_TYPES.find(t => t.id === q.type)?.short ?? q.type
               const optCount = q.payload?.options?.length
               return (
@@ -710,6 +716,47 @@ export default function QuestionBank() {
               </div>
             )}
           </div>
+
+          {/* Pagination */}
+          {filtered.length > 0 && (
+            <div className="flex items-center justify-between px-4 py-4 border-t border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500">Items per page:</span>
+                {[10, 15, 25, 50, 100].map(n => (
+                  <button
+                    key={n}
+                    onClick={() => { setPerPage(n); setCurrentPage(1) }}
+                    className={`px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                      perPage === n
+                        ? 'bg-[#E63E6D] text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+              <div className="text-xs text-slate-500">
+                Page {currentPage} of {totalPages} ({filtered.length} total)
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  ← Prev
+                </button>
+                <button
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

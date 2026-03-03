@@ -81,7 +81,7 @@ function Toast({ id, type, message, undoData, duration = 4000, onRemove, onUndo 
 /* ── Toast container (portal-style fixed position) ─────────── */
 export function ToastContainer({ toasts, onRemove, onUndo }) {
   return (
-    <div className="fixed top-6 right-6 z-[10000] flex flex-col gap-2.5 items-end pointer-events-none">
+    <div style={{ position: 'fixed', top: '24px', right: '24px', zIndex: 10000 }} className="flex flex-col gap-2.5 items-end pointer-events-none">
       {toasts.map((t) => (
         <div key={t.id} className="pointer-events-auto">
           <Toast
