@@ -503,6 +503,25 @@ export default function QuestionBank() {
     }
   }
 
+  async function handleBulkDelete() {
+    if (selected.size === 0) return
+    try {
+      await Promise.all([...selected].map(id => fetch(`/api/questions/${id}`, { method: 'DELETE' })))
+      setQuestions(prev => prev.filter(q => !selected.has(q.id)))
+      setSelected(new Set())
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
+  function toggleAll() {
+    if (selected.size === filtered.length && filtered.length > 0) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(filtered.map(q => q.id)))
+    }
+  }
+
   function exportSelected() {
     const qs = filtered.filter(q => selected.has(q.id))
     const csv = [['ID', 'Question', 'Type', 'Difficulty', 'Topic', 'Points']].concat(
@@ -527,12 +546,20 @@ export default function QuestionBank() {
           </div>
           <div className="flex gap-2">
             {selected.size > 0 && (
-              <button
-                onClick={exportSelected}
-                className="flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm transition-colors"
-              >
-                <Download className="w-4 h-4" /> Export ({selected.size})
-              </button>
+              <>
+                <button
+                  onClick={handleBulkDelete}
+                  className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" /> Delete ({selected.size})
+                </button>
+                <button
+                  onClick={exportSelected}
+                  className="flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium shadow-sm transition-colors"
+                >
+                  <Download className="w-4 h-4" /> Export ({selected.size})
+                </button>
+              </>
             )}
             <button
               onClick={() => setShowImport(true)}
@@ -590,7 +617,7 @@ export default function QuestionBank() {
         {/* Table */}
         <div className="glass-card rounded-2xl overflow-hidden">
           <div className="hidden md:grid grid-cols-[2rem_1fr_6rem_6rem_5rem_5rem_6rem] items-center gap-3 px-4 border-b border-slate-100">
-            <div />
+            <input type="checkbox" checked={selected.size === filtered.length && filtered.length > 0} onChange={toggleAll} className="rounded accent-[#E63E6D]" />
             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider py-3.5">Question</span>
             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider py-3.5">Type</span>
             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider py-3.5">Difficulty</span>
