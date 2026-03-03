@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import { AlertTriangle, Archive, FolderOpen, RefreshCw, X } from 'lucide-react'
 
 const FOLDERS = ['Technology', 'HR & Compliance', 'Onboarding', 'Certifications', 'General']
@@ -11,6 +12,17 @@ const STATUSES = [
 export default function ConfirmModal({ modal, onConfirm, onCancel }) {
   const [selectedFolder, setSelectedFolder] = useState(FOLDERS[0])
   const [selectedStatus, setSelectedStatus] = useState('published')
+
+  useEffect(() => {
+    if (modal) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [modal])
 
   if (!modal) return null
   const { type, items } = modal
@@ -58,12 +70,12 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
     else onConfirm()
   }
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-hidden"
       onClick={(e) => e.target === e.currentTarget && onCancel()}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-auto animate-fade-in-up">
         {/* Header */}
         <div className={`flex items-center gap-3 px-6 py-5 ${config.bg}`}>
           {config.icon}
@@ -80,9 +92,9 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
           {/* Affected quiz list (delete / archive) */}
           {(type === 'delete' || type === 'archive') && (
             <ul className="bg-gray-50 rounded-xl border border-gray-200 divide-y divide-gray-100 max-h-40 overflow-y-auto mb-1">
-              {items.map((q) => (
-                <li key={q.id} className="px-3 py-2 text-sm text-gray-700 truncate">
-                  {q.title}
+              {items?.map((q) => (
+                <li key={q?.id} className="px-3 py-2 text-sm text-gray-700 truncate">
+                  {q?.title}
                 </li>
               ))}
             </ul>
@@ -144,7 +156,7 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 px-6 pb-5">
+        <div className="flex justify-end gap-3 px-6 py-5 border-t border-gray-100">
           <button
             onClick={onCancel}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
@@ -161,4 +173,6 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(modalContent, document.body)
 }

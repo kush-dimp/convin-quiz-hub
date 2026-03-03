@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ClipboardList, Plus, Trash2, Check, Clock, AlertTriangle, Users, User, RefreshCw, Lock, ChevronDown, X } from 'lucide-react'
 import { useAssignments } from '../hooks/useAssignments'
+import { ToastContainer } from './Toast'
 
 const statusColor = {
   completed:   'bg-emerald-100 text-emerald-700',
@@ -19,6 +20,8 @@ function daysLeft(dueDate) {
   return diff
 }
 
+let toastCounter = 0
+
 export default function AssignmentSystem() {
   const { assignments: rawAssignments, loading, createAssignment, deleteAssignment } = useAssignments()
   const [showModal, setShowModal]     = useState(false)
@@ -26,6 +29,7 @@ export default function AssignmentSystem() {
   const [filterType, setFilterType]   = useState('all')
   const [quizzes, setQuizzes]         = useState([])
   const [dbUsers, setDbUsers]         = useState([])
+  const [toasts, setToasts]           = useState([])
   const [form, setForm] = useState({
     quizId: '',
     assignTo: 'all',
@@ -37,6 +41,12 @@ export default function AssignmentSystem() {
     recurringInterval: 'weekly',
     prerequisiteId: '',
   })
+
+  function addToast(type, message, duration = 4000) {
+    const id = ++toastCounter
+    setToasts((prev) => [...prev, { id, type, message, duration }])
+  }
+  function removeToast(id) { setToasts((prev) => prev.filter((t) => t.id !== id)) }
 
   // Load quizzes and users for the modal selectors
   useEffect(() => {
@@ -61,22 +71,31 @@ export default function AssignmentSystem() {
   }))
 
   async function handleCreateAssignment() {
-    const quiz = quizzes.find(q => q.id === form.quizId || String(q.id) === String(form.quizId))
-    const payload = {
-      quiz_id:    form.quizId,
-      quizTitle:  quiz?.title || 'Untitled Quiz',
-      assign_type: form.assignTo,
-      target_user_id: form.assignTo === 'user' ? form.selectedUsers?.[0] : null,
-      target_group_id: form.assignTo === 'group' ? form.selectedGroups?.[0] : null,
-      due_date:   form.dueDate || '2026-03-31',
-      required:   form.required,
-      recurring:  form.recurring,
-      recurring_interval: form.recurring ? form.recurringInterval : null,
-      prerequisite_id: form.prerequisiteId ? form.prerequisiteId : null,
+    try {
+      const quiz = quizzes.find(q => q.id === form.quizId || String(q.id) === String(form.quizId))
+      const payload = {
+        quiz_id:    form.quizId,
+        quizTitle:  quiz?.title || 'Untitled Quiz',
+        assign_type: form.assignTo,
+        target_user_id: form.assignTo === 'user' ? form.selectedUsers?.[0] : null,
+        target_group_id: form.assignTo === 'group' ? form.selectedGroups?.[0] : null,
+        due_date:   form.dueDate || '2026-03-31',
+        required:   form.required,
+        recurring:  form.recurring,
+        recurring_interval: form.recurring ? form.recurringInterval : null,
+        prerequisite_id: form.prerequisiteId ? form.prerequisiteId : null,
+      }
+      const res = await createAssignment(payload)
+      if (res?.success || res?.id) {
+        addToast('success', 'Assignment created successfully')
+        setShowModal(false)
+        setForm(p => ({ ...p, assignTo: 'all', selectedUsers: [], selectedGroups: [], dueDate: '', required: true, recurring: false, recurringInterval: 'weekly', prerequisiteId: '' }))
+      } else {
+        addToast('error', 'Failed to create assignment')
+      }
+    } catch (err) {
+      addToast('error', 'Something went wrong')
     }
-    await createAssignment(payload)
-    setShowModal(false)
-    setForm(p => ({ ...p, assignTo: 'all', selectedUsers: [], selectedGroups: [], dueDate: '', required: true, recurring: false, recurringInterval: 'weekly', prerequisiteId: '' }))
   }
 
   const filtered = assignments.filter(a => {
@@ -338,6 +357,8 @@ export default function AssignmentSystem() {
           </div>
         </div>
       )}
+
+      <ToastContainer toasts={toasts} onRemove={removeToast} onUndo={() => {}} />
     </div>
   )
 }
