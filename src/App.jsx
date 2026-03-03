@@ -4,6 +4,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import QuizGrid from './components/QuizGrid'
+import Trash from './components/Trash'
 import TemplateLibrary from './components/TemplateLibrary'
 import QuizEditor from './components/QuizEditor'
 import QuizSettings from './components/QuizSettings'
@@ -72,6 +73,7 @@ function AppRoutes() {
         }
       >
         <Route index element={<QuizGrid />} />
+        <Route path="trash" element={<Trash />} />
         <Route path="templates" element={<TemplateLibrary />} />
         <Route path="question-bank" element={<QuestionBank />} />
         <Route path="quizzes/:id/editor" element={<QuizEditor />} />

@@ -46,6 +46,22 @@ export default async function handler(req, res) {
     }
   }
 
+  // Route: /api/quizzes/trash (soft delete + restore)
+  const trashMatch = path.match(/\/api\/quizzes\/trash$/)
+  if (trashMatch) {
+    if (req.method === 'PATCH') {
+      const { ids, isRestore } = req.body
+      if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ error: 'Invalid ids' })
+      const idList = ids.map((_, i) => `$${i + 1}`).join(',')
+      if (isRestore) {
+        await sql(`UPDATE quizzes SET is_deleted = false, deleted_at = NULL WHERE id IN (${idList})`, ids)
+      } else {
+        await sql(`UPDATE quizzes SET is_deleted = true, deleted_at = NOW() WHERE id IN (${idList})`, ids)
+      }
+      return res.status(200).json({ success: true })
+    }
+  }
+
   // Route: /api/quizzes/:id
   const idMatch = path.match(/\/api\/quizzes\/([^/?]+)$/)
   if (idMatch) {
@@ -92,43 +108,47 @@ export default async function handler(req, res) {
     const url = new URL(req.url, 'http://localhost')
     const status = url.searchParams.get('status')
     const instructorId = url.searchParams.get('instructorId')
+    const showTrash = url.searchParams.get('trash') === 'true'
 
     let rows
+    const whereDeleted = showTrash ? 'q.is_deleted = true' : '(q.is_deleted = false OR q.is_deleted IS NULL)'
+
     if (status && instructorId) {
-      rows = await sql`
+      rows = await sql(`
         SELECT q.*, qs.views, qs.previews, qs.reports, p.name as instructor_name
         FROM quizzes q
         LEFT JOIN quiz_stats qs ON qs.quiz_id = q.id
         LEFT JOIN profiles p ON p.id = q.instructor_id
-        WHERE q.status = ${status} AND q.instructor_id = ${instructorId}
+        WHERE q.status = $1 AND q.instructor_id = $2 AND ${whereDeleted}
         ORDER BY q.updated_at DESC
-      `
+      `, [status, instructorId])
     } else if (status) {
-      rows = await sql`
+      rows = await sql(`
         SELECT q.*, qs.views, qs.previews, qs.reports, p.name as instructor_name
         FROM quizzes q
         LEFT JOIN quiz_stats qs ON qs.quiz_id = q.id
         LEFT JOIN profiles p ON p.id = q.instructor_id
-        WHERE q.status = ${status}
+        WHERE q.status = $1 AND ${whereDeleted}
         ORDER BY q.updated_at DESC
-      `
+      `, [status])
     } else if (instructorId) {
-      rows = await sql`
+      rows = await sql(`
         SELECT q.*, qs.views, qs.previews, qs.reports, p.name as instructor_name
         FROM quizzes q
         LEFT JOIN quiz_stats qs ON qs.quiz_id = q.id
         LEFT JOIN profiles p ON p.id = q.instructor_id
-        WHERE q.instructor_id = ${instructorId}
+        WHERE q.instructor_id = $1 AND ${whereDeleted}
         ORDER BY q.updated_at DESC
-      `
+      `, [instructorId])
     } else {
-      rows = await sql`
+      rows = await sql(`
         SELECT q.*, qs.views, qs.previews, qs.reports, p.name as instructor_name
         FROM quizzes q
         LEFT JOIN quiz_stats qs ON qs.quiz_id = q.id
         LEFT JOIN profiles p ON p.id = q.instructor_id
+        WHERE ${whereDeleted}
         ORDER BY q.updated_at DESC
-      `
+      `)
     }
     return res.status(200).json(rows)
   }

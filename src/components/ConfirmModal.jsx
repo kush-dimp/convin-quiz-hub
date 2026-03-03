@@ -33,9 +33,9 @@ export default function ConfirmModal({ modal, onConfirm, onCancel }) {
     delete: {
       icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
       bg:   'bg-red-50',
-      title: `Delete ${count} quiz${count !== 1 ? 'zes' : ''}?`,
-      body:  'This action cannot be undone. The following quizzes will be permanently deleted:',
-      confirmLabel: 'Delete',
+      title: `Move ${count} quiz${count !== 1 ? 'zes' : ''} to Trash?`,
+      body:  'Quizzes in Trash can be restored. They will be permanently deleted after 7 days. Affected quizzes:',
+      confirmLabel: 'Move to Trash',
       confirmClass: 'bg-red-600 hover:bg-red-700 text-white',
     },
     archive: {
