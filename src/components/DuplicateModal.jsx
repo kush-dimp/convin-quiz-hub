@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import {
   X, Copy, CheckCircle2, AlertCircle,
   FolderOpen, Settings, HelpCircle, BarChart2,
@@ -137,13 +138,18 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
   }
 
   /* ── Backdrop click ── */
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
   function handleBackdrop(e) {
     if (phase === 'processing') return
     if (e.target === e.currentTarget) onClose()
   }
 
   /* ── Render phases ── */
-  return (
+  const modalContent = (
     <div
       className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-hidden"
       onClick={handleBackdrop}
@@ -386,6 +392,8 @@ export default function DuplicateModal({ quiz, onClose, onSuccess }) {
       </div>
     </div>
   )
+
+  return ReactDOM.createPortal(modalContent, document.body)
 }
 
 function Row({ label, value }) {

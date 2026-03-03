@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import { ClipboardList, Plus, Trash2, Check, Clock, AlertTriangle, Users, User, RefreshCw, Lock, ChevronDown, X } from 'lucide-react'
 import { useAssignments } from '../hooks/useAssignments'
 import { ToastContainer } from './Toast'
@@ -47,6 +48,15 @@ export default function AssignmentSystem() {
     setToasts((prev) => [...prev, { id, type, message, duration }])
   }
   function removeToast(id) { setToasts((prev) => prev.filter((t) => t.id !== id)) }
+
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [showModal])
 
   // Load quizzes and users for the modal selectors
   useEffect(() => {
@@ -254,8 +264,9 @@ export default function AssignmentSystem() {
         </div>
       </main>
 
-      {/* New Assignment Modal */}
-      {showModal && (
+      <ToastContainer toasts={toasts} onRemove={removeToast} onUndo={() => {}} />
+
+      {showModal && ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-hidden" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-auto flex flex-col">
             <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-b border-slate-100 flex-shrink-0">
@@ -356,10 +367,9 @@ export default function AssignmentSystem() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-
-      <ToastContainer toasts={toasts} onRemove={removeToast} onUndo={() => {}} />
     </div>
   )
 }
