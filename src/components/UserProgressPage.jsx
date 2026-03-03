@@ -64,7 +64,12 @@ export default function UserProgressPage() {
       })
       if (res.ok) {
         setEditingRole(false)
-        window.location.reload()
+        // Refresh user data from server
+        const updatedRes = await fetch(`/api/users/${user.id}`)
+        if (updatedRes.ok) {
+          const { user: updatedUser } = await updatedRes.json()
+          if (updatedUser) setNewRole(updatedUser.role)
+        }
       }
     } catch (err) {
       console.error('Failed to update role:', err)
