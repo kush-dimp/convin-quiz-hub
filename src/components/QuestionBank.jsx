@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { Database, Search, Plus, Edit2, Trash2, Copy, Download, X, Check, Upload } from 'lucide-react'
 import { QUESTION_TYPES, DIFFICULTY_LEVELS, TOPICS } from '../data/mockQuestions'
 import QuestionImportModal from './QuestionImport'
+import { ToastContainer } from './Toast'
 
 const diffColor = {
   Easy:   'bg-emerald-50 text-emerald-700',
@@ -392,6 +393,8 @@ function QuestionModal({ initial, onSave, onClose, saving }) {
 }
 
 /* ── Main component ── */
+let toastCounter = 0
+
 export default function QuestionBank() {
   const [questions, setQuestions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -404,6 +407,13 @@ export default function QuestionBank() {
   const [modal, setModal] = useState(null)   // null | 'new' | flattenedQuestion
   const [saving, setSaving] = useState(false)
   const [showImport, setShowImport] = useState(false)
+  const [toasts, setToasts] = useState([])
+
+  function addToast(type, message, duration = 4000) {
+    const id = ++toastCounter
+    setToasts((prev) => [...prev, { id, type, message, duration }])
+  }
+  function removeToast(id) { setToasts((prev) => prev.filter((t) => t.id !== id)) }
 
   useEffect(() => {
     async function load() {
@@ -497,9 +507,10 @@ export default function QuestionBank() {
       if (res.ok) {
         setQuestions(prev => prev.filter(q => q.id !== id))
         setSelected(prev => { const n = new Set(prev); n.delete(id); return n })
+        addToast('success', 'Question deleted successfully')
       }
     } catch (e) {
-      setError(e.message)
+      addToast('error', 'Failed to delete question')
     }
   }
 
@@ -508,9 +519,11 @@ export default function QuestionBank() {
     try {
       await Promise.all([...selected].map(id => fetch(`/api/questions/${id}`, { method: 'DELETE' })))
       setQuestions(prev => prev.filter(q => !selected.has(q.id)))
+      const count = selected.size
       setSelected(new Set())
+      addToast('success', `${count} question${count > 1 ? 's' : ''} deleted successfully`)
     } catch (e) {
-      setError(e.message)
+      addToast('error', 'Failed to delete questions')
     }
   }
 
@@ -720,6 +733,8 @@ export default function QuestionBank() {
           }}
         />
       )}
+
+      <ToastContainer toasts={toasts} onRemove={removeToast} onUndo={() => {}} />
     </div>
   )
 }
