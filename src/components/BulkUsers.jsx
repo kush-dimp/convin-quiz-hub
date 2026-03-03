@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Users, Search, Plus, Upload, Download, Edit2,
   Mail, UserCheck, UserX, X, Check, RefreshCw,
@@ -343,40 +343,130 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
 
 /* ── Edit user modal ── */
 function EditUserModal({ user, onClose, onSave }) {
-  const [name, setName] = useState(user.name || '')
+  const [form, setForm] = useState({
+    name: user?.name ?? '',
+    email: user?.email ?? '',
+    role: user?.role ?? '',
+    status: user?.status ?? '',
+    password: '',
+    confirmPassword: '',
+  })
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    setForm({
+      name: user?.name ?? '',
+      email: user?.email ?? '',
+      role: user?.role ?? '',
+      status: user?.status ?? '',
+      password: '',
+      confirmPassword: '',
+    })
+  }, [user?.id])
 
   async function handleSave() {
-    if (!name.trim()) return
+    setError('')
+    if (!form.name?.trim()) { setError('Name required'); return }
+    if (!form.email?.trim()) { setError('Email required'); return }
+    if (form.password && form.password !== form.confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
     setSaving(true)
-    await onSave(name.trim())
+    const payload = {
+      name: form.name,
+      email: form.email,
+      role: form.role,
+      status: form.status,
+      ...(form.password ? { password: form.password } : {}),
+    }
+    await onSave(payload)
     setSaving(false)
     onClose()
   }
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-fade-in-up">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-y-auto max-h-[90vh] animate-fade-in-up">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 sticky top-0 bg-white">
           <h2 className="font-heading text-[14px] font-bold text-slate-900">Edit User</h2>
           <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 transition-colors"><X className="w-4 h-4" /></button>
         </div>
         <div className="px-5 py-4 space-y-3">
+          {error && (
+            <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</div>
+          )}
+
           <div>
             <label className="text-xs font-semibold text-slate-600 block mb-1.5">Full Name</label>
             <input
-              value={name}
-              onChange={e => setName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSave()}
-              autoFocus
+              value={form.name}
+              onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
             />
           </div>
-          <p className="text-xs text-slate-400">{user.email}</p>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Email</label>
+            <input
+              value={form.email}
+              onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+              type="email"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Role</label>
+            <select
+              value={form.role}
+              onChange={e => setForm(p => ({ ...p, role: e.target.value }))}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
+            >
+              <option value="">Select role</option>
+              {ROLES.map(r => <option key={r} value={r.toLowerCase().replace(/\s+/g, '_')}>{r}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Status</label>
+            <select
+              value={form.status}
+              onChange={e => setForm(p => ({ ...p, status: e.target.value }))}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
+            >
+              <option value="">Select status</option>
+              {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+
+          <div className="border-t border-slate-100 pt-3 mt-3">
+            <p className="text-xs font-semibold text-slate-600 mb-3">Change Password (Optional)</p>
+            <div>
+              <label className="text-xs font-semibold text-slate-600 block mb-1.5">New Password</label>
+              <input
+                value={form.password}
+                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                type="password"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
+              />
+            </div>
+            <div className="mt-2">
+              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Confirm Password</label>
+              <input
+                value={form.confirmPassword}
+                onChange={e => setForm(p => ({ ...p, confirmPassword: e.target.value }))}
+                type="password"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6]"
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex justify-end gap-3 px-5 pb-4">
+        <div className="flex justify-end gap-3 px-5 py-4 border-t border-slate-100 sticky bottom-0 bg-white">
           <button onClick={onClose} className="border border-slate-200 text-slate-600 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-colors">Cancel</button>
-          <button onClick={handleSave} disabled={saving || !name.trim()} className="bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm disabled:opacity-50 transition-all">
+          <button onClick={handleSave} disabled={saving || !form.name?.trim() || !form.email?.trim()} className="bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm disabled:opacity-50 transition-all">
             {saving ? 'Saving…' : 'Save'}
           </button>
         </div>
@@ -557,13 +647,9 @@ export default function BulkUsers() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <select
-                        value={u.role || ''}
-                        onChange={e => updateUser(u.id, { role: e.target.value })}
-                        className={`text-xs px-2 py-0.5 rounded-full font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] ${roleColor[u.role] || 'bg-slate-100 text-slate-500'}`}
-                      >
-                        {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
-                      </select>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${roleColor[u?.role] || 'bg-slate-100 text-slate-500'}`}>
+                        {u?.role ?? '-'}
+                      </span>
                     </td>
                     <td className="px-4 py-3 text-[12px] text-slate-400 hidden md:table-cell">{u.department || '—'}</td>
                     <td className="px-4 py-3"><span className={`text-xs px-2 py-0.5 rounded-full font-semibold capitalize ${statusColor[u.status] || 'bg-slate-100 text-slate-500'}`}>{u.status}</span></td>
@@ -618,7 +704,7 @@ export default function BulkUsers() {
         <EditUserModal
           user={editUser}
           onClose={() => setEditUser(null)}
-          onSave={name => updateUser(editUser.id, { name })}
+          onSave={payload => updateUser(editUser.id, payload)}
         />
       )}
     </div>

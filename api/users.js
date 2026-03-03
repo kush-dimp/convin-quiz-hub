@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
       if (req.method === 'PUT') {
         const patch = req.body
-        const allowed = ['name','email','role','status','department','avatar_url']
+        const allowed = ['name','email','role','status','department','avatar_url','password']
         const sets = []
         const vals = []
         for (const key of allowed) {
