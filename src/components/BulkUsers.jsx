@@ -508,7 +508,7 @@ function SyncButton({ syncing, lastSynced, onSync }) {
 
 /* ── Main component ── */
 export default function BulkUsers() {
-  const { users, loading, lastSynced, syncing, refetch, updateUser, deactivateUser, activateUser, inviteUser } = useUsers()
+  const { users, loading, lastSynced, syncing, refetch, updateUser, deactivateUser, activateUser, inviteUser, resendVerificationEmail } = useUsers()
   const [search,       setSearch]       = useState('')
   const [roleFilter,   setRoleFilter]   = useState('all')
   const [deptFilter,   setDeptFilter]   = useState('all')
@@ -531,6 +531,7 @@ export default function BulkUsers() {
     const ids = [...selected]
     if (action === 'activate')   await Promise.all(ids.map(id => activateUser(id)))
     if (action === 'deactivate') await Promise.all(ids.map(id => deactivateUser(id)))
+    if (action === 'resend-verification') await Promise.all(ids.map(id => resendVerificationEmail(id)))
     setSelected(new Set())
   }
 
@@ -600,13 +601,14 @@ export default function BulkUsers() {
               <button onClick={() => bulkAction('deactivate')} className="text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1"><UserX className="w-3.5 h-3.5" /> Deactivate</button>
               <button
                 onClick={() => {
-                  const emails = users.filter(u => selected.has(u.id)).map(u => u.email).filter(Boolean).join(',')
+                  const emails = filtered.filter(u => selected.has(u.id)).map(u => u.email).filter(Boolean).join(',')
                   if (emails) window.open(`mailto:${emails}`)
                 }}
                 className="text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1"
               >
                 <Mail className="w-3.5 h-3.5" /> Email All
               </button>
+              <button onClick={() => bulkAction('resend-verification')} className="text-xs font-semibold text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> Resend Verification</button>
             </div>
           )}
         </div>
@@ -691,6 +693,15 @@ export default function BulkUsers() {
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
+                        {!u.email_verified && (
+                          <button
+                            onClick={() => resendVerificationEmail(u.id)}
+                            title="Resend verification email"
+                            className="p-1.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

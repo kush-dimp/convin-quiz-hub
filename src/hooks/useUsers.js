@@ -62,6 +62,22 @@ export function useUsers(filters = {}) {
   async function deactivateUser(id) { return updateUser(id, { status: 'inactive' }) }
   async function activateUser(id)   { return updateUser(id, { status: 'active' }) }
 
+  async function resendVerificationEmail(userId) {
+    const user = users.find(u => u.id === userId)
+    if (!user) return { error: { message: 'User not found' } }
+
+    const res = await fetch('/api/auth/resend-verification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user.email })
+    })
+    const data = await res.json()
+    if (res.ok) {
+      await logAudit({ action: 'user.verification_email_resent', resource: user.email, severity: 'info' })
+    }
+    return { data: res.ok ? data : null, error: res.ok ? null : { message: data.error } }
+  }
+
   async function inviteUser({ email, name, role = 'student', department }) {
     const res  = await fetch('/api/users', {
       method: 'POST',
@@ -76,7 +92,7 @@ export function useUsers(filters = {}) {
     return { data: res.ok ? data : null, error: res.ok ? null : { message: data.error } }
   }
 
-  return { users, loading, error, lastSynced, syncing, refetch: () => fetchUsers(true), updateUser, deactivateUser, activateUser, inviteUser }
+  return { users, loading, error, lastSynced, syncing, refetch: () => fetchUsers(true), updateUser, deactivateUser, activateUser, inviteUser, resendVerificationEmail }
 }
 
 export function useUser(userId) {
