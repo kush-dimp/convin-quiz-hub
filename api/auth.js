@@ -1,7 +1,18 @@
 import { sql } from './_db.js'
 import { signToken, verifyToken } from './_jwt.js'
 import { extractToken } from './_middleware.js'
+import { sendUserInvite, sendVerificationEmail } from '../lib/email.js'
 import bcryptjs from 'bcryptjs'
+import crypto from 'crypto'
+
+function generateVerificationToken() {
+  return crypto.randomBytes(32).toString('hex')
+}
+
+function getVerificationLink(token) {
+  const appUrl = process.env.APP_URL || 'https://quiz-platform-mauve.vercel.app'
+  return `${appUrl}/verify-email?token=${token}`
+}
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -16,7 +27,7 @@ export default async function handler(req, res) {
       const payload = verifyToken(token)
       if (!payload) return res.status(401).json({ error: 'Invalid token' })
 
-      const rows = await sql`SELECT id, name, email, role FROM profiles WHERE id = ${payload.id}`
+      const rows = await sql`SELECT id, name, email, role, email_verified FROM profiles WHERE id = ${payload.id}`
       if (!rows.length) return res.status(401).json({ error: 'User not found' })
 
       const user = rows[0]
@@ -25,7 +36,8 @@ export default async function handler(req, res) {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: user.role,
+          email_verified: user.email_verified
         }
       })
     }
@@ -37,7 +49,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Email and password required' })
       }
 
-      const rows = await sql`SELECT id, name, email, role, password_hash FROM profiles WHERE email = ${email}`
+      const rows = await sql`SELECT id, name, email, role, password_hash, email_verified FROM profiles WHERE email = ${email}`
       if (!rows.length) {
         return res.status(401).json({ error: 'Invalid credentials' })
       }
@@ -60,7 +72,8 @@ export default async function handler(req, res) {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: user.role,
+          email_verified: user.email_verified
         }
       })
     }
@@ -84,14 +97,21 @@ export default async function handler(req, res) {
       }
 
       const hashedPassword = await bcryptjs.hash(password, 12)
+      const verificationToken = generateVerificationToken()
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+
       const newUserRows = await sql`
-        INSERT INTO profiles (name, email, role, status, password_hash)
-        VALUES (${name}, ${email}, 'student', 'active', ${hashedPassword})
-        RETURNING id, name, email, role
+        INSERT INTO profiles (name, email, role, status, password_hash, verification_token, verification_token_expires_at)
+        VALUES (${name}, ${email}, 'student', 'active', ${hashedPassword}, ${verificationToken}, ${expiresAt.toISOString()})
+        RETURNING id, name, email, role, email_verified
       `
       const newUser = newUserRows[0]
 
       await sql`INSERT INTO profile_stats (user_id) VALUES (${newUser.id}) ON CONFLICT DO NOTHING`
+
+      // Send verification email (async, don't wait)
+      const verificationLink = getVerificationLink(verificationToken)
+      sendUserInvite(email, name, verificationLink).catch(err => console.error('Failed to send invite:', err))
 
       const token = signToken({ id: newUser.id, email: newUser.email, role: newUser.role })
       res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`)
@@ -101,7 +121,8 @@ export default async function handler(req, res) {
           id: newUser.id,
           name: newUser.name,
           email: newUser.email,
-          role: newUser.role
+          role: newUser.role,
+          email_verified: newUser.email_verified
         }
       })
     }

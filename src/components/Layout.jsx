@@ -7,6 +7,7 @@ import {
   Zap, GraduationCap, PanelLeftClose, PanelLeftOpen, Radio, ChevronDown,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import LogoutConfirmModal from './LogoutConfirmModal'
 
 const NAV = [
   {
@@ -107,6 +108,7 @@ function NavItem({ item, collapsed }) {
 export default function Layout() {
   const { profile, role, signOut } = useAuth()
   const location = useLocation()
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
   const [collapsed, setCollapsed] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sidebar_collapsed') || 'false') }
@@ -243,7 +245,7 @@ export default function Layout() {
                   <p className="text-[10px] text-slate-500 mt-0.5 truncate">{roleLabel}</p>
                 </div>
                 <button
-                  onClick={signOut}
+                  onClick={() => setShowLogoutModal(true)}
                   title="Sign out"
                   className="p-1 text-slate-500 hover:text-slate-300 hover:bg-white/5 rounded transition-colors flex-shrink-0"
                 >
@@ -261,6 +263,16 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={showLogoutModal}
+        onCancel={() => setShowLogoutModal(false)}
+        onConfirm={async () => {
+          setShowLogoutModal(false)
+          await signOut()
+        }}
+      />
     </div>
   )
 }

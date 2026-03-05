@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import Layout from './components/Layout'
 import Login from './pages/Login'
+import VerifyEmail from './pages/VerifyEmail'
 import QuizGrid from './components/QuizGrid'
 import TemplateLibrary from './components/TemplateLibrary'
 import QuizEditor from './components/QuizEditor'
@@ -65,6 +66,10 @@ function AppRoutes() {
       <Route
         path="/login"
         element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
+      />
+      <Route
+        path="/verify-email"
+        element={<VerifyEmail />}
       />
 
       {/* Protected — all under the sidebar Layout */}
