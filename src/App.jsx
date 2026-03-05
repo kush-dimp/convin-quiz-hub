@@ -27,9 +27,9 @@ import CertificatesPage from './components/CertificatesPage'
 import LiveSessionHost from './components/LiveSessionHost'
 import LiveSessionJoin from './components/LiveSessionJoin'
 
-// Redirects to /login if not authenticated; shows a loading state while checking
-function ProtectedRoute({ children }) {
-  const { session, loading } = useAuth()
+// Redirects to /login if not authenticated, checks role permissions
+function ProtectedRoute({ children, roles }) {
+  const { isAuthenticated, role, loading } = useAuth()
 
   if (loading) {
     return (
@@ -39,12 +39,17 @@ function ProtectedRoute({ children }) {
     )
   }
 
-  if (!session) return <Navigate to="/login" replace />
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+
+  if (roles?.length > 0 && !roles.includes(role)) {
+    return <Navigate to="/" replace />
+  }
+
   return children
 }
 
 function AppRoutes() {
-  const { session, loading } = useAuth()
+  const { isAuthenticated, loading } = useAuth()
 
   if (loading) {
     return (
@@ -59,7 +64,7 @@ function AppRoutes() {
       {/* Public */}
       <Route
         path="/login"
-        element={session ? <Navigate to="/" replace /> : <Login />}
+        element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
       />
 
       {/* Protected — all under the sidebar Layout */}
@@ -80,18 +85,18 @@ function AppRoutes() {
         <Route path="results/:id" element={<IndividualResult />} />
         <Route path="analytics" element={<AnalyticsDashboard />} />
         <Route path="question-analysis" element={<QuestionAnalysis />} />
-        <Route path="grade-book" element={<GradeBook />} />
+        <Route path="grade-book" element={<ProtectedRoute roles={['super_admin', 'admin', 'reviewer']}><GradeBook /></ProtectedRoute>} />
         <Route path="user-progress" element={<UserProgressPage />} />
         <Route path="reports" element={<AutomatedReports />} />
-        <Route path="cheat-detection" element={<CheatDetection />} />
-        <Route path="users" element={<BulkUsers />} />
+        <Route path="cheat-detection" element={<ProtectedRoute roles={['super_admin', 'admin']}><CheatDetection /></ProtectedRoute>} />
+        <Route path="users" element={<ProtectedRoute roles={['super_admin', 'admin']}><BulkUsers /></ProtectedRoute>} />
         <Route path="assignments" element={<AssignmentSystem />} />
         <Route path="notifications" element={<NotificationCenter />} />
-        <Route path="roles" element={<RoleManagement />} />
-        <Route path="admin" element={<AdminDashboard />} />
-        <Route path="audit-logs" element={<AuditLogs />} />
+        <Route path="roles" element={<ProtectedRoute roles={['super_admin']}><RoleManagement /></ProtectedRoute>} />
+        <Route path="admin" element={<ProtectedRoute roles={['super_admin', 'admin']}><AdminDashboard /></ProtectedRoute>} />
+        <Route path="audit-logs" element={<ProtectedRoute roles={['super_admin', 'admin']}><AuditLogs /></ProtectedRoute>} />
         <Route path="certificates" element={<CertificatesPage />} />
-        <Route path="live" element={<LiveSessionHost />} />
+        <Route path="live" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><LiveSessionHost /></ProtectedRoute>} />
       </Route>
 
       {/* Full-screen quiz taking — outside Layout, still protected */}

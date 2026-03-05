@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/auth/:sub+",              "destination": "/api/auth?sub=:sub" },
     { "source": "/api/quizzes/:sub+",          "destination": "/api/quizzes?sub=:sub" },
     { "source": "/api/results/:sub+",           "destination": "/api/results?sub=:sub" },
     { "source": "/api/users/:sub+",             "destination": "/api/users?sub=:sub" },

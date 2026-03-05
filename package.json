@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^8.5.1",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

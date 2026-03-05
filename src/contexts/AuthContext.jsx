@@ -1,96 +1,142 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const AuthContext = createContext(null)
 
-const DEFAULT_PROFILE = {
-  id:         '00000000-0000-0000-0000-000000000001',
-  name:       'Demo Admin',
-  email:      'admin@demo.local',
-  role:       'student',
-  status:     'active',
-  department: null,
-  avatar_url: null,
-}
-
 export function AuthProvider({ children }) {
-  const [profile, setProfile] = useState(DEFAULT_PROFILE)
-  const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
-  const isAdmin = profile?.role?.includes('admin') || false
-  const isInstructor = profile?.role === 'instructor' || profile?.role?.includes('admin') || false
+  // On mount, verify JWT via /api/auth/me
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/me', {
+          credentials: 'include'
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setUser(data.user)
+        } else {
+          setUser(null)
+        }
+      } catch (err) {
+        console.error('Auth verification failed:', err)
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    verifyAuth()
+  }, [])
+
+  const signIn = async (email, password) => {
+    try {
+      setLoading(true)
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password })
+      })
+      const data = await res.json()
+      if (res.ok && data.user) {
+        setUser(data.user)
+        return { data, error: null }
+      }
+      return { data: null, error: { message: data.error || 'Login failed' } }
+    } catch (e) {
+      return { data: null, error: { message: 'Login failed' } }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const signUp = async (email, password, name) => {
+    try {
+      setLoading(true)
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password, name })
+      })
+      const data = await res.json()
+      if (res.ok && data.user) {
+        setUser(data.user)
+        return { data, error: null }
+      }
+      return { data: null, error: { message: data.error || 'Signup failed' } }
+    } catch (e) {
+      return { data: null, error: { message: 'Signup failed' } }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const signOut = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+    } catch (err) {
+      console.error('Logout error:', err)
+    } finally {
+      setUser(null)
+      navigate('/login')
+    }
+  }
+
+  const updateProfile = async (updates) => {
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(updates)
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setUser(data)
+        return { data, error: null }
+      }
+      return { data: null, error: { message: data.error || 'Update failed' } }
+    } catch (e) {
+      return { data: null, error: { message: 'Update failed' } }
+    }
+  }
+
+  const refetchProfile = async () => {
+    if (user?.id) {
+      try {
+        const res = await fetch(`/api/users/${user.id}`, {
+          credentials: 'include'
+        })
+        if (res.ok) {
+          const data = await res.json()
+          if (data.user) setUser(data.user)
+        }
+      } catch (err) {
+        console.error('Failed to refetch profile:', err)
+      }
+    }
+  }
 
   const value = {
-    session:      { user: profile },
-    profile:      profile,
-    loading:      loading,
-    user:         profile,
-    isAdmin:      isAdmin,
-    isInstructor: isInstructor,
-    signIn:       async (email, password) => {
-      try {
-        setLoading(true)
-        const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
-        const data = await res.json()
-        if (res.ok && data.user) {
-          setProfile(data.user)
-          return { data, error: null }
-        }
-        return { data: null, error: { message: data.error || 'Login failed' } }
-      } catch (e) {
-        return { data: null, error: { message: 'Login failed' } }
-      } finally {
-        setLoading(false)
-      }
-    },
-    signUp:       async (email, password, name) => {
-      try {
-        setLoading(true)
-        const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, name }) })
-        const data = await res.json()
-        if (res.ok && data.user) {
-          setProfile(data.user)
-          return { data, error: null }
-        }
-        return { data: null, error: { message: data.error || 'Signup failed' } }
-      } catch (e) {
-        return { data: null, error: { message: 'Signup failed' } }
-      } finally {
-        setLoading(false)
-      }
-    },
-    signOut:      async () => {
-      setProfile(DEFAULT_PROFILE)
-    },
-    updateProfile: async (updates) => {
-      try {
-        const res = await fetch(`/api/users/${profile.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updates),
-        })
-        const data = await res.json()
-        if (res.ok) {
-          setProfile(data)
-          return { data, error: null }
-        }
-        return { data: null, error: { message: data.error || 'Update failed' } }
-      } catch (e) {
-        return { data: null, error: { message: 'Update failed' } }
-      }
-    },
-    refetchProfile: async () => {
-      if (profile?.id) {
-        try {
-          const res = await fetch(`/api/users/${profile.id}`)
-          if (res.ok) {
-            const data = await res.json()
-            if (data.user) setProfile(data.user)
-          }
-        } catch (err) {
-          console.error('Failed to refetch profile:', err)
-        }
-      }
-    },
+    session: user ? { user } : null,
+    profile: user,
+    user: user,
+    loading: loading,
+    isAuthenticated: user !== null,
+    role: user?.role,
+    signIn,
+    signUp,
+    signOut,
+    updateProfile,
+    refetchProfile,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

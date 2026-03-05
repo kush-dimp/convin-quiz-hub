@@ -12,49 +12,49 @@ const NAV = [
   {
     group: 'Content',
     items: [
-      { to: '/',              icon: LayoutGrid,    label: 'My Quizzes',     exact: true },
-      { to: '/templates',     icon: Layers,        label: 'Templates'                  },
-      { to: '/question-bank', icon: Database,      label: 'Question Bank'              },
+      { to: '/',              icon: LayoutGrid,    label: 'My Quizzes',     exact: true, roles: ['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'] },
+      { to: '/templates',     icon: Layers,        label: 'Templates',                  roles: ['super_admin', 'admin', 'instructor'] },
+      { to: '/question-bank', icon: Database,      label: 'Question Bank',              roles: ['super_admin', 'admin', 'instructor'] },
     ],
   },
   {
     group: 'Analytics',
     items: [
-      { to: '/results',           icon: BarChart2,     label: 'Results'           },
-      { to: '/analytics',         icon: TrendingUp,    label: 'Analytics'         },
-      { to: '/question-analysis', icon: FileText,      label: 'Question Analysis' },
-      { to: '/grade-book',        icon: BookOpen,      label: 'Grade Book'        },
-      { to: '/user-progress',     icon: Award,         label: 'User Progress'     },
-      { to: '/reports',           icon: ClipboardList, label: 'Reports'           },
-      { to: '/certificates',      icon: GraduationCap, label: 'Certificates'      },
+      { to: '/results',           icon: BarChart2,     label: 'Results',           roles: ['super_admin', 'admin', 'instructor', 'reviewer'] },
+      { to: '/analytics',         icon: TrendingUp,    label: 'Analytics',         roles: ['super_admin', 'admin', 'instructor', 'reviewer'] },
+      { to: '/question-analysis', icon: FileText,      label: 'Question Analysis', roles: ['super_admin', 'admin', 'instructor'] },
+      { to: '/grade-book',        icon: BookOpen,      label: 'Grade Book',        roles: ['super_admin', 'admin', 'reviewer'] },
+      { to: '/user-progress',     icon: Award,         label: 'User Progress',     roles: ['super_admin', 'admin', 'instructor', 'reviewer'] },
+      { to: '/reports',           icon: ClipboardList, label: 'Reports',           roles: ['super_admin', 'admin', 'reviewer'] },
+      { to: '/certificates',      icon: GraduationCap, label: 'Certificates',      roles: ['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'] },
     ],
   },
   {
     group: 'Security',
     items: [
-      { to: '/cheat-detection', icon: Shield,   label: 'Cheat Detection' },
-      { to: '/audit-logs',      icon: Activity, label: 'Audit Logs'      },
+      { to: '/cheat-detection', icon: Shield,   label: 'Cheat Detection', roles: ['super_admin', 'admin'] },
+      { to: '/audit-logs',      icon: Activity, label: 'Audit Logs',      roles: ['super_admin', 'admin'] },
     ],
   },
   {
     group: 'Users',
     items: [
-      { to: '/users',         icon: Users,    label: 'All Users'           },
-      { to: '/assignments',   icon: Calendar, label: 'Assignments'         },
-      { to: '/notifications', icon: Bell,     label: 'Notifications'       },
-      { to: '/roles',         icon: Key,      label: 'Roles & Permissions' },
+      { to: '/users',         icon: Users,    label: 'All Users',           roles: ['super_admin', 'admin'] },
+      { to: '/assignments',   icon: Calendar, label: 'Assignments',         roles: ['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'] },
+      { to: '/notifications', icon: Bell,     label: 'Notifications',       roles: ['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'] },
+      { to: '/roles',         icon: Key,      label: 'Roles & Permissions', roles: ['super_admin'] },
     ],
   },
   {
     group: 'Admin',
     items: [
-      { to: '/admin', icon: LayoutDashboard, label: 'Admin Dashboard' },
+      { to: '/admin', icon: LayoutDashboard, label: 'Admin Dashboard', roles: ['super_admin', 'admin'] },
     ],
   },
   {
     group: 'Live',
     items: [
-      { to: '/live', icon: Radio, label: 'Live Session' },
+      { to: '/live', icon: Radio, label: 'Live Session', roles: ['super_admin', 'admin', 'instructor'] },
     ],
   },
 ]
@@ -105,7 +105,7 @@ function NavItem({ item, collapsed }) {
 }
 
 export default function Layout() {
-  const { profile, signOut } = useAuth()
+  const { profile, role, signOut } = useAuth()
   const location = useLocation()
 
   const [collapsed, setCollapsed] = useState(() => {
@@ -117,6 +117,12 @@ export default function Layout() {
     try { return JSON.parse(localStorage.getItem('sidebar_expanded_group') || 'null') }
     catch { return null }
   })
+
+  // Filter navigation items by role
+  const filteredNav = NAV.map(group => ({
+    ...group,
+    items: group.items.filter(item => !item.roles || item.roles.includes(role))
+  })).filter(group => group.items.length > 0)
 
   useEffect(() => {
     localStorage.setItem('sidebar_collapsed', JSON.stringify(collapsed))
@@ -166,7 +172,7 @@ export default function Layout() {
 
         {/* Nav with accordion groups */}
         <nav className="relative flex-1 overflow-y-auto py-3 space-y-2 scrollbar-hide px-2">
-          {NAV.map(({ group, items }) => {
+          {filteredNav.map(({ group, items }) => {
             const isExpanded = !collapsed && (expandedGroup === group || expandedGroup === null)
             return (
               <section key={group}>
