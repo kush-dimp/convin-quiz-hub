@@ -127,6 +127,74 @@ export default async function handler(req, res) {
       })
     }
 
+    // GET /api/auth/verify-email?token=...
+    if (sub === 'verify-email' && req.method === 'GET') {
+      const { token } = req.query
+      const tokenStr = Array.isArray(token) ? token[0] : (token || '')
+      if (!tokenStr) {
+        return res.status(400).json({ error: 'Token required' })
+      }
+
+      const rows = await sql`
+        SELECT id, email_verified, verification_token_expires_at FROM profiles
+        WHERE verification_token = ${tokenStr}
+      `
+      if (!rows.length) {
+        return res.status(404).json({ error: 'Invalid or expired token' })
+      }
+
+      const user = rows[0]
+      if (user.email_verified) {
+        return res.status(200).json({ message: 'Email already verified' })
+      }
+
+      if (new Date(user.verification_token_expires_at) < new Date()) {
+        return res.status(400).json({ error: 'Token expired' })
+      }
+
+      await sql`
+        UPDATE profiles
+        SET email_verified = true, verification_token = null, verification_token_expires_at = null
+        WHERE id = ${user.id}
+      `
+
+      return res.status(200).json({ message: 'Email verified successfully' })
+    }
+
+    // POST /api/auth/resend-verification
+    if (sub === 'resend-verification' && req.method === 'POST') {
+      const { email } = req.body
+      if (!email) {
+        return res.status(400).json({ error: 'Email required' })
+      }
+
+      const rows = await sql`SELECT id, name, email_verified FROM profiles WHERE email = ${email}`
+      if (!rows.length) {
+        return res.status(404).json({ error: 'User not found' })
+      }
+
+      const user = rows[0]
+      if (user.email_verified) {
+        return res.status(200).json({ message: 'Email already verified' })
+      }
+
+      const verificationToken = generateVerificationToken()
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+
+      await sql`
+        UPDATE profiles
+        SET verification_token = ${verificationToken}, verification_token_expires_at = ${expiresAt.toISOString()}
+        WHERE id = ${user.id}
+      `
+
+      const verificationLink = getVerificationLink(verificationToken)
+      sendVerificationEmail(email, user.name, verificationLink).catch(err =>
+        console.error('Failed to send verification email:', err)
+      )
+
+      return res.status(200).json({ message: 'Verification email sent' })
+    }
+
     return res.status(404).json({ error: 'Not found' })
   } catch (err) {
     console.error('Auth API Error:', err)

@@ -16,8 +16,8 @@ export default function VerifyEmail() {
       return
     }
 
-    // Call verify endpoint
-    fetch(`/api/verify-email?token=${encodeURIComponent(token)}`)
+    // Call verify endpoint (routed through /api/auth)
+    fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`)
       .then(res => res.json())
       .then(data => {
         if (data.error) {
