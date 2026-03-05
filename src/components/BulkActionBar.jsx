@@ -99,9 +99,9 @@ export default function BulkActionBar({
                 onClick={onDeselectAll}
                 className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors ml-2 border-l border-slate-200"
                 title="Deselect all"
-            >
-              <X className="w-4 h-4" />
-            </button>
+              >
+                <X className="w-4 h-4" />
+              </button>
           </>
         )}
       </div>
