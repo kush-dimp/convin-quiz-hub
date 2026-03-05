@@ -6,6 +6,7 @@ import {
   AlertCircle, ChevronDown,
 } from 'lucide-react'
 import { useUsers } from '../hooks/useUsers'
+import { ToastContainer } from './Toast'
 
 const ROLES       = ['Super Admin', 'Admin', 'Instructor', 'Reviewer', 'Student', 'Guest']
 const DEPARTMENTS = ['Engineering', 'Sales', 'Marketing', 'HR', 'Finance', 'Operations', 'Legal', 'Product']
@@ -516,6 +517,7 @@ export default function BulkUsers() {
   const [selected,     setSelected]     = useState(new Set())
   const [showAddModal, setShowAddModal] = useState(false)
   const [editUser,     setEditUser]     = useState(null)
+  const [toasts,       setToasts]       = useState([])
 
   const filtered = users.filter(u =>
     (roleFilter   === 'all' || u.role       === roleFilter)   &&
@@ -527,11 +529,29 @@ export default function BulkUsers() {
   function toggle(id) { setSelected(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n }) }
   const allSelected = filtered.length > 0 && filtered.every(u => selected.has(u.id))
 
+  function showToast(type, message) {
+    const id = Date.now()
+    setToasts(p => [...p, { id, type, message }])
+  }
+
+  function removeToast(id) {
+    setToasts(p => p.filter(t => t.id !== id))
+  }
+
   async function bulkAction(action) {
     const ids = [...selected]
-    if (action === 'activate')   await Promise.all(ids.map(id => activateUser(id)))
-    if (action === 'deactivate') await Promise.all(ids.map(id => deactivateUser(id)))
-    if (action === 'resend-verification') await Promise.all(ids.map(id => resendVerificationEmail(id)))
+    if (action === 'activate') {
+      await Promise.all(ids.map(id => activateUser(id)))
+      showToast('success', `${ids.length} user(s) activated`)
+    }
+    if (action === 'deactivate') {
+      await Promise.all(ids.map(id => deactivateUser(id)))
+      showToast('success', `${ids.length} user(s) deactivated`)
+    }
+    if (action === 'resend-verification') {
+      await Promise.all(ids.map(id => resendVerificationEmail(id)))
+      showToast('success', `Verification email sent to ${ids.length} user(s)`)
+    }
     setSelected(new Set())
   }
 
@@ -695,7 +715,10 @@ export default function BulkUsers() {
                         </button>
                         {!u.email_verified && (
                           <button
-                            onClick={() => resendVerificationEmail(u.id)}
+                            onClick={async () => {
+                              await resendVerificationEmail(u.id)
+                              showToast('success', `Verification email sent to ${u.email}`)
+                            }}
                             title="Resend verification email"
                             className="p-1.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                           >
@@ -733,6 +756,12 @@ export default function BulkUsers() {
           onSave={payload => updateUser(editUser.id, payload)}
         />
       )}
+
+      <ToastContainer
+        toasts={toasts}
+        onRemove={removeToast}
+        onUndo={() => {}}
+      />
     </div>
   )
 }
