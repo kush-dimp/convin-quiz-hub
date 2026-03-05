@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Trash2, RotateCcw, Trash, AlertCircle } from 'lucide-react'
+import { Trash2, RotateCcw, AlertCircle } from 'lucide-react'
 import { useQuizzes } from '../hooks/useQuizzes'
 import { ToastContainer } from './Toast'
 
@@ -87,7 +87,7 @@ export default function Trash() {
                 onClick={handlePermanentDelete}
                 className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 px-4 py-2 rounded-xl text-[13px] font-semibold transition-colors"
               >
-                <Trash className="w-4 h-4" /> Delete ({selectedIds.size})
+                <Trash2 className="w-4 h-4" /> Delete ({selectedIds.size})
               </button>
             </div>
           )}
