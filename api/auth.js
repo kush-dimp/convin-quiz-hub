@@ -6,7 +6,7 @@ import bcryptjs from 'bcryptjs'
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
   try {
-    const sub = req.query.sub ? req.query.sub[0] : ''
+    const sub = Array.isArray(req.query.sub) ? req.query.sub[0] : (req.query.sub || '')
 
     // GET /api/auth/me — verify JWT and return user
     if (sub === 'me' && req.method === 'GET') {
