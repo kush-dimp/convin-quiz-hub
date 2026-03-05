@@ -109,6 +109,8 @@ create table quizzes (
   password_protected       boolean default false,
   access_password          text,
   require_proctoring       boolean default false,
+  is_deleted               boolean not null default false,
+  deleted_at               timestamptz,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
@@ -118,6 +120,7 @@ create index idx_quizzes_status      on quizzes(status);
 create index idx_quizzes_category    on quizzes(category);
 create index idx_quizzes_tags        on quizzes using gin(tags);
 create index idx_quizzes_title_trgm  on quizzes using gin(title gin_trgm_ops);
+create index idx_quizzes_is_deleted  on quizzes(is_deleted, deleted_at);
 
 create table quiz_stats (
   quiz_id  uuid primary key references quizzes(id) on delete cascade,

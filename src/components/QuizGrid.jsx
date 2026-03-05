@@ -355,7 +355,7 @@ export default function QuizGrid() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-6">
+      <main className={`max-w-7xl mx-auto px-6 py-6 ${selectedIds.size > 0 ? 'pt-20' : ''}`}>
         <FilterBar
           searchInput={searchInput}   onSearchChange={setSearchInput}
           filters={filters}           onFilterChange={(k, v) => setFilters((p) => ({ ...p, [k]: v }))}

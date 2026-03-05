@@ -19,13 +19,13 @@ export default function BulkActionBar({
 
   return (
     <div
-      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-40 transition-all duration-300 ${
+      className={`fixed top-16 left-0 right-0 z-40 bg-white shadow-md transition-all duration-300 ${
         visible
           ? 'opacity-100 translate-y-0 pointer-events-auto'
-          : 'opacity-0 translate-y-6 pointer-events-none'
+          : 'opacity-0 -translate-y-full pointer-events-none'
       }`}
     >
-      <div className="bg-gray-900 text-white rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 min-w-max">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
 
         {isProcessing ? (
           /* ── Processing state ── */
@@ -47,8 +47,8 @@ export default function BulkActionBar({
         ) : (
           /* ── Normal state ── */
           <>
-            {/* Select-all checkbox */}
-            <label className="flex items-center gap-2 cursor-pointer select-none pr-2 border-r border-gray-700">
+            {/* Left: Select-all checkbox */}
+            <label className="flex items-center gap-2 cursor-pointer select-none">
               <span className="relative flex-shrink-0">
                 <input
                   type="checkbox"
@@ -58,50 +58,47 @@ export default function BulkActionBar({
                   className="w-4 h-4 rounded accent-[#FF6B9D] cursor-pointer"
                 />
               </span>
-              <span className="text-sm font-semibold whitespace-nowrap">
+              <span className="text-sm font-semibold text-slate-700 whitespace-nowrap">
                 {selectedCount} selected
               </span>
             </label>
 
-            {/* Actions */}
-            <div className="flex items-center gap-1">
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2">
               <ActionBtn
                 icon={Archive}
                 label="Archive"
                 onClick={onArchive}
-                color="text-orange-300 hover:bg-orange-500/20"
+                color="text-orange-600 hover:bg-orange-50"
               />
               <ActionBtn
                 icon={FolderOpen}
                 label="Move"
                 onClick={onMove}
-                color="text-blue-300 hover:bg-blue-500/20"
+                color="text-blue-600 hover:bg-blue-50"
               />
               <ActionBtn
                 icon={RefreshCw}
                 label="Status"
                 onClick={onChangeStatus}
-                color="text-purple-300 hover:bg-purple-500/20"
+                color="text-purple-600 hover:bg-purple-50"
               />
               <ActionBtn
                 icon={Download}
                 label="Export"
                 onClick={onExport}
-                color="text-green-300 hover:bg-green-500/20"
+                color="text-green-600 hover:bg-green-50"
               />
               <ActionBtn
                 icon={Trash2}
                 label="Delete"
                 onClick={onDelete}
-                color="text-red-400 hover:bg-red-500/20"
+                color="text-red-600 hover:bg-red-50"
               />
-            </div>
-
-            {/* Deselect */}
-            <button
-              onClick={onDeselectAll}
-              className="ml-1 p-1.5 rounded-full text-gray-500 hover:text-gray-200 hover:bg-gray-700 transition-colors"
-              title="Deselect all"
+              <button
+                onClick={onDeselectAll}
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors ml-2 border-l border-slate-200"
+                title="Deselect all"
             >
               <X className="w-4 h-4" />
             </button>
