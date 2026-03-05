@@ -72,34 +72,6 @@ export function useQuizzes(filters = {}) {
     return { data: res.ok ? data : null, error }
   }
 
-  async function moveToTrash(ids) {
-    const res = await fetch('/api/quizzes/trash', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids, isRestore: false }),
-    })
-    const error = res.ok ? null : { message: 'Failed to move to trash' }
-    if (!error) {
-      setQuizzes(prev => prev.filter(q => !ids.includes(q.id)))
-      const count = ids.length
-      await logAudit({ action: 'quiz.trashed', resource: `${count} quiz${count > 1 ? 'zes' : ''}`, severity: 'warning' })
-    }
-    return { error }
-  }
-
-  async function restoreFromTrash(ids) {
-    const res = await fetch('/api/quizzes/trash', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids, isRestore: true }),
-    })
-    const error = res.ok ? null : { message: 'Failed to restore' }
-    if (!error) {
-      await fetchQuizzes(true)
-    }
-    return { error }
-  }
-
   async function deleteQuiz(id) {
     const quiz = quizzes.find(q => q.id === id)
     const res  = await fetch(`/api/quizzes/${id}`, { method: 'DELETE' })
@@ -123,7 +95,7 @@ export function useQuizzes(filters = {}) {
     return updateQuiz(id, { status: 'archived' })
   }
 
-  return { quizzes, loading, error, lastSynced, syncing, refetch: () => fetchQuizzes(true), createQuiz, updateQuiz, deleteQuiz, moveToTrash, restoreFromTrash, publishQuiz, archiveQuiz }
+  return { quizzes, loading, error, lastSynced, syncing, refetch: () => fetchQuizzes(true), createQuiz, updateQuiz, deleteQuiz, publishQuiz, archiveQuiz }
 }
 
 // DB columns that exist on the questions table

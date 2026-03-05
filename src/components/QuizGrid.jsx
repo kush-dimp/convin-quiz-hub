@@ -81,7 +81,7 @@ export default function QuizGrid() {
   const navigate = useNavigate()
 
   /* ── Real data from Neon ── */
-  const { quizzes: rawQuizzes, loading: dataLoading, error: apiError, lastSynced, syncing, refetch, createQuiz, deleteQuiz, moveToTrash, publishQuiz } = useQuizzes()
+  const { quizzes: rawQuizzes, loading: dataLoading, error: apiError, lastSynced, syncing, refetch, createQuiz, deleteQuiz, publishQuiz } = useQuizzes()
 
   /* ── Local quizzes state (mirrors hook but allows optimistic UI) ── */
   const [localQuizzes, setLocalQuizzes] = useState([])
@@ -264,11 +264,13 @@ export default function QuizGrid() {
     switch (type) {
       case 'delete':
         try {
-          await moveToTrash(Array.from(ids))
+          for (const id of ids) {
+            await deleteQuiz(id)
+          }
           setLocalQuizzes((prev) => prev.filter((q) => !ids.has(q.id)))
-          addToast('success', `${label} moved to Trash`)
+          addToast('success', `${label} deleted`)
         } catch (err) {
-          addToast('error', 'Failed to move to trash')
+          addToast('error', 'Failed to delete')
         }
         break
       case 'archive':
