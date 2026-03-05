@@ -111,7 +111,10 @@ export default async function handler(req, res) {
 
       // Send verification email (async, don't wait)
       const verificationLink = getVerificationLink(verificationToken)
-      sendUserInvite(email, name, verificationLink).catch(err => console.error('Failed to send invite:', err))
+      sendUserInvite(email, name, verificationLink).then(result => {
+        if (!result.ok) console.error('Failed to send verification email')
+        else console.log('Verification email sent successfully')
+      }).catch(err => console.error('Failed to send invite:', err))
 
       const token = signToken({ id: newUser.id, email: newUser.email, role: newUser.role })
       res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`)
@@ -188,7 +191,10 @@ export default async function handler(req, res) {
       `
 
       const verificationLink = getVerificationLink(verificationToken)
-      sendVerificationEmail(email, user.name, verificationLink).catch(err =>
+      sendVerificationEmail(email, user.name, verificationLink).then(result => {
+        if (!result.ok) console.error('Failed to send verification email to', email)
+        else console.log('Verification email sent to', email)
+      }).catch(err =>
         console.error('Failed to send verification email:', err)
       )
 
