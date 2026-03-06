@@ -1,21 +1,4 @@
 import { sql, DEMO_USER_ID } from './_db.js'
-import { extractToken, verifyToken } from './_middleware.js'
-
-function requireCreatorRole(req, res) {
-  try {
-    const token = extractToken(req)
-    if (!token) return true
-    const payload = verifyToken(token)
-    if (!payload) return true
-    req.user = payload
-    const validRoles = ['super_admin', 'admin', 'instructor']
-    if (!validRoles.includes(payload.role)) return true
-    return false
-  } catch (err) {
-    console.error('Role check error:', err)
-    return true
-  }
-}
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -80,7 +63,6 @@ export default async function handler(req, res) {
       return res.status(200).json(rows[0])
     }
     if (req.method === 'PATCH') {
-      if (requireCreatorRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
       const patch = req.body
       const allowed = ['title','description','category','status','tags','is_private','thumbnail_url',
         'time_limit_mins','max_attempts','passing_score_pct','shuffle_questions','shuffle_options',
@@ -100,7 +82,6 @@ export default async function handler(req, res) {
       return res.status(200).json(rows[0])
     }
     if (req.method === 'DELETE') {
-      if (requireCreatorRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
       await sql`DELETE FROM quizzes WHERE id = ${quizId}`
       return res.status(204).end()
     }
@@ -154,7 +135,6 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    if (requireCreatorRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
     const { title, description, category, tags, is_private, time_limit_mins, max_attempts,
             passing_score_pct, shuffle_questions, shuffle_options, show_results_immediately,
             show_correct_answers, allow_review, certificate_enabled, require_proctoring } = req.body
