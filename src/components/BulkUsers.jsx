@@ -709,11 +709,11 @@ export default function BulkUsers() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
                         {u.status === 'active' ? (
-                          <button onClick={() => deactivateUser(u.id)} title="Deactivate" className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                          <button onClick={async () => { const { error } = await deactivateUser(u.id); if (!error) showToast('success', 'User deactivated'); else showToast('error', 'Failed to deactivate'); }} title="Deactivate" className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                             <UserX className="w-3.5 h-3.5" />
                           </button>
                         ) : (
-                          <button onClick={() => activateUser(u.id)} title="Activate" className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
+                          <button onClick={async () => { const { error } = await activateUser(u.id); if (!error) showToast('success', 'User activated'); else showToast('error', 'Failed to activate'); }} title="Activate" className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
                             <UserCheck className="w-3.5 h-3.5" />
                           </button>
                         )}
@@ -768,9 +768,13 @@ export default function BulkUsers() {
           user={editUser}
           onClose={() => setEditUser(null)}
           onSave={async payload => {
-            await updateUser(editUser.id, payload)
-            showToast('success', 'Saved successfully')
-            setEditUser(null)
+            const { error } = await updateUser(editUser.id, payload)
+            if (error) {
+              showToast('error', error.message || 'Failed to save')
+            } else {
+              showToast('success', 'Saved successfully')
+              setEditUser(null)
+            }
           }}
         />
       )}
