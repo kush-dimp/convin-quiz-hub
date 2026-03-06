@@ -1,22 +1,5 @@
 import { sql } from './_db.js'
 import bcryptjs from 'bcryptjs'
-import { extractToken, verifyToken } from './_middleware.js'
-
-function requireAdminRole(req, res) {
-  try {
-    const token = extractToken(req)
-    if (!token) return true
-    const payload = verifyToken(token)
-    if (!payload) return true
-    req.user = payload
-    const validRoles = ['super_admin', 'admin']
-    if (!validRoles.includes(payload.role)) return true
-    return false
-  } catch (err) {
-    console.error('Role check error:', err)
-    return true
-  }
-}
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -42,7 +25,6 @@ export default async function handler(req, res) {
       }
 
       if (req.method === 'PUT') {
-        if (requireAdminRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
         const patch = req.body
         const allowed = ['name','email','role','status','department','avatar_url','password']
         const sets = []
@@ -73,7 +55,6 @@ export default async function handler(req, res) {
 
     // /api/users (list + create)
     if (req.method === 'GET') {
-      if (requireAdminRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
       const url = new URL(req.url, 'http://localhost')
       const role   = url.searchParams.get('role')
       const status = url.searchParams.get('status')
@@ -100,7 +81,6 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      if (requireAdminRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
       const { name, email, role = 'student', department, status = 'active', password } = req.body
       if (!name || !email) return res.status(400).json({ error: 'Name and email required' })
       if (!password) return res.status(400).json({ error: 'Password required' })
