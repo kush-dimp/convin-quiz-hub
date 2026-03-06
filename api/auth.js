@@ -37,6 +37,7 @@ export default async function handler(req, res) {
           name: user.name,
           email: user.email,
           role: user.role,
+          dashboard_access: payload.dashboard_access ?? true,
           email_verified: user.email_verified
         }
       })
@@ -64,7 +65,11 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Invalid credentials' })
       }
 
-      const token = signToken({ id: user.id, email: user.email, role: user.role })
+      // Get dashboard access for this role
+      const dashboardRows = await sql`SELECT dashboard_access FROM role_settings WHERE role = ${user.role}`
+      const dashboard_access = dashboardRows.length ? dashboardRows[0].dashboard_access : true
+
+      const token = signToken({ id: user.id, email: user.email, role: user.role, dashboard_access })
       res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`)
 
       return res.status(200).json({
@@ -73,6 +78,7 @@ export default async function handler(req, res) {
           name: user.name,
           email: user.email,
           role: user.role,
+          dashboard_access,
           email_verified: user.email_verified
         }
       })

@@ -28,9 +28,9 @@ import CertificatesPage from './components/CertificatesPage'
 import LiveSessionHost from './components/LiveSessionHost'
 import LiveSessionJoin from './components/LiveSessionJoin'
 
-// Redirects to /login if not authenticated, checks role permissions
-function ProtectedRoute({ children, roles }) {
-  const { isAuthenticated, role, loading } = useAuth()
+// Redirects to /login if not authenticated, checks role permissions & dashboard access
+function ProtectedRoute({ children, roles, requireDashboard = false }) {
+  const { isAuthenticated, role, dashboard_access, loading } = useAuth()
 
   if (loading) {
     return (
@@ -41,6 +41,8 @@ function ProtectedRoute({ children, roles }) {
   }
 
   if (!isAuthenticated || role === 'guest') return <Navigate to="/login" replace />
+
+  if (requireDashboard && !dashboard_access) return <Navigate to="/" replace />
 
   if (roles?.length > 0 && !roles.includes(role)) {
     return <Navigate to="/" replace />
@@ -72,11 +74,11 @@ function AppRoutes() {
         element={<VerifyEmail />}
       />
 
-      {/* Protected — all under the sidebar Layout */}
+      {/* Protected — all under the sidebar Layout (requires dashboard access) */}
       <Route
         path="/"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireDashboard>
             <Layout />
           </ProtectedRoute>
         }

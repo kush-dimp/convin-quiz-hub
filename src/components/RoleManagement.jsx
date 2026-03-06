@@ -29,17 +29,17 @@ const PERMISSIONS = [
 
 const defaultRoles = [
   { id: 1, name: 'Super Admin', color: 'bg-purple-100 text-purple-700', locked: true,
-    permissions: new Set(PERMISSIONS.map(p => p.id)) },
+    permissions: new Set(PERMISSIONS.map(p => p.id)), dashboard_access: true },
   { id: 2, name: 'Admin', color: 'bg-red-100 text-red-700', locked: true,
-    permissions: new Set(['quiz_create','quiz_edit','quiz_delete','quiz_publish','results_view','results_export','users_manage','users_invite','cert_issue','reports_view']) },
+    permissions: new Set(['quiz_create','quiz_edit','quiz_delete','quiz_publish','results_view','results_export','users_manage','users_invite','cert_issue','reports_view']), dashboard_access: true },
   { id: 3, name: 'Instructor', color: 'bg-[#FFE5EC] text-[#C41E5C]', locked: true,
-    permissions: new Set(['quiz_create','quiz_edit','quiz_publish','results_view','results_export','reports_view']) },
+    permissions: new Set(['quiz_create','quiz_edit','quiz_publish','results_view','results_export','reports_view']), dashboard_access: true },
   { id: 4, name: 'Reviewer', color: 'bg-blue-100 text-blue-700', locked: true,
-    permissions: new Set(['results_view','reports_view']) },
+    permissions: new Set(['results_view','reports_view']), dashboard_access: true },
   { id: 5, name: 'Student', color: 'bg-green-100 text-green-700', locked: true,
-    permissions: new Set([]) },
+    permissions: new Set([]), dashboard_access: false },
   { id: 6, name: 'Guest', color: 'bg-gray-100 text-gray-600', locked: true,
-    permissions: new Set([]) },
+    permissions: new Set([]), dashboard_access: false },
 ]
 
 export default function RoleManagement() {
@@ -83,10 +83,12 @@ export default function RoleManagement() {
     try {
       // Build rows for all system roles
       const rolePermissions = []
+      const roleDashboardAccess = []
       for (const role of roles) {
         const dbRole = ROLE_DB_MAP[role.name]
         if (!dbRole) continue
         for (const permId of role.permissions) rolePermissions.push({ role: dbRole, permission: permId })
+        roleDashboardAccess.push({ role: dbRole, dashboard_access: role.dashboard_access })
       }
       const res = await fetch('/api/role-permissions', {
         method: 'PUT',
@@ -94,6 +96,7 @@ export default function RoleManagement() {
         body: JSON.stringify({
           permissions: PERMISSIONS.map(p => ({ id: p.id, label: p.label })),
           rolePermissions,
+          roleDashboardAccess,
         }),
       })
       if (!res.ok) throw new Error('Failed to save')
@@ -166,6 +169,18 @@ export default function RoleManagement() {
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${selected.color}`}>{selected.name}</span>
                   <span className="text-xs text-slate-500">{selected.permissions.size} of {PERMISSIONS.length} permissions granted</span>
                   {selected.locked && <span className="text-xs text-slate-400 flex items-center gap-1 ml-auto"><Shield className="w-3 h-3" /> System role (changes will be saved)</span>}
+                </div>
+                <div className="px-5 py-3 bg-white border-b border-slate-100 flex items-center justify-between">
+                  <div>
+                    <p className="text-[13px] font-semibold text-slate-700">Dashboard Access</p>
+                    <p className="text-[12px] text-slate-400 mt-0.5">Allow this role to access the dashboard</p>
+                  </div>
+                  <div
+                    onClick={() => setRoles(prev => prev.map(r => r.id === selected.id ? { ...r, dashboard_access: !r.dashboard_access } : r)) || setSelected(prev => prev ? { ...prev, dashboard_access: !prev.dashboard_access } : prev)}
+                    className={`w-12 h-6 rounded-full flex items-center transition-all cursor-pointer flex-shrink-0 ${selected.dashboard_access ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${selected.dashboard_access ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                  </div>
                 </div>
                 <div className="divide-y divide-slate-100">
                   {PERMISSIONS.map(perm => {
