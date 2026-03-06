@@ -6,8 +6,10 @@ function requireAdminRole(req, res) {
   const token = extractToken(req)
   if (!token) return true
   const payload = verifyToken(token)
-  if (!payload || !['super_admin', 'admin'].includes(payload.role)) return true
+  if (!payload) return true
   req.user = payload
+  // Allow super_admin and admin
+  if (!['super_admin', 'admin'].includes(payload.role)) return true
   return false
 }
 
@@ -66,6 +68,7 @@ export default async function handler(req, res) {
 
     // /api/users (list + create)
     if (req.method === 'GET') {
+      if (requireAdminRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
       const url = new URL(req.url, 'http://localhost')
       const role   = url.searchParams.get('role')
       const status = url.searchParams.get('status')
