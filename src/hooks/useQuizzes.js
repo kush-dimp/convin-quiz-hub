@@ -21,9 +21,12 @@ export function useQuizzes(filters = {}) {
       if (filters.status)       params.set('status',       filters.status)
       if (filters.instructorId) params.set('instructorId', filters.instructorId)
       const res  = await fetch(`/api/quizzes?${params}`)
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error ?? 'Failed to fetch quizzes')
+      }
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Failed to fetch quizzes')
-      setQuizzes(data)
+      setQuizzes(Array.isArray(data) ? data : [])
       setLastSynced(new Date())
     } catch (err) {
       setError(err.message)
@@ -43,33 +46,37 @@ export function useQuizzes(filters = {}) {
   }, [fetchQuizzes])
 
   async function createQuiz(payload) {
-    const res  = await fetch('/api/quizzes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    const data = await res.json()
-    const error = res.ok ? null : { message: data.error }
-    if (!error) {
+    try {
+      const res  = await fetch('/api/quizzes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) return { data: null, error: { message: data.error ?? 'Failed to create quiz' } }
       setQuizzes(prev => [data, ...prev])
       await logAudit({ action: 'quiz.created', resource: data.title, severity: 'info' })
+      return { data, error: null }
+    } catch (err) {
+      return { data: null, error: { message: err.message } }
     }
-    return { data: res.ok ? data : null, error }
   }
 
   async function updateQuiz(id, patch) {
-    const res  = await fetch(`/api/quizzes/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(patch),
-    })
-    const data = await res.json()
-    const error = res.ok ? null : { message: data.error }
-    if (!error) {
+    try {
+      const res  = await fetch(`/api/quizzes/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(patch),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) return { data: null, error: { message: data.error ?? 'Failed to update quiz' } }
       setQuizzes(prev => prev.map(q => q.id === id ? { ...q, ...data } : q))
       await logAudit({ action: 'quiz.updated', resource: data.title, severity: 'info' })
+      return { data, error: null }
+    } catch (err) {
+      return { data: null, error: { message: err.message } }
     }
-    return { data: res.ok ? data : null, error }
   }
 
   async function deleteQuiz(id) {
@@ -134,13 +141,14 @@ export function useQuiz(id) {
           fetch(`/api/quizzes/${id}`),
           fetch(`/api/quizzes/${id}/questions`),
         ])
-        const quizData = await quizRes.json()
-        const qData    = await qRes.json()
-        if (!quizRes.ok) setError(quizData.error ?? 'Failed to load quiz')
-        else {
-          setQuiz(quizData)
-          setQuestions((Array.isArray(qData) ? qData : []).map(deserializeQuestion))
+        const quizData = await quizRes.json().catch(() => ({}))
+        const qData    = await qRes.json().catch(() => [])
+        if (!quizRes.ok) {
+          setError(quizData.error ?? 'Failed to load quiz')
+          return
         }
+        setQuiz(quizData)
+        setQuestions((Array.isArray(qData) ? qData : []).map(deserializeQuestion))
       } catch (err) {
         setError(err.message ?? 'Failed to load quiz')
       } finally {
@@ -151,17 +159,21 @@ export function useQuiz(id) {
   }, [id])
 
   async function saveQuestions(qs) {
-    const serialized = qs.map((q, i) => serializeQuestion(q, i, id))
-    const res  = await fetch(`/api/quizzes/${id}/questions`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(serialized),
-    })
-    const data = await res.json()
-    if (!res.ok) return { data: null, error: { message: data.error } }
-    const sorted = (Array.isArray(data) ? data : []).sort((a, b) => a.position - b.position)
-    setQuestions(sorted.map(deserializeQuestion))
-    return { data: sorted, error: null }
+    try {
+      const serialized = qs.map((q, i) => serializeQuestion(q, i, id))
+      const res  = await fetch(`/api/quizzes/${id}/questions`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(serialized),
+      })
+      const data = await res.json().catch(() => [])
+      if (!res.ok) return { data: null, error: { message: data.error ?? 'Failed to save questions' } }
+      const sorted = (Array.isArray(data) ? data : []).sort((a, b) => a.position - b.position)
+      setQuestions(sorted.map(deserializeQuestion))
+      return { data: sorted, error: null }
+    } catch (err) {
+      return { data: null, error: { message: err.message } }
+    }
   }
 
   return { quiz, questions, loading, error, setQuiz, setQuestions, saveQuestions }
