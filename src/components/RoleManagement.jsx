@@ -186,15 +186,17 @@ export default function RoleManagement() {
                   {PERMISSIONS.map(perm => {
                     const hasIt = selected.permissions.has(perm.id)
                     return (
-                      <div key={perm.id} className={`flex items-center gap-4 px-5 py-3 hover:bg-slate-50/50 transition-colors ${hasIt ? '' : 'opacity-60'}`}>
+                      <div key={perm.id} className="flex items-center justify-between px-5 py-3 hover:bg-slate-50/70 transition-colors">
+                        <div>
+                          <p className="text-[13px] font-semibold text-slate-700">{perm.label}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5 font-mono">{perm.id}</p>
+                        </div>
                         <div
                           onClick={() => togglePerm(selected.id, perm.id)}
-                          className={`w-5 h-5 rounded-md border-2 flex items-center justify-center cursor-pointer transition-all flex-shrink-0 ${hasIt ? 'bg-[#E63E6D] border-[#E63E6D]' : 'border-slate-300 hover:border-[#FF6B9D]'}`}
+                          className={`w-11 h-6 rounded-full flex items-center transition-all cursor-pointer flex-shrink-0 ${hasIt ? 'bg-emerald-500' : 'bg-slate-300'}`}
                         >
-                          {hasIt && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                          <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${hasIt ? 'translate-x-5' : 'translate-x-0.5'}`} />
                         </div>
-                        <span className="text-[13px] text-slate-700 font-medium">{perm.label}</span>
-                        <span className="text-[12px] text-slate-400 font-mono ml-auto">{perm.id}</span>
                       </div>
                     )
                   })}
