@@ -2,12 +2,19 @@ import { sql, DEMO_USER_ID } from './_db.js'
 import { extractToken, verifyToken } from './_middleware.js'
 
 function requireAssignRole(req, res) {
-  const token = extractToken(req)
-  if (!token) return true
-  const payload = verifyToken(token)
-  if (!payload || !['super_admin', 'admin', 'instructor'].includes(payload.role)) return true
-  req.user = payload
-  return false
+  try {
+    const token = extractToken(req)
+    if (!token) return true
+    const payload = verifyToken(token)
+    if (!payload) return true
+    req.user = payload
+    const validRoles = ['super_admin', 'admin', 'instructor']
+    if (!validRoles.includes(payload.role)) return true
+    return false
+  } catch (err) {
+    console.error('Role check error:', err)
+    return true
+  }
 }
 
 export default async function handler(req, res) {

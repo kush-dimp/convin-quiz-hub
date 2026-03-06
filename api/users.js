@@ -3,14 +3,19 @@ import bcryptjs from 'bcryptjs'
 import { extractToken, verifyToken } from './_middleware.js'
 
 function requireAdminRole(req, res) {
-  const token = extractToken(req)
-  if (!token) return true
-  const payload = verifyToken(token)
-  if (!payload) return true
-  req.user = payload
-  // Allow super_admin and admin
-  if (!['super_admin', 'admin'].includes(payload.role)) return true
-  return false
+  try {
+    const token = extractToken(req)
+    if (!token) return true
+    const payload = verifyToken(token)
+    if (!payload) return true
+    req.user = payload
+    const validRoles = ['super_admin', 'admin']
+    if (!validRoles.includes(payload.role)) return true
+    return false
+  } catch (err) {
+    console.error('Role check error:', err)
+    return true
+  }
 }
 
 export default async function handler(req, res) {
