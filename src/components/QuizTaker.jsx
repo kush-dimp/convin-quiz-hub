@@ -350,9 +350,10 @@ export default function QuizTaker() {
     setLoading(true)
     setError(null)
     try {
-      const [quizRes, qRes] = await Promise.all([
+      const [quizRes, qRes, assignRes] = await Promise.all([
         fetch(`/api/quizzes/${id}`),
         fetch(`/api/quizzes/${id}/questions`),
+        fetch(`/api/assignments`),
       ])
 
       if (!quizRes.ok) throw new Error('Failed to load quiz')
@@ -360,6 +361,17 @@ export default function QuizTaker() {
 
       const quizData     = await quizRes.json()
       const questionData = await qRes.json()
+      const assignments = assignRes.ok ? await assignRes.json() : []
+
+      // Check if user is assigned to this quiz
+      const quizAssignment = assignments.find(a => a.quiz_id === id || String(a.quiz_id) === String(id))
+      if (quizAssignment) {
+        const isAssigned =
+          quizAssignment.assign_type === 'all' ||
+          (quizAssignment.assign_type === 'user' && quizAssignment.target_user_id === profile.id) ||
+          (quizAssignment.assign_type === 'group' && quizAssignment.target_group_id) // simplified group check
+        if (!isAssigned) throw new Error('You are not assigned to this quiz')
+      }
 
       setQuiz(quizData)
 

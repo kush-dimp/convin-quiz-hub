@@ -236,6 +236,7 @@ export default function QuizGrid() {
     try {
       const { data, error } = await createQuiz({ title: 'Untitled Quiz', description: '', category: 'General' })
       if (!error && data?.id) {
+        addToast('success', 'Created successfully')
         navigate('/quizzes/' + data.id + '/editor')
       } else {
         addToast('error', 'Failed to create quiz. Please try again.')

@@ -78,11 +78,11 @@ export function useUsers(filters = {}) {
     return { data: res.ok ? data : null, error: res.ok ? null : { message: data.error } }
   }
 
-  async function inviteUser({ email, name, role = 'student', department }) {
+  async function inviteUser({ email, name, role = 'student', department, password }) {
     const res  = await fetch('/api/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, role, department, status: 'active' }),
+      body: JSON.stringify({ email, name, role, department, status: 'active', password }),
     })
     const data = await res.json()
     if (res.ok) {

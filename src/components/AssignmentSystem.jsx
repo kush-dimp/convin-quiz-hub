@@ -97,7 +97,7 @@ export default function AssignmentSystem() {
       }
       const res = await createAssignment(payload)
       if (!res?.error && res?.data) {
-        addToast('success', 'Assignment created successfully')
+        addToast('success', 'Assignment assigned successfully')
         setShowModal(false)
         setForm(p => ({ ...p, assignTo: 'all', selectedUsers: [], selectedGroups: [], dueDate: '', required: true, recurring: false, recurringInterval: 'weekly', prerequisiteId: '' }))
         return
@@ -253,7 +253,10 @@ export default function AssignmentSystem() {
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <button onClick={() => deleteAssignment(a.id)} className="text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg px-2.5 py-1.5 transition-colors">
+                    <button onClick={async () => {
+                      await deleteAssignment(a.id)
+                      addToast('success', 'Deleted successfully')
+                    }} className="text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg px-2.5 py-1.5 transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>

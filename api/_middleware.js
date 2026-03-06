@@ -23,3 +23,15 @@ export function authenticateRequest(req, res) {
   req.user = payload
   return null
 }
+
+export function requireRole(roles) {
+  return (req, res) => {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+    if (!roles.includes(req.user.role)) {
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(403).json({ error: 'Forbidden' })
+    }
+    return null
+  }
+}

@@ -40,7 +40,7 @@ function ProtectedRoute({ children, roles }) {
     )
   }
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (!isAuthenticated || role === 'guest') return <Navigate to="/login" replace />
 
   if (roles?.length > 0 && !roles.includes(role)) {
     return <Navigate to="/" replace />
@@ -82,20 +82,20 @@ function AppRoutes() {
         }
       >
         <Route index element={<QuizGrid />} />
-        <Route path="templates" element={<TemplateLibrary />} />
-        <Route path="question-bank" element={<QuestionBank />} />
-        <Route path="quizzes/:id/editor" element={<QuizEditor />} />
-        <Route path="quizzes/:id/settings" element={<QuizSettings />} />
-        <Route path="results" element={<ResultsDashboard />} />
-        <Route path="results/:id" element={<IndividualResult />} />
-        <Route path="analytics" element={<AnalyticsDashboard />} />
-        <Route path="question-analysis" element={<QuestionAnalysis />} />
+        <Route path="templates" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><TemplateLibrary /></ProtectedRoute>} />
+        <Route path="question-bank" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><QuestionBank /></ProtectedRoute>} />
+        <Route path="quizzes/:id/editor" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><QuizEditor /></ProtectedRoute>} />
+        <Route path="quizzes/:id/settings" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><QuizSettings /></ProtectedRoute>} />
+        <Route path="results" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor', 'reviewer']}><ResultsDashboard /></ProtectedRoute>} />
+        <Route path="results/:id" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor', 'reviewer']}><IndividualResult /></ProtectedRoute>} />
+        <Route path="analytics" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor', 'reviewer']}><AnalyticsDashboard /></ProtectedRoute>} />
+        <Route path="question-analysis" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><QuestionAnalysis /></ProtectedRoute>} />
         <Route path="grade-book" element={<ProtectedRoute roles={['super_admin', 'admin', 'reviewer']}><GradeBook /></ProtectedRoute>} />
-        <Route path="user-progress" element={<UserProgressPage />} />
-        <Route path="reports" element={<AutomatedReports />} />
+        <Route path="user-progress" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><UserProgressPage /></ProtectedRoute>} />
+        <Route path="reports" element={<ProtectedRoute roles={['super_admin', 'admin', 'reviewer']}><AutomatedReports /></ProtectedRoute>} />
         <Route path="cheat-detection" element={<ProtectedRoute roles={['super_admin', 'admin']}><CheatDetection /></ProtectedRoute>} />
         <Route path="users" element={<ProtectedRoute roles={['super_admin', 'admin']}><BulkUsers /></ProtectedRoute>} />
-        <Route path="assignments" element={<AssignmentSystem />} />
+        <Route path="assignments" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><AssignmentSystem /></ProtectedRoute>} />
         <Route path="notifications" element={<NotificationCenter />} />
         <Route path="roles" element={<ProtectedRoute roles={['super_admin']}><RoleManagement /></ProtectedRoute>} />
         <Route path="admin" element={<ProtectedRoute roles={['super_admin', 'admin']}><AdminDashboard /></ProtectedRoute>} />

@@ -23,12 +23,16 @@ export default function Login() {
     setLoading(true)
 
     if (mode === 'login') {
-      const { error } = await signIn(email, password)
+      const { data, error } = await signIn(email, password)
       if (error) {
         setError(error.message)
         setLoading(false)
       } else {
-        navigate('/')
+        const role = data?.user?.role
+        if (role === 'super_admin' || role === 'admin') navigate('/admin')
+        else if (role === 'instructor') navigate('/')
+        else if (role === 'reviewer') navigate('/results')
+        else navigate('/')
       }
     } else {
       if (!name.trim()) { setError('Name is required.'); setLoading(false); return }

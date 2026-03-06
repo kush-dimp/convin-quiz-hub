@@ -1,4 +1,14 @@
 import { sql, DEMO_USER_ID } from './_db.js'
+import { extractToken, verifyToken } from './_middleware.js'
+
+function requireAssignRole(req, res) {
+  const token = extractToken(req)
+  if (!token) return true
+  const payload = verifyToken(token)
+  if (!payload || !['super_admin', 'admin', 'instructor'].includes(payload.role)) return true
+  req.user = payload
+  return false
+}
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -10,6 +20,7 @@ export default async function handler(req, res) {
     const id = idMatch[1]
 
     if (req.method === 'PUT') {
+      if (requireAssignRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
       const patch = req.body
       const allowed = ['status','due_date','required','recurring','recurring_interval']
       const sets = []
@@ -26,6 +37,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
+      if (requireAssignRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
       await sql`DELETE FROM assignments WHERE id = ${id}`
       return res.status(204).end()
     }
@@ -73,6 +85,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
+    if (requireAssignRole(req, res)) return res.status(403).json({ error: 'Forbidden' })
     const { quiz_id, assign_type = 'all', target_user_id, target_group_id,
             due_date, required = true, recurring = false, recurring_interval } = req.body
     const rows = await sql`
