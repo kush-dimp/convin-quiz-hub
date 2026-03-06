@@ -27,7 +27,7 @@ function fmtSynced(date) {
 /* ── Add / Bulk import modal ── */
 function AddUserModal({ onClose, onSuccess, inviteUser }) {
   const [tab,        setTab]        = useState('single')
-  const [form,       setForm]       = useState({ name: '', email: '', role: 'Student', department: '' })
+  const [form,       setForm]       = useState({ name: '', email: '', role: 'Student', department: '', password: '' })
   const [saving,     setSaving]     = useState(false)
   const [formError,  setFormError]  = useState('')
   const [success,    setSuccess]    = useState(null)   // { name, email }
@@ -47,6 +47,7 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!form.email.trim() || !form.name.trim()) { setFormError('Name and email are required'); return }
+    if (!form.password.trim()) { setFormError('Password is required'); return }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(form.email.trim())) { setFormError('Invalid email address'); return }
     setSaving(true); setFormError('')
@@ -55,12 +56,12 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
     setSaving(false)
     if (error) { setFormError(error.message || 'Failed to create user — email may already exist'); return }
     setSuccess({ name: form.name, email: form.email })
-    setForm({ name: '', email: '', role: 'Student', department: '' })
-    onSuccess()
+    setForm({ name: '', email: '', role: 'Student', department: '', password: '' })
+    setTimeout(() => onSuccess('create', 'Created successfully'), 1500)
   }
 
   function resetForm() {
-    setForm({ name: '', email: '', role: 'Student', department: '' })
+    setForm({ name: '', email: '', role: 'Student', department: '', password: '' })
     setSuccess(null); setFormError('')
   }
 
@@ -100,7 +101,7 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
     }
     setImporting(false)
     setImportDone({ success: successCount, failed: failedCount })
-    onSuccess()
+    onSuccess('import', 'Created successfully')
   }
 
   function downloadTemplate() {
@@ -190,6 +191,16 @@ function AddUserModal({ onClose, onSuccess, inviteUser }) {
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]"
                     />
                   </div>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-slate-600 block mb-1.5">Password <span className="text-red-400">*</span></label>
+                  <input
+                    type="password"
+                    value={form.password}
+                    onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                    placeholder="Set initial password"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl text-[13px] px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#FFB3C6] focus:border-[#FF6B9D]"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -744,7 +755,10 @@ export default function BulkUsers() {
       {showAddModal && (
         <AddUserModal
           onClose={() => setShowAddModal(false)}
-          onSuccess={() => {}}
+          onSuccess={(action, message) => {
+            showToast('success', message || 'User created successfully')
+            setShowAddModal(false)
+          }}
           inviteUser={inviteUser}
         />
       )}
@@ -753,7 +767,11 @@ export default function BulkUsers() {
         <EditUserModal
           user={editUser}
           onClose={() => setEditUser(null)}
-          onSave={payload => updateUser(editUser.id, payload)}
+          onSave={async payload => {
+            await updateUser(editUser.id, payload)
+            showToast('success', 'Saved successfully')
+            setEditUser(null)
+          }}
         />
       )}
 
