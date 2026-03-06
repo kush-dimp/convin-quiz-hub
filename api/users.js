@@ -1,4 +1,5 @@
 import { sql } from './_db.js'
+import bcryptjs from 'bcryptjs'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -29,7 +30,19 @@ export default async function handler(req, res) {
         const sets = []
         const vals = []
         for (const key of allowed) {
-          if (key in patch) { sets.push(key); vals.push(patch[key]) }
+          if (key in patch && patch[key] !== null && patch[key] !== '') {
+            if (key === 'password') {
+              try {
+                sets.push('password_hash')
+                vals.push(await bcryptjs.hash(patch[key], 12))
+              } catch (hashErr) {
+                return res.status(400).json({ error: 'Failed to hash password' })
+              }
+            } else {
+              sets.push(key)
+              vals.push(patch[key])
+            }
+          }
         }
         if (!sets.length) return res.status(400).json({ error: 'No valid fields' })
         let updateSql = 'UPDATE profiles SET '
@@ -68,11 +81,20 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const { name, email, role = 'student', department, status = 'active' } = req.body
+      const { name, email, role = 'student', department, status = 'active', password } = req.body
       if (!name || !email) return res.status(400).json({ error: 'Name and email required' })
+      if (!password) return res.status(400).json({ error: 'Password required' })
+
+      let passwordHash = null
+      try {
+        passwordHash = await bcryptjs.hash(password, 12)
+      } catch (hashErr) {
+        return res.status(400).json({ error: 'Failed to hash password' })
+      }
+
       const rows = await sql`
-        INSERT INTO profiles (name, email, role, department, status)
-        VALUES (${name}, ${email}, ${role}, ${department ?? null}, ${status})
+        INSERT INTO profiles (name, email, role, department, status, password_hash)
+        VALUES (${name}, ${email}, ${role}, ${department ?? null}, ${status}, ${passwordHash})
         RETURNING *
       `
       await sql`INSERT INTO profile_stats (user_id) VALUES (${rows[0].id}) ON CONFLICT DO NOTHING`
