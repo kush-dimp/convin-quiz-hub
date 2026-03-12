@@ -31,6 +31,11 @@ export default async function handler(req, res) {
       if (!rows.length) return res.status(401).json({ error: 'User not found' })
 
       const user = rows[0]
+
+      // Get permissions (may be updated since JWT was issued)
+      const permRows = await sql`SELECT permission FROM role_permissions WHERE role = ${user.role}`
+      const permissions = permRows.map(r => r.permission)
+
       return res.status(200).json({
         user: {
           id: user.id,
@@ -38,6 +43,7 @@ export default async function handler(req, res) {
           email: user.email,
           role: user.role,
           dashboard_access: payload.dashboard_access ?? true,
+          permissions,
           email_verified: user.email_verified
         }
       })
@@ -69,7 +75,11 @@ export default async function handler(req, res) {
       const dashboardRows = await sql`SELECT dashboard_access FROM role_settings WHERE role = ${user.role}`
       const dashboard_access = dashboardRows.length ? dashboardRows[0].dashboard_access : true
 
-      const token = signToken({ id: user.id, email: user.email, role: user.role, dashboard_access })
+      // Get permissions for this role
+      const permRows = await sql`SELECT permission FROM role_permissions WHERE role = ${user.role}`
+      const permissions = permRows.map(r => r.permission)
+
+      const token = signToken({ id: user.id, email: user.email, role: user.role, dashboard_access, permissions })
       res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`)
 
       return res.status(200).json({
@@ -79,6 +89,7 @@ export default async function handler(req, res) {
           email: user.email,
           role: user.role,
           dashboard_access,
+          permissions,
           email_verified: user.email_verified
         }
       })

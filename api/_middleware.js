@@ -35,3 +35,16 @@ export function requireRole(roles) {
     return null
   }
 }
+
+export function requirePermission(permissions) {
+  return (req, res) => {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+    const userPerms = req.user.permissions || []
+    if (!permissions.some(p => userPerms.includes(p))) {
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(403).json({ error: 'Insufficient permissions' })
+    }
+    return null
+  }
+}

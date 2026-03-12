@@ -1,4 +1,5 @@
 import { sql, DEMO_USER_ID } from './_db.js'
+import { authenticateRequest } from './_middleware.js'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -63,6 +64,14 @@ export default async function handler(req, res) {
       return res.status(200).json(rows[0])
     }
     if (req.method === 'PATCH') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
+      const userPerms = req.user.permissions || []
+      const canEdit = ['super_admin', 'admin', 'instructor'].includes(req.user.role) &&
+                      (userPerms.includes('quiz_edit') || userPerms.includes('quiz_create'))
+      if (!canEdit) return res.status(403).json({ error: 'Insufficient permissions to edit quiz' })
+
       const patch = req.body
       const allowed = ['title','description','category','status','tags','is_private','thumbnail_url',
         'time_limit_mins','max_attempts','passing_score_pct','shuffle_questions','shuffle_options',
@@ -135,6 +144,14 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    const userPerms = req.user.permissions || []
+    const canCreate = ['super_admin', 'admin', 'instructor'].includes(req.user.role) &&
+                      userPerms.includes('quiz_create')
+    if (!canCreate) return res.status(403).json({ error: 'Insufficient permissions to create quiz' })
+
     const { title, description, category, tags, is_private, time_limit_mins, max_attempts,
             passing_score_pct, shuffle_questions, shuffle_options, show_results_immediately,
             show_correct_answers, allow_review, certificate_enabled, require_proctoring } = req.body
@@ -144,7 +161,7 @@ export default async function handler(req, res) {
         show_results_immediately, show_correct_answers, allow_review, certificate_enabled, require_proctoring)
       VALUES (
         ${title}, ${description ?? null}, ${category ?? null}, ${tags ?? []}, ${is_private ?? false},
-        ${DEMO_USER_ID}, ${time_limit_mins ?? null}, ${max_attempts ?? null},
+        ${req.user.id}, ${time_limit_mins ?? null}, ${max_attempts ?? null},
         ${passing_score_pct ?? 70}, ${shuffle_questions ?? false}, ${shuffle_options ?? false},
         ${show_results_immediately ?? true}, ${show_correct_answers ?? true},
         ${allow_review ?? true}, ${certificate_enabled ?? false}, ${require_proctoring ?? false}

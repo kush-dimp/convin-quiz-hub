@@ -132,6 +132,7 @@ export function AuthProvider({ children }) {
     loading: loading,
     isAuthenticated: user !== null,
     role: user?.role,
+    permissions: user?.permissions ?? [],
     dashboard_access: user?.dashboard_access ?? true,
     signIn,
     signUp,

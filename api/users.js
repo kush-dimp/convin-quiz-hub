@@ -1,4 +1,5 @@
 import { sql } from './_db.js'
+import { authenticateRequest } from './_middleware.js'
 import bcryptjs from 'bcryptjs'
 
 export default async function handler(req, res) {
@@ -25,8 +26,22 @@ export default async function handler(req, res) {
       }
 
       if (req.method === 'PUT') {
+        const auth = authenticateRequest(req, res)
+        if (auth) return auth
+
+        const userPerms = req.user.permissions || []
+        const isSelfUpdate = userId === req.user.id
+        const canManageUsers = ['super_admin', 'admin'].includes(req.user.role) &&
+                               userPerms.includes('users_manage')
+        if (!isSelfUpdate && !canManageUsers) {
+          return res.status(403).json({ error: 'Insufficient permissions to update user' })
+        }
+
         const patch = req.body
-        const allowed = ['name','email','role','status','department','avatar_url','password']
+        // Only super_admin/admin can change role/status
+        const allowed = isSelfUpdate
+          ? ['name','email','department','avatar_url','password']
+          : ['name','email','role','status','department','avatar_url','password']
         const sets = []
         const vals = []
         for (const key of allowed) {
@@ -81,6 +96,16 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
+      const userPerms = req.user.permissions || []
+      const canCreateUsers = ['super_admin', 'admin'].includes(req.user.role) &&
+                             userPerms.includes('users_manage')
+      if (!canCreateUsers) {
+        return res.status(403).json({ error: 'Insufficient permissions to create user' })
+      }
+
       const { name, email, role = 'student', department, status = 'active', password } = req.body
       if (!name || !email) return res.status(400).json({ error: 'Name and email required' })
       if (!password) return res.status(400).json({ error: 'Password required' })

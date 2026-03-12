@@ -2,8 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import Layout from './components/Layout'
+import StudentLayout from './components/StudentLayout'
 import Login from './pages/Login'
 import VerifyEmail from './pages/VerifyEmail'
+import LearnerPortal from './pages/LearnerPortal'
 import QuizGrid from './components/QuizGrid'
 import TemplateLibrary from './components/TemplateLibrary'
 import QuizEditor from './components/QuizEditor'
@@ -42,10 +44,13 @@ function ProtectedRoute({ children, roles, requireDashboard = false }) {
 
   if (!isAuthenticated || role === 'guest') return <Navigate to="/login" replace />
 
-  if (requireDashboard && !dashboard_access) return <Navigate to="/" replace />
+  // Students cannot access admin dashboard
+  if (role === 'student' && requireDashboard) return <Navigate to="/learn" replace />
+
+  if (requireDashboard && !dashboard_access) return <Navigate to="/learn" replace />
 
   if (roles?.length > 0 && !roles.includes(role)) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/learn" replace />
   }
 
   return children
@@ -115,6 +120,20 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Student Learning Area */}
+      <Route
+        path="/learn"
+        element={
+          <ProtectedRoute roles={['student']}>
+            <StudentLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<LearnerPortal />} />
+        <Route path="results" element={<ResultsDashboard />} />
+        <Route path="certificates" element={<CertificatesPage />} />
+      </Route>
 
       {/* Public live session join — no auth required */}
       <Route path="/join" element={<LiveSessionJoin />} />

@@ -1,5 +1,6 @@
 import { sql } from './_db.js'
 import { sendCertificateEmail } from './_email.js'
+import { authenticateRequest } from './_middleware.js'
 
 function calcExpiry(expiry) {
   if (!expiry || expiry === 'never') return null
@@ -109,7 +110,40 @@ export default async function handler(req, res) {
   // POST /api/results/attempts
   if (path.endsWith('/attempts') || path.includes('/attempts?')) {
     if (req.method === 'POST') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
       const { quiz_id, user_id, attempt_number, status, started_at } = req.body
+
+      // Students can only attempt quizzes assigned to them
+      if (req.user.role === 'student') {
+        // Check if quiz is assigned to this student
+        const assignmentRows = await sql`
+          SELECT COUNT(*) as count FROM assignments
+          WHERE quiz_id = ${quiz_id}
+          AND assign_type = 'all'
+          AND status = 'active'
+          UNION ALL
+          SELECT COUNT(*) as count FROM assignments
+          WHERE quiz_id = ${quiz_id}
+          AND assign_type = 'user'
+          AND target_user_id = ${user_id}
+          AND status = 'active'
+          UNION ALL
+          SELECT COUNT(*) as count FROM assignments a
+          WHERE a.quiz_id = ${quiz_id}
+          AND a.assign_type = 'group'
+          AND a.target_group_id IN (
+            SELECT group_id FROM group_members WHERE user_id = ${user_id}
+          )
+          AND a.status = 'active'
+        `
+        const totalAssigned = assignmentRows.reduce((sum, r) => sum + (r.count || 0), 0)
+        if (totalAssigned === 0) {
+          return res.status(403).json({ error: 'Quiz not assigned to you' })
+        }
+      }
+
       const rows = await sql`
         INSERT INTO quiz_attempts (quiz_id, user_id, attempt_number, status, started_at)
         VALUES (${quiz_id}, ${user_id}, ${attempt_number ?? 1}, ${status ?? 'in_progress'}, ${started_at ?? new Date().toISOString()})

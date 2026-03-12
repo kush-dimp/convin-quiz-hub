@@ -32,7 +32,8 @@ export default function Login() {
         if (role === 'super_admin' || role === 'admin') navigate('/admin')
         else if (role === 'instructor') navigate('/')
         else if (role === 'reviewer') navigate('/results')
-        else navigate('/')
+        else if (role === 'student') navigate('/learn')
+        else navigate('/login')
       }
     } else {
       if (!name.trim()) { setError('Name is required.'); setLoading(false); return }

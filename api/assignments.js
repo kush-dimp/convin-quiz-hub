@@ -35,9 +35,24 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const url = new URL(req.url, 'http://localhost')
     const status = url.searchParams.get('status')
+    const userId = url.searchParams.get('userId')
 
     let rows
-    if (status) {
+    // Get assignments for a specific user (for learner portal)
+    if (userId) {
+      rows = await sql`
+        SELECT DISTINCT a.*, q.id as quiz_id_fk, q.title as quiz_title
+        FROM assignments a
+        LEFT JOIN quizzes q ON q.id = a.quiz_id
+        LEFT JOIN group_members gm ON gm.group_id = a.target_group_id
+        WHERE a.status = 'active' AND (
+          a.assign_type = 'all'
+          OR (a.assign_type = 'user' AND a.target_user_id = ${userId})
+          OR (a.assign_type = 'group' AND gm.user_id = ${userId})
+        )
+        ORDER BY a.created_at DESC
+      `
+    } else if (status) {
       rows = await sql`
         SELECT a.*, q.id as quiz_id_fk, q.title as quiz_title,
                p.name as target_user_name, g.name as target_group_name
