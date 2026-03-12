@@ -20,7 +20,8 @@ export function useQuizzes(filters = {}) {
       const params = new URLSearchParams()
       if (filters.status)       params.set('status',       filters.status)
       if (filters.instructorId) params.set('instructorId', filters.instructorId)
-      const res  = await fetch(`/api/quizzes?${params}`)
+      // Added credentials: 'include' to send auth tokens with fetch request
+      const res = await fetch(`/api/quizzes?${params}`, { credentials: 'include' })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error ?? 'Failed to fetch quizzes')
@@ -47,45 +48,104 @@ export function useQuizzes(filters = {}) {
 
   async function createQuiz(payload) {
     try {
-      const res  = await fetch('/api/quizzes', {
+      const res = await fetch('/api/quizzes', {
         method: 'POST',
+        // FIX #1: Added credentials to include auth token/cookies in request
+        // Without this, the backend's authenticateRequest middleware cannot verify the user
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-      const data = await res.json().catch(() => ({}))
-      if (!res.ok) return { data: null, error: { message: data.error ?? 'Failed to create quiz' } }
+
+      // FIX #2: Capture response text BEFORE parsing, in case it's not JSON (e.g., HTML error page)
+      const responseText = await res.text()
+      let data
+      try {
+        data = JSON.parse(responseText)
+      } catch {
+        // FIX #3: If response isn't JSON, log the actual response to help debug
+        // This surfaces HTML error pages, plain text errors, or other non-JSON responses
+        console.error('API returned non-JSON response:', {
+          status: res.status,
+          statusText: res.statusText,
+          body: responseText.substring(0, 500),
+        })
+        data = {}
+      }
+
+      if (!res.ok) {
+        // FIX #4: Log the real API error before returning generic message
+        // This helps identify authentication failures (401), permission errors (403), etc.
+        const errorMessage = data?.error || res.statusText || 'Unknown error'
+        console.error('Quiz creation failed:', {
+          status: res.status,
+          statusText: res.statusText,
+          error: errorMessage,
+          payload,
+        })
+        return { data: null, error: { message: data.error ?? 'Failed to create quiz' } }
+      }
+
       setQuizzes(prev => [data, ...prev])
       await logAudit({ action: 'quiz.created', resource: data.title, severity: 'info' })
       return { data, error: null }
     } catch (err) {
-      return { data: null, error: { message: err.message } }
+      // FIX #5: Log network/parsing errors with full context
+      // This captures timeouts, CORS errors, and other network failures
+      console.error('Quiz creation error:', {
+        message: err.message,
+        stack: err.stack,
+      })
+      return { data: null, error: { message: err.message || 'Network error' } }
     }
   }
 
   async function updateQuiz(id, patch) {
     try {
-      const res  = await fetch(`/api/quizzes/${id}`, {
+      const res = await fetch(`/api/quizzes/${id}`, {
         method: 'PATCH',
+        // Added credentials: 'include' to send auth tokens with update request
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch),
       })
-      const data = await res.json().catch(() => ({}))
-      if (!res.ok) return { data: null, error: { message: data.error ?? 'Failed to update quiz' } }
+      const responseText = await res.text()
+      let data
+      try {
+        data = JSON.parse(responseText)
+      } catch {
+        console.error('API returned non-JSON response for update:', {
+          status: res.status,
+          body: responseText.substring(0, 500),
+        })
+        data = {}
+      }
+      if (!res.ok) {
+        console.error('Quiz update failed:', { status: res.status, error: data?.error })
+        return { data: null, error: { message: data.error ?? 'Failed to update quiz' } }
+      }
       setQuizzes(prev => prev.map(q => q.id === id ? { ...q, ...data } : q))
       await logAudit({ action: 'quiz.updated', resource: data.title, severity: 'info' })
       return { data, error: null }
     } catch (err) {
+      console.error('Quiz update error:', err.message)
       return { data: null, error: { message: err.message } }
     }
   }
 
   async function deleteQuiz(id) {
     const quiz = quizzes.find(q => q.id === id)
-    const res  = await fetch(`/api/quizzes/${id}`, { method: 'DELETE' })
+    // Added credentials: 'include' to send auth tokens with delete request
+    const res = await fetch(`/api/quizzes/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    })
     const error = res.ok ? null : { message: 'Failed to delete' }
     if (!error) {
       setQuizzes(prev => prev.filter(q => q.id !== id))
       await logAudit({ action: 'quiz.deleted', resource: quiz?.title, severity: 'warning' })
+    } else {
+      console.error('Quiz delete failed:', { status: res.status, id })
     }
     return { error }
   }
@@ -138,8 +198,9 @@ export function useQuiz(id) {
       setLoading(true)
       try {
         const [quizRes, qRes] = await Promise.all([
-          fetch(`/api/quizzes/${id}`),
-          fetch(`/api/quizzes/${id}/questions`),
+          // Added credentials: 'include' to send auth tokens with fetch
+          fetch(`/api/quizzes/${id}`, { credentials: 'include' }),
+          fetch(`/api/quizzes/${id}/questions`, { credentials: 'include' }),
         ])
         const quizData = await quizRes.json().catch(() => ({}))
         const qData    = await qRes.json().catch(() => [])
@@ -161,17 +222,33 @@ export function useQuiz(id) {
   async function saveQuestions(qs) {
     try {
       const serialized = qs.map((q, i) => serializeQuestion(q, i, id))
-      const res  = await fetch(`/api/quizzes/${id}/questions`, {
+      const res = await fetch(`/api/quizzes/${id}/questions`, {
         method: 'PUT',
+        // Added credentials: 'include' to send auth tokens with save request
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(serialized),
       })
-      const data = await res.json().catch(() => [])
-      if (!res.ok) return { data: null, error: { message: data.error ?? 'Failed to save questions' } }
+      const responseText = await res.text()
+      let data
+      try {
+        data = JSON.parse(responseText)
+      } catch {
+        console.error('API returned non-JSON response for saveQuestions:', {
+          status: res.status,
+          body: responseText.substring(0, 500),
+        })
+        data = []
+      }
+      if (!res.ok) {
+        console.error('Save questions failed:', { status: res.status, error: data?.error })
+        return { data: null, error: { message: data?.error ?? 'Failed to save questions' } }
+      }
       const sorted = (Array.isArray(data) ? data : []).sort((a, b) => a.position - b.position)
       setQuestions(sorted.map(deserializeQuestion))
       return { data: sorted, error: null }
     } catch (err) {
+      console.error('Save questions error:', err.message)
       return { data: null, error: { message: err.message } }
     }
   }
