@@ -42,7 +42,7 @@ function ProtectedRoute({ children, roles, requireDashboard = false }) {
     )
   }
 
-  if (!isAuthenticated || role === 'guest') return <Navigate to="/login" replace />
+  if (!isAuthenticated) return <Navigate to="/login" replace />
 
   // Students cannot access admin dashboard
   if (role === 'student' && requireDashboard) return <Navigate to="/learn" replace />
@@ -89,26 +89,26 @@ function AppRoutes() {
         }
       >
         <Route index element={<QuizGrid />} />
-        <Route path="templates" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><TemplateLibrary /></ProtectedRoute>} />
-        <Route path="question-bank" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><QuestionBank /></ProtectedRoute>} />
-        <Route path="quizzes/:id/editor" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><QuizEditor /></ProtectedRoute>} />
-        <Route path="quizzes/:id/settings" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><QuizSettings /></ProtectedRoute>} />
-        <Route path="results" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor', 'reviewer']}><ResultsDashboard /></ProtectedRoute>} />
-        <Route path="results/:id" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor', 'reviewer']}><IndividualResult /></ProtectedRoute>} />
-        <Route path="analytics" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor', 'reviewer']}><AnalyticsDashboard /></ProtectedRoute>} />
-        <Route path="question-analysis" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><QuestionAnalysis /></ProtectedRoute>} />
-        <Route path="grade-book" element={<ProtectedRoute roles={['super_admin', 'admin', 'reviewer']}><GradeBook /></ProtectedRoute>} />
-        <Route path="user-progress" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><UserProgressPage /></ProtectedRoute>} />
-        <Route path="reports" element={<ProtectedRoute roles={['super_admin', 'admin', 'reviewer']}><AutomatedReports /></ProtectedRoute>} />
+        <Route path="templates" element={<ProtectedRoute roles={['super_admin', 'admin']}><TemplateLibrary /></ProtectedRoute>} />
+        <Route path="question-bank" element={<ProtectedRoute roles={['super_admin', 'admin']}><QuestionBank /></ProtectedRoute>} />
+        <Route path="quizzes/:id/editor" element={<ProtectedRoute roles={['super_admin', 'admin']}><QuizEditor /></ProtectedRoute>} />
+        <Route path="quizzes/:id/settings" element={<ProtectedRoute roles={['super_admin', 'admin']}><QuizSettings /></ProtectedRoute>} />
+        <Route path="results" element={<ProtectedRoute roles={['super_admin', 'admin']}><ResultsDashboard /></ProtectedRoute>} />
+        <Route path="results/:id" element={<ProtectedRoute roles={['super_admin', 'admin']}><IndividualResult /></ProtectedRoute>} />
+        <Route path="analytics" element={<ProtectedRoute roles={['super_admin', 'admin']}><AnalyticsDashboard /></ProtectedRoute>} />
+        <Route path="question-analysis" element={<ProtectedRoute roles={['super_admin', 'admin']}><QuestionAnalysis /></ProtectedRoute>} />
+        <Route path="grade-book" element={<ProtectedRoute roles={['super_admin', 'admin']}><GradeBook /></ProtectedRoute>} />
+        <Route path="user-progress" element={<ProtectedRoute roles={['super_admin', 'admin']}><UserProgressPage /></ProtectedRoute>} />
+        <Route path="reports" element={<ProtectedRoute roles={['super_admin', 'admin']}><AutomatedReports /></ProtectedRoute>} />
         <Route path="cheat-detection" element={<ProtectedRoute roles={['super_admin', 'admin']}><CheatDetection /></ProtectedRoute>} />
         <Route path="users" element={<ProtectedRoute roles={['super_admin', 'admin']}><BulkUsers /></ProtectedRoute>} />
-        <Route path="assignments" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><AssignmentSystem /></ProtectedRoute>} />
+        <Route path="assignments" element={<ProtectedRoute roles={['super_admin', 'admin']}><AssignmentSystem /></ProtectedRoute>} />
         <Route path="notifications" element={<NotificationCenter />} />
         <Route path="roles" element={<ProtectedRoute roles={['super_admin']}><RoleManagement /></ProtectedRoute>} />
         <Route path="admin" element={<ProtectedRoute roles={['super_admin', 'admin']}><AdminDashboard /></ProtectedRoute>} />
         <Route path="audit-logs" element={<ProtectedRoute roles={['super_admin', 'admin']}><AuditLogs /></ProtectedRoute>} />
         <Route path="certificates" element={<CertificatesPage />} />
-        <Route path="live" element={<ProtectedRoute roles={['super_admin', 'admin', 'instructor']}><LiveSessionHost /></ProtectedRoute>} />
+        <Route path="live" element={<ProtectedRoute roles={['super_admin', 'admin']}><LiveSessionHost /></ProtectedRoute>} />
       </Route>
 
       {/* Full-screen quiz taking — outside Layout, still protected */}

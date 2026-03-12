@@ -6,10 +6,7 @@ import { useUsers } from '../hooks/useUsers'
 const ROLE_DB_MAP = {
   'Super Admin': 'super_admin',
   'Admin':       'admin',
-  'Instructor':  'instructor',
-  'Reviewer':    'reviewer',
   'Student':     'student',
-  'Guest':       'guest',
 }
 
 const PERMISSIONS = [
@@ -32,13 +29,7 @@ const defaultRoles = [
     permissions: new Set(PERMISSIONS.map(p => p.id)), dashboard_access: true },
   { id: 2, name: 'Admin', color: 'bg-red-100 text-red-700', locked: true,
     permissions: new Set(['quiz_create','quiz_edit','quiz_delete','quiz_publish','results_view','results_export','users_manage','users_invite','cert_issue','reports_view']), dashboard_access: true },
-  { id: 3, name: 'Instructor', color: 'bg-[#FFE5EC] text-[#C41E5C]', locked: true,
-    permissions: new Set(['quiz_create','quiz_edit','quiz_publish','results_view','results_export','reports_view']), dashboard_access: true },
-  { id: 4, name: 'Reviewer', color: 'bg-blue-100 text-blue-700', locked: true,
-    permissions: new Set(['results_view','reports_view']), dashboard_access: true },
-  { id: 5, name: 'Student', color: 'bg-green-100 text-green-700', locked: true,
-    permissions: new Set([]), dashboard_access: false },
-  { id: 6, name: 'Guest', color: 'bg-gray-100 text-gray-600', locked: true,
+  { id: 3, name: 'Student', color: 'bg-green-100 text-green-700', locked: true,
     permissions: new Set([]), dashboard_access: false },
 ]
 

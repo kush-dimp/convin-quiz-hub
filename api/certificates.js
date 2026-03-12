@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       if (auth) return auth
 
       // Only admin can delete templates
-      if (!['super_admin', 'admin', 'instructor'].includes(req.user.role)) {
+      if (!['super_admin', 'admin'].includes(req.user.role)) {
         return res.status(403).json({ error: 'Only admins can delete templates' })
       }
 
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     if (auth) return auth
 
     // Only admin can create templates
-    if (!['super_admin', 'admin', 'instructor'].includes(req.user.role)) {
+    if (!['super_admin', 'admin'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Only admins can create certificate templates' })
     }
 

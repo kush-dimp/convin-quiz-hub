@@ -73,7 +73,7 @@ export default async function handler(req, res) {
       }
 
       const userPerms = req.user.permissions || []
-      const canEdit = ['super_admin', 'admin', 'instructor'].includes(req.user.role) &&
+      const canEdit = ['super_admin', 'admin'].includes(req.user.role) &&
                       (userPerms.includes('quiz_edit') || userPerms.includes('quiz_create'))
       if (!canEdit) return res.status(403).json({ error: 'Insufficient permissions to edit quiz' })
 
@@ -105,7 +105,7 @@ export default async function handler(req, res) {
       }
 
       const userPerms = req.user.permissions || []
-      const canDelete = ['super_admin', 'admin', 'instructor'].includes(req.user.role) &&
+      const canDelete = ['super_admin', 'admin'].includes(req.user.role) &&
                         (userPerms.includes('quiz_edit') || userPerms.includes('quiz_create'))
       if (!canDelete) return res.status(403).json({ error: 'Insufficient permissions to delete quiz' })
 
@@ -166,7 +166,7 @@ export default async function handler(req, res) {
     if (auth) return auth
 
     const userPerms = req.user.permissions || []
-    const canCreate = ['super_admin', 'admin', 'instructor'].includes(req.user.role) &&
+    const canCreate = ['super_admin', 'admin'].includes(req.user.role) &&
                       userPerms.includes('quiz_create')
     if (!canCreate) return res.status(403).json({ error: 'Insufficient permissions to create quiz' })
 

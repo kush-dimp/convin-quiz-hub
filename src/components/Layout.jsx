@@ -13,21 +13,21 @@ const NAV = [
   {
     group: 'Content',
     items: [
-      { to: '/',              icon: LayoutGrid,    label: 'My Quizzes',     exact: true, roles: ['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'] },
-      { to: '/templates',     icon: Layers,        label: 'Templates',                  roles: ['super_admin', 'admin', 'instructor'] },
-      { to: '/question-bank', icon: Database,      label: 'Question Bank',              roles: ['super_admin', 'admin', 'instructor'] },
+      { to: '/',              icon: LayoutGrid,    label: 'My Quizzes',     exact: true, roles: ['super_admin', 'admin', 'student'] },
+      { to: '/templates',     icon: Layers,        label: 'Templates',                  roles: ['super_admin', 'admin'] },
+      { to: '/question-bank', icon: Database,      label: 'Question Bank',              roles: ['super_admin', 'admin'] },
     ],
   },
   {
     group: 'Analytics',
     items: [
-      { to: '/results',           icon: BarChart2,     label: 'Results',           roles: ['super_admin', 'admin', 'instructor', 'reviewer'] },
-      { to: '/analytics',         icon: TrendingUp,    label: 'Analytics',         roles: ['super_admin', 'admin', 'instructor', 'reviewer'] },
-      { to: '/question-analysis', icon: FileText,      label: 'Question Analysis', roles: ['super_admin', 'admin', 'instructor'] },
-      { to: '/grade-book',        icon: BookOpen,      label: 'Grade Book',        roles: ['super_admin', 'admin', 'reviewer'] },
-      { to: '/user-progress',     icon: Award,         label: 'User Progress',     roles: ['super_admin', 'admin', 'instructor', 'reviewer'] },
-      { to: '/reports',           icon: ClipboardList, label: 'Reports',           roles: ['super_admin', 'admin', 'reviewer'] },
-      { to: '/certificates',      icon: GraduationCap, label: 'Certificates',      roles: ['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'] },
+      { to: '/results',           icon: BarChart2,     label: 'Results',           roles: ['super_admin', 'admin'] },
+      { to: '/analytics',         icon: TrendingUp,    label: 'Analytics',         roles: ['super_admin', 'admin'] },
+      { to: '/question-analysis', icon: FileText,      label: 'Question Analysis', roles: ['super_admin', 'admin'] },
+      { to: '/grade-book',        icon: BookOpen,      label: 'Grade Book',        roles: ['super_admin', 'admin'] },
+      { to: '/user-progress',     icon: Award,         label: 'User Progress',     roles: ['super_admin', 'admin'] },
+      { to: '/reports',           icon: ClipboardList, label: 'Reports',           roles: ['super_admin', 'admin'] },
+      { to: '/certificates',      icon: GraduationCap, label: 'Certificates',      roles: ['super_admin', 'admin', 'student'] },
     ],
   },
   {
@@ -41,8 +41,8 @@ const NAV = [
     group: 'Users',
     items: [
       { to: '/users',         icon: Users,    label: 'All Users',           roles: ['super_admin', 'admin'] },
-      { to: '/assignments',   icon: Calendar, label: 'Assignments',         roles: ['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'] },
-      { to: '/notifications', icon: Bell,     label: 'Notifications',       roles: ['super_admin', 'admin', 'instructor', 'reviewer', 'student', 'guest'] },
+      { to: '/assignments',   icon: Calendar, label: 'Assignments',         roles: ['super_admin', 'admin', 'student'] },
+      { to: '/notifications', icon: Bell,     label: 'Notifications',       roles: ['super_admin', 'admin', 'student'] },
       { to: '/roles',         icon: Key,      label: 'Roles & Permissions', roles: ['super_admin'] },
     ],
   },

@@ -30,8 +30,6 @@ export default function Login() {
       } else {
         const role = data?.user?.role
         if (role === 'super_admin' || role === 'admin') navigate('/admin')
-        else if (role === 'instructor') navigate('/')
-        else if (role === 'reviewer') navigate('/results')
         else if (role === 'student') navigate('/learn')
         else navigate('/login')
       }
