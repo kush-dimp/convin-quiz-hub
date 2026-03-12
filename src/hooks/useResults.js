@@ -17,7 +17,8 @@ export function useResults(filters = {}) {
       if (filters.userId)  params.set('userId',  filters.userId)
       if (filters.flagged) params.set('flagged', 'true')
       if (filters.limit)   params.set('limit',   filters.limit)
-      const res  = await fetch(`/api/results?${params}`)
+      // Added credentials: 'include' to send auth tokens with fetch
+      const res = await fetch(`/api/results?${params}`, { credentials: 'include' })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to fetch results')
       setResults(data)
@@ -53,7 +54,8 @@ export function useResult(attemptId) {
     if (!attemptId) { setLoading(false); return }
     async function load() {
       setLoading(true)
-      const res  = await fetch(`/api/results/${attemptId}`)
+      // Added credentials: 'include' to send auth tokens with fetch
+      const res = await fetch(`/api/results/${attemptId}`, { credentials: 'include' })
       const data = await res.json()
       if (!res.ok) setError(data.error ?? 'Failed to load result')
       else { setAttempt(data.attempt); setAnswers(data.answers ?? []) }
@@ -73,7 +75,8 @@ export function useResultStats(quizId) {
   useEffect(() => {
     async function load() {
       const params = quizId ? `?quizId=${quizId}` : ''
-      const res  = await fetch(`/api/results/stats${params}`)
+      // Added credentials: 'include' to send auth tokens with fetch
+      const res = await fetch(`/api/results/stats${params}`, { credentials: 'include' })
       const data = await res.json()
       setStats(data)
       setLoading(false)
