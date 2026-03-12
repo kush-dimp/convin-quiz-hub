@@ -67,6 +67,11 @@ export default async function handler(req, res) {
       const auth = authenticateRequest(req, res)
       if (auth) return auth
 
+      // Students cannot edit quizzes
+      if (req.user.role === 'student') {
+        return res.status(403).json({ error: 'Students cannot edit quizzes' })
+      }
+
       const userPerms = req.user.permissions || []
       const canEdit = ['super_admin', 'admin', 'instructor'].includes(req.user.role) &&
                       (userPerms.includes('quiz_edit') || userPerms.includes('quiz_create'))
@@ -91,6 +96,19 @@ export default async function handler(req, res) {
       return res.status(200).json(rows[0])
     }
     if (req.method === 'DELETE') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
+      // Students cannot delete quizzes
+      if (req.user.role === 'student') {
+        return res.status(403).json({ error: 'Students cannot delete quizzes' })
+      }
+
+      const userPerms = req.user.permissions || []
+      const canDelete = ['super_admin', 'admin', 'instructor'].includes(req.user.role) &&
+                        (userPerms.includes('quiz_edit') || userPerms.includes('quiz_create'))
+      if (!canDelete) return res.status(403).json({ error: 'Insufficient permissions to delete quiz' })
+
       await sql`DELETE FROM quizzes WHERE id = ${quizId}`
       return res.status(204).end()
     }

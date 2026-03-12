@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import {
   Eye, Play, BarChart2, Lock, MoreVertical,
   Pencil, Copy, Share2, Trash2, Check, History,
@@ -75,7 +76,7 @@ export function SkeletonCard() {
 }
 
 /* ── Three-dot menu ── */
-function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, onPreview, hoverClass }) {
+function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, onPreview, hoverClass, role }) {
   const [open, setOpen] = useState(false)
   const [menuPos, setMenuPos] = useState({ top: 0, right: 0 })
   const btnRef = useRef(null)
@@ -94,9 +95,12 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, onPr
     return () => document.removeEventListener('mousedown', close)
   }, [open])
 
-  if (disabled) return <div className="w-7 h-7" />
+  // Hide menu for students and guests
+  const canAccessMenu = !['student', 'guest'].includes(role)
+  if (disabled || !canAccessMenu) return <div className="w-7 h-7" />
 
-  const actions = [
+  // Filter actions by role
+  let actions = [
     { icon: Eye,     label: 'Preview',   onClick: () => onPreview?.() },
     { icon: Pencil,  label: 'Edit',      onClick: () => navigate(`/quizzes/${quizId}/editor`) },
     { icon: Copy,    label: 'Duplicate', onClick: onDuplicate },
@@ -104,6 +108,11 @@ function ThreeDotMenu({ disabled, onDuplicate, quizId, onHistory, onDelete, onPr
     { icon: Share2,  label: 'Share',     onClick: () => navigator.clipboard.writeText(`${window.location.origin}/quiz/${quizId}/take`) },
     { icon: Trash2,  label: 'Delete',    onClick: () => onDelete?.(), danger: true },
   ]
+
+  // Reviewer: Only Preview and can't edit
+  if (role === 'reviewer') {
+    actions = actions.filter(a => a.label === 'Preview')
+  }
 
   function handleOpen(e) {
     e.stopPropagation()
@@ -168,6 +177,7 @@ export default function QuizCard({
   onPreview,
 }) {
   const navigate = useNavigate()
+  const { role } = useAuth()
   const {
     title = 'Untitled Quiz',
     updated_at = new Date().toISOString(),
@@ -254,20 +264,59 @@ export default function QuizCard({
         {/* Hover overlay */}
         {!isSelectionMode && (
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-center pb-4 gap-2">
-            {[
-              { icon: Eye,       label: 'Preview', to: `/quiz/${quiz.id}/take`      },
-              { icon: Pencil,    label: 'Edit',    to: `/quizzes/${quiz.id}/editor` },
-              { icon: BarChart2, label: 'Reports', to: `/results`                   },
-            ].map(({ icon: Icon, label, to }) => (
+            {role === 'student' ? (
+              // Students: Only Attempt Quiz
               <button
-                key={label}
-                onClick={e => { e.stopPropagation(); navigate(to) }}
+                onClick={e => { e.stopPropagation(); navigate(`/quiz/${quiz.id}/take`) }}
                 className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-lg hover:bg-white transition-colors"
               >
-                <Icon className="w-3 h-3" />
-                {label}
+                <Play className="w-3 h-3" />
+                Attempt Quiz
               </button>
-            ))}
+            ) : role === 'reviewer' ? (
+              // Reviewer: Preview and Reports only
+              <>
+                <button
+                  onClick={e => { e.stopPropagation(); navigate(`/quiz/${quiz.id}/take`) }}
+                  className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-lg hover:bg-white transition-colors"
+                >
+                  <Eye className="w-3 h-3" />
+                  Preview
+                </button>
+                <button
+                  onClick={e => { e.stopPropagation(); navigate(`/results?quizId=${quiz.id}`) }}
+                  className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-lg hover:bg-white transition-colors"
+                >
+                  <BarChart2 className="w-3 h-3" />
+                  Reports
+                </button>
+              </>
+            ) : (
+              // Admin/Instructor: All actions
+              <>
+                <button
+                  onClick={e => { e.stopPropagation(); navigate(`/quiz/${quiz.id}/take`) }}
+                  className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-lg hover:bg-white transition-colors"
+                >
+                  <Eye className="w-3 h-3" />
+                  Preview
+                </button>
+                <button
+                  onClick={e => { e.stopPropagation(); navigate(`/quizzes/${quiz.id}/editor`) }}
+                  className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-lg hover:bg-white transition-colors"
+                >
+                  <Pencil className="w-3 h-3" />
+                  Edit
+                </button>
+                <button
+                  onClick={e => { e.stopPropagation(); navigate(`/results`) }}
+                  className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-800 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-lg hover:bg-white transition-colors"
+                >
+                  <BarChart2 className="w-3 h-3" />
+                  Reports
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -286,6 +335,7 @@ export default function QuizCard({
             onDelete={onDelete}
             onPreview={() => onPreview?.(quiz)}
             hoverClass={p?.hover || 'hover:bg-slate-100'}
+            role={role}
           />
         </div>
 
