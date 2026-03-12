@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { GraduationCap, Search, Printer, Trash2, Eye, X, RefreshCw, Settings, ChevronDown, ChevronUp, Plus, Palette, FileUp, Download } from 'lucide-react'
 import CertificateRenderer, { CERT_W, CERT_H } from './CertificateRenderer'
 import CertificateBuilder from './CertificateBuilder'
@@ -27,6 +28,10 @@ const TEMPLATE_LABELS = { classic: 'Classic', modern: 'Modern', minimalist: 'Min
 const TEMPLATE_COLORS = { classic: 'from-amber-50 to-amber-100', modern: 'from-indigo-50 to-blue-100', minimalist: 'from-white to-slate-50', corporate: 'from-slate-50 to-slate-100' }
 
 export default function CertificatesPage() {
+  const { role } = useAuth()
+  const isAdmin = ['super_admin', 'admin', 'instructor'].includes(role)
+  const canEdit = isAdmin
+
   const [certs, setCerts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -187,20 +192,23 @@ export default function CertificatesPage() {
             <button onClick={fetchCerts} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
               <RefreshCw className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => setBuilderOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white hover:from-[#E63E6D] hover:to-[#C41E5C] transition-all shadow-sm shadow-[#FFB3C6]/40"
-            >
-              <Palette className="w-3.5 h-3.5" />
-              Design Certificate
-            </button>
+            {canEdit && (
+              <button
+                onClick={() => setBuilderOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] text-white hover:from-[#E63E6D] hover:to-[#C41E5C] transition-all shadow-sm shadow-[#FFB3C6]/40"
+              >
+                <Palette className="w-3.5 h-3.5" />
+                Design Certificate
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       <div className="px-6 py-6 max-w-6xl mx-auto">
 
-        {/* ── Upload Custom Templates ── */}
+        {/* ── Upload Custom Templates (Admin only) ── */}
+        {canEdit && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 overflow-hidden">
           <div className="px-5 py-4">
             <div className="flex items-center gap-3 mb-4">
@@ -255,8 +263,10 @@ export default function CertificatesPage() {
             </div>
           </div>
         </div>
+        )}
 
-        {/* ── Configure Templates section ── */}
+        {/* ── Configure Templates section (Admin only) ── */}
+        {canEdit && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 overflow-hidden">
           <button
             onClick={() => setConfigOpen(v => !v)}
@@ -342,6 +352,7 @@ export default function CertificatesPage() {
             </div>
           )}
         </div>
+        )}
 
         {/* Filters */}
         <div className="flex flex-wrap gap-3 mb-5">
@@ -432,12 +443,14 @@ export default function CertificatesPage() {
                           >
                             <Eye className="w-3.5 h-3.5" /> View
                           </button>
-                          <button
-                            onClick={() => setRevokeTarget(cert)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Revoke
-                          </button>
+                          {canEdit && (
+                            <button
+                              onClick={() => setRevokeTarget(cert)}
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Revoke
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

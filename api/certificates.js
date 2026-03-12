@@ -24,6 +24,14 @@ export default async function handler(req, res) {
       }
     }
     if (req.method === 'DELETE') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
+      // Only admin can delete templates
+      if (!['super_admin', 'admin', 'instructor'].includes(req.user.role)) {
+        return res.status(403).json({ error: 'Only admins can delete templates' })
+      }
+
       try {
         await sql`DELETE FROM certificate_templates WHERE id = ${templateId}`
         return res.status(204).end()
@@ -45,8 +53,16 @@ export default async function handler(req, res) {
     }
   }
 
-  // Upload template
+  // Upload template (Admin only)
   if (path === '/api/certificates/templates' && req.method === 'POST') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    // Only admin can create templates
+    if (!['super_admin', 'admin', 'instructor'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Only admins can create certificate templates' })
+    }
+
     const { name, data, contentType } = req.body
     if (!name || !data || !contentType) return res.status(400).json({ error: 'Missing required fields' })
     try {
