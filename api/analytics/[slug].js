@@ -1,4 +1,5 @@
 import { sql } from '../_db.js'
+import { authenticateRequest } from '../_middleware.js'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -7,8 +8,57 @@ export default async function handler(req, res) {
   const slug = req.query.slug
   const url  = new URL(req.url, 'http://localhost')
 
+  // Learner-specific analytics endpoints (authenticated)
+  if (slug === 'learner-performance') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    const days  = parseInt(url.searchParams.get('days') ?? '30')
+    const since = new Date(Date.now() - days * 86400000).toISOString()
+    const rows  = await sql`
+      SELECT score_pct, submitted_at FROM quiz_attempts
+      WHERE user_id = ${req.user.id} AND status IN ('submitted','graded') AND submitted_at >= ${since}
+      ORDER BY submitted_at
+    `
+    const map = {}
+    for (const r of rows) {
+      const day = new Date(r.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      if (!map[day]) map[day] = { date: day, attempts: 0, totalScore: 0 }
+      map[day].attempts++
+      map[day].totalScore += Number(r.score_pct) || 0
+    }
+    return res.status(200).json(Object.values(map).map(d => ({
+      date: d.date, attempts: d.attempts, avgScore: Math.round(d.totalScore / d.attempts),
+    })))
+  }
+
+  if (slug === 'learner-stats') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    const rows = await sql`
+      SELECT score_pct, passed, time_taken_s FROM quiz_attempts
+      WHERE user_id = ${req.user.id} AND status IN ('submitted','graded')
+    `
+    if (!rows.length) return res.status(200).json(null)
+    const total    = rows.length
+    const passed   = rows.filter(r => r.passed).length
+    const avgScore = Math.round(rows.reduce((s, r) => s + (Number(r.score_pct) || 0), 0) / total)
+    const avgTime  = Math.round(rows.reduce((s, r) => s + (r.time_taken_s || 0), 0) / total / 60)
+    const passRate = Math.round((passed / total) * 100)
+    return res.status(200).json({ total, passed, avgScore, avgTime, passRate })
+  }
+
   // ── admin-stats ────────────────────────────────────────────────────────────
   if (slug === 'admin-stats') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    // Only admin can access
+    if (!['super_admin', 'admin'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Insufficient permissions' })
+    }
+
     const since24h = new Date(Date.now() - 86400000).toISOString()
     const [usersRes, quizzesRes, todayRes, allRes] = await Promise.all([
       sql`SELECT COUNT(*) FROM profiles`,
@@ -32,6 +82,14 @@ export default async function handler(req, res) {
 
   // ── score-distribution ────────────────────────────────────────────────────
   if (slug === 'score-distribution') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    // Only admin can access
+    if (!['super_admin', 'admin'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Insufficient permissions' })
+    }
+
     const quizId = url.searchParams.get('quizId')
     const rows = quizId
       ? await sql`SELECT score_pct FROM quiz_attempts WHERE status IN ('submitted','graded') AND quiz_id = ${quizId}`
@@ -46,6 +104,14 @@ export default async function handler(req, res) {
 
   // ── performance ───────────────────────────────────────────────────────────
   if (slug === 'performance') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    // Only admin can access
+    if (!['super_admin', 'admin'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Insufficient permissions' })
+    }
+
     const days  = parseInt(url.searchParams.get('days') ?? '30')
     const since = new Date(Date.now() - days * 86400000).toISOString()
     const rows  = await sql`
@@ -67,6 +133,14 @@ export default async function handler(req, res) {
 
   // ── question-performance ──────────────────────────────────────────────────
   if (slug === 'question-performance') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    // Only admin can access
+    if (!['super_admin', 'admin'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Insufficient permissions' })
+    }
+
     const quizId = url.searchParams.get('quizId')
     const rows = quizId
       ? await sql`
@@ -92,6 +166,14 @@ export default async function handler(req, res) {
 
   // ── signups ───────────────────────────────────────────────────────────────
   if (slug === 'signups') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    // Only admin can access
+    if (!['super_admin', 'admin'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Insufficient permissions' })
+    }
+
     const rows = await sql`SELECT created_at FROM profiles ORDER BY created_at`
     const map = {}
     for (const r of rows) {
@@ -103,6 +185,14 @@ export default async function handler(req, res) {
 
   // ── popular-quizzes ───────────────────────────────────────────────────────
   if (slug === 'popular-quizzes') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
+    // Only admin can access
+    if (!['super_admin', 'admin'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Insufficient permissions' })
+    }
+
     const limit = parseInt(url.searchParams.get('limit') ?? '5')
     const rows  = await sql`
       SELECT q.title, COUNT(a.id) as attempts

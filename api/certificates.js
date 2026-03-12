@@ -1,4 +1,5 @@
 import { sql } from './_db.js'
+import { authenticateRequest } from './_middleware.js'
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
@@ -68,11 +69,22 @@ export default async function handler(req, res) {
     const certId = idMatch[1]
 
     if (req.method === 'DELETE') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
+      // Only admin can delete certificates
+      if (!['super_admin', 'admin'].includes(req.user.role)) {
+        return res.status(403).json({ error: 'Insufficient permissions' })
+      }
+
       await sql`DELETE FROM certificates WHERE id = ${certId}`
       return res.status(204).end()
     }
 
     if (req.method === 'GET') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
       const rows = await sql`
         SELECT c.*, p.name AS user_name, p.email AS user_email,
                q.title AS quiz_title, q.certificate_template,
@@ -84,19 +96,35 @@ export default async function handler(req, res) {
         WHERE c.id = ${certId}
       `
       if (!rows.length) return res.status(404).json({ error: 'Not found' })
-      return res.status(200).json(rows[0])
+
+      const cert = rows[0]
+      // User can only see their own certificates (unless admin)
+      if (cert.user_id !== req.user.id && !['super_admin', 'admin'].includes(req.user.role)) {
+        return res.status(403).json({ error: 'Unauthorized' })
+      }
+
+      return res.status(200).json(cert)
     }
   }
 
-  // GET /api/certificates  (list, supports ?userId= ?quizId=)
+  // GET /api/certificates  (list, supports ?quizId=)
   if (req.method === 'GET') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
     const url = new URL(req.url, 'http://localhost')
-    const userId = url.searchParams.get('userId')
     const quizId = url.searchParams.get('quizId')
+    const isAdmin = ['super_admin', 'admin'].includes(req.user.role)
 
     const conditions = []
     const vals = []
-    if (userId) { vals.push(userId); conditions.push(`c.user_id = $${vals.length}`) }
+
+    // Students can only see their own certificates
+    if (!isAdmin) {
+      vals.push(req.user.id)
+      conditions.push(`c.user_id = $${vals.length}`)
+    }
+
     if (quizId) { vals.push(quizId); conditions.push(`c.quiz_id = $${vals.length}`) }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''

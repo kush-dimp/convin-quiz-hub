@@ -155,18 +155,25 @@ export default async function handler(req, res) {
 
   // GET /api/results/stats
   if (path.includes('/stats')) {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
     const url = new URL(req.url, 'http://localhost')
     const quizId = url.searchParams.get('quizId')
+    const isAdmin = ['super_admin', 'admin'].includes(req.user.role)
+
     let rows
     if (quizId) {
       rows = await sql`
         SELECT score_pct, passed, time_taken_s FROM quiz_attempts
         WHERE status IN ('submitted','graded') AND quiz_id = ${quizId}
+        ${isAdmin ? '' : `AND user_id = ${req.user.id}`}
       `
     } else {
       rows = await sql`
         SELECT score_pct, passed, time_taken_s FROM quiz_attempts
         WHERE status IN ('submitted','graded')
+        ${isAdmin ? '' : `AND user_id = ${req.user.id}`}
       `
     }
     if (!rows.length) return res.status(200).json(null)
@@ -183,10 +190,21 @@ export default async function handler(req, res) {
   if (idMatch) {
     const attemptId = idMatch[1]
     if (req.method === 'DELETE') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
+      // Only admin can delete attempts
+      if (!['super_admin', 'admin'].includes(req.user.role)) {
+        return res.status(403).json({ error: 'Insufficient permissions' })
+      }
+
       await sql`DELETE FROM quiz_attempts WHERE id = ${attemptId}`
       return res.status(204).end()
     }
     if (req.method === 'GET') {
+      const auth = authenticateRequest(req, res)
+      if (auth) return auth
+
       const [aRows, ansRows] = await Promise.all([
         sql`
           SELECT a.*, p.name, p.email, q.title, q.passing_score_pct
@@ -202,22 +220,40 @@ export default async function handler(req, res) {
           WHERE aa.attempt_id = ${attemptId}
         `,
       ])
-      return res.status(200).json({ attempt: aRows[0] ?? null, answers: ansRows })
+
+      const attempt = aRows[0]
+      if (!attempt) return res.status(404).json({ error: 'Attempt not found' })
+
+      // User can only see their own attempts (unless admin)
+      if (attempt.user_id !== req.user.id && !['super_admin', 'admin'].includes(req.user.role)) {
+        return res.status(403).json({ error: 'Unauthorized' })
+      }
+
+      return res.status(200).json({ attempt, answers: ansRows })
     }
   }
 
   // GET /api/results (list)
   if (req.method === 'GET') {
+    const auth = authenticateRequest(req, res)
+    if (auth) return auth
+
     const url = new URL(req.url, 'http://localhost')
     const quizId  = url.searchParams.get('quizId')
-    const userId  = url.searchParams.get('userId')
     const flagged = url.searchParams.get('flagged')
     const limit   = url.searchParams.get('limit')
 
     const conditions = ["a.status IN ('submitted','graded')"]
     const vals = []
+
+    // Students can only see their own results; admins can see all
+    const isAdmin = ['super_admin', 'admin'].includes(req.user.role)
+    if (!isAdmin) {
+      vals.push(req.user.id)
+      conditions.push(`a.user_id = $${vals.length}`)
+    }
+
     if (quizId)  { vals.push(quizId);  conditions.push(`a.quiz_id = $${vals.length}`) }
-    if (userId)  { vals.push(userId);  conditions.push(`a.user_id = $${vals.length}`) }
     if (flagged === 'true') conditions.push('a.flagged = true')
 
     let query = `
