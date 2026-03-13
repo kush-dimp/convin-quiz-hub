@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import LogoutConfirmModal from './LogoutConfirmModal'
+import NotificationBell from './NotificationBell'
 
 const NAV = [
   {
@@ -174,8 +175,13 @@ export default function StudentLayout() {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 overflow-y-auto min-w-0">
-        <div key={location.pathname} className="page-enter">
+      <main className="flex-1 overflow-y-auto min-w-0 flex flex-col">
+        {/* Top Navbar with Notification Bell */}
+        <div className="sticky top-0 z-20 bg-white border-b border-slate-200/50 px-6 h-14 flex items-center justify-end">
+          <NotificationBell />
+        </div>
+
+        <div key={location.pathname} className="page-enter flex-1">
           <Outlet />
         </div>
       </main>

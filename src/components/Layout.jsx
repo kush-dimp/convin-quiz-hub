@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutGrid, Layers, Database, BarChart2, TrendingUp,
-  BookOpen, Award, FileText, Shield, Users, Calendar,
+  BookOpen, Award, FileText, Users, Calendar,
   Bell, Key, LogOut, Activity, LayoutDashboard, ClipboardList,
   Zap, GraduationCap, PanelLeftClose, PanelLeftOpen, Radio, ChevronDown,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import LogoutConfirmModal from './LogoutConfirmModal'
+import NotificationBell from './NotificationBell'
 
 const NAV = [
   {
@@ -33,7 +34,6 @@ const NAV = [
   {
     group: 'Security',
     items: [
-      { to: '/cheat-detection', icon: Shield,   label: 'Cheat Detection', roles: ['super_admin', 'admin'] },
       { to: '/audit-logs',      icon: Activity, label: 'Audit Logs',      roles: ['super_admin', 'admin'] },
     ],
   },
@@ -42,7 +42,6 @@ const NAV = [
     items: [
       { to: '/users',         icon: Users,    label: 'All Users',           roles: ['super_admin', 'admin'] },
       { to: '/assignments',   icon: Calendar, label: 'Assignments',         roles: ['super_admin', 'admin', 'student'] },
-      { to: '/notifications', icon: Bell,     label: 'Notifications',       roles: ['super_admin', 'admin', 'student'] },
       { to: '/roles',         icon: Key,      label: 'Roles & Permissions', roles: ['super_admin'] },
     ],
   },
@@ -258,8 +257,13 @@ export default function Layout() {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 overflow-y-auto min-w-0">
-        <div key={location.pathname} className="page-enter">
+      <main className="flex-1 overflow-y-auto min-w-0 flex flex-col">
+        {/* Top Navbar with Notification Bell */}
+        <div className="sticky top-0 z-20 bg-white border-b border-slate-200/50 px-6 h-14 flex items-center justify-end">
+          <NotificationBell />
+        </div>
+
+        <div key={location.pathname} className="page-enter flex-1">
           <Outlet />
         </div>
       </main>
