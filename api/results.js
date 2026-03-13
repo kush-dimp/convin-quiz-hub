@@ -320,8 +320,8 @@ export default async function handler(req, res) {
     return res.status(200).json(normalised)
   }
 
-  // GET /api/results/export?format=csv|pdf - Export reports
-  if (path === '/api/results/export' && req.method === 'GET') {
+  // GET /api/results/export?format=csv|pdf - Export reports (strip query string from path)
+  if (path.split('?')[0] === '/api/results/export' && req.method === 'GET') {
     const auth = authenticateRequest(req, res)
     if (auth) return auth
 
