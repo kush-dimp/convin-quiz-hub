@@ -1,7 +1,8 @@
 import { sql } from './_db.js'
 import { signToken, verifyToken } from './_jwt.js'
 import { extractToken } from './_middleware.js'
-import { sendUserInvite, sendVerificationEmail } from '../lib/email.js'
+// Fixed import path for Netlify (functions now in netlify/functions/ instead of api/)
+import { sendUserInvite, sendVerificationEmail } from '../../lib/email.js'
 import bcryptjs from 'bcryptjs'
 import crypto from 'crypto'
 
