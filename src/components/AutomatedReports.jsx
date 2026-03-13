@@ -54,9 +54,9 @@ export default function AutomatedReports() {
     setDownloading(format)
     setDownloadError('')
     try {
-      // Build query params - only students can't specify quizId
+      // Build query params - merged with results endpoint
       const params = new URLSearchParams({ format })
-      const response = await fetch(`/api/reports/export?${params}`, {
+      const response = await fetch(`/api/results/export?${params}`, {
         credentials: 'include'
       })
 
