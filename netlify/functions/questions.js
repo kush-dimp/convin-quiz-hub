@@ -1,7 +1,8 @@
 import { sql, DEMO_USER_ID } from './_db.js'
+import { createNetlifyHandler } from './_handler-wrapper.js'
 
 // Question bank: questions where quiz_id IS NULL
-export default async function handler(req, res) {
+async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
   try {
     const path = req.query.sub ? `/api/questions/${req.query.sub.split('?')[0]}` : req.url
@@ -61,3 +62,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Database error: ' + (err.message || 'unknown') })
   }
 }
+
+export default createNetlifyHandler(handler)

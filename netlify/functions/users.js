@@ -1,8 +1,9 @@
 import { sql } from './_db.js'
 import { authenticateRequest } from './_middleware.js'
 import bcryptjs from 'bcryptjs'
+import { createNetlifyHandler } from './_handler-wrapper.js'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
   try {
     const path = req.query.sub ? `/api/users/${req.query.sub.split('?')[0]}` : req.url
@@ -132,3 +133,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Database error: ' + (err.message || 'unknown') })
   }
 }
+
+export default createNetlifyHandler(handler)

@@ -1,7 +1,8 @@
 import { sql, DEMO_USER_ID } from './_db.js'
 import { authenticateRequest } from './_middleware.js'
+import { createNetlifyHandler } from './_handler-wrapper.js'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
   try {
     // Reconstruct full path from sub-path query param (added by vercel.json rewrite)
@@ -195,3 +196,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Database error: ' + (err.message || 'unknown') })
   }
 }
+
+export default createNetlifyHandler(handler)

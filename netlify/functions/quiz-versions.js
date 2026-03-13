@@ -1,6 +1,7 @@
 import { sql } from './_db.js'
+import { createNetlifyHandler } from './_handler-wrapper.js'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
 
   if (req.method === 'GET') {
@@ -20,3 +21,5 @@ export default async function handler(req, res) {
 
   res.status(405).json({ error: 'Method not allowed' })
 }
+
+export default createNetlifyHandler(handler)

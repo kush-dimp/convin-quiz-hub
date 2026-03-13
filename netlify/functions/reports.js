@@ -1,5 +1,6 @@
 import { sql } from './_db.js'
 import { authenticateRequest } from './_middleware.js'
+import { createNetlifyHandler } from './_handler-wrapper.js'
 
 // Convert data array to CSV format
 function generateCSV(headers, rows) {
@@ -62,7 +63,7 @@ function generatePDFHTML(title, headers, rows) {
   `
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json')
 
   try {
@@ -167,3 +168,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, message: 'Server error: ' + err.message })
   }
 }
+
+export default createNetlifyHandler(handler)

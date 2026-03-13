@@ -5,6 +5,7 @@ import { extractToken } from './_middleware.js'
 import { sendUserInvite, sendVerificationEmail } from '../../lib/email.js'
 import bcryptjs from 'bcryptjs'
 import crypto from 'crypto'
+import { createNetlifyHandler } from './_handler-wrapper.js'
 
 function generateVerificationToken() {
   return crypto.randomBytes(32).toString('hex')
@@ -15,7 +16,7 @@ function getVerificationLink(token) {
   return `${appUrl}/verify-email?token=${token}`
 }
 
-export default async function handler(req, res) {
+async function authHandler(req, res) {
   res.setHeader('Content-Type', 'application/json')
   try {
     const sub = Array.isArray(req.query.sub) ? req.query.sub[0] : (req.query.sub || '')
@@ -225,3 +226,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server error' })
   }
 }
+
+// Wrap Vercel-style handler for Netlify Functions
+export default createNetlifyHandler(authHandler)
