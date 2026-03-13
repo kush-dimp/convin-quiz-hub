@@ -1,4 +1,4 @@
-import { sql } from './_db.js'
+import { sql, DEMO_USER_ID } from './_db.js'
 import { authenticateRequest } from './_middleware.js'
 import bcryptjs from 'bcryptjs'
 
@@ -124,6 +124,25 @@ export default async function handler(req, res) {
       `
       await sql`INSERT INTO profile_stats (user_id) VALUES (${rows[0].id}) ON CONFLICT DO NOTHING`
       return res.status(201).json(rows[0])
+    }
+
+    // /api/users/audit-logs (merged from audit.js)
+    if (path === '/api/users/audit-logs' || path === '/api/audit-logs') {
+      if (req.method === 'GET') {
+        const rows = await sql`
+          SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 200
+        `
+        return res.status(200).json(rows)
+      }
+
+      if (req.method === 'POST') {
+        const { action, resource, severity = 'info', metadata } = req.body
+        await sql`
+          INSERT INTO audit_logs (user_id, user_name, action, resource, severity, metadata)
+          VALUES (${DEMO_USER_ID}, 'Demo Admin', ${action}, ${resource ?? null}, ${severity}, ${JSON.stringify(metadata ?? null)})
+        `
+        return res.status(201).json({ ok: true })
+      }
     }
 
     // /api/users/role-permissions (merged from role-permissions.js)
