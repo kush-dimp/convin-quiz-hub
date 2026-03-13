@@ -17,7 +17,7 @@ import QuestionAnalysis from './components/QuestionAnalysis'
 import QuestionBank from './components/QuestionBank'
 import GradeBook from './components/GradeBook'
 import UserProgressPage from './components/UserProgressPage'
-import AutomatedReports from './components/AutomatedReports'
+import ReportsDashboard from './components/ReportsDashboard'
 import CheatDetection from './components/CheatDetection'
 import RoleManagement from './components/RoleManagement'
 import BulkUsers from './components/BulkUsers'
@@ -99,7 +99,7 @@ function AppRoutes() {
         <Route path="question-analysis" element={<ProtectedRoute roles={['super_admin', 'admin']}><QuestionAnalysis /></ProtectedRoute>} />
         <Route path="grade-book" element={<ProtectedRoute roles={['super_admin', 'admin']}><GradeBook /></ProtectedRoute>} />
         <Route path="user-progress" element={<ProtectedRoute roles={['super_admin', 'admin']}><UserProgressPage /></ProtectedRoute>} />
-        <Route path="reports" element={<ProtectedRoute roles={['super_admin', 'admin']}><AutomatedReports /></ProtectedRoute>} />
+        <Route path="reports" element={<ProtectedRoute roles={['super_admin', 'admin']}><ReportsDashboard /></ProtectedRoute>} />
         <Route path="cheat-detection" element={<ProtectedRoute roles={['super_admin', 'admin']}><CheatDetection /></ProtectedRoute>} />
         <Route path="users" element={<ProtectedRoute roles={['super_admin', 'admin']}><BulkUsers /></ProtectedRoute>} />
         <Route path="assignments" element={<ProtectedRoute roles={['super_admin', 'admin']}><AssignmentSystem /></ProtectedRoute>} />
