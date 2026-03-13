@@ -4,6 +4,7 @@
     { "source": "/api/verify-email",            "destination": "/api/auth?sub=verify-email" },
     { "source": "/api/resend-verification",     "destination": "/api/auth?sub=resend-verification" },
     { "source": "/api/import",                  "destination": "/api/import" },
+    { "source": "/api/role-permissions",        "destination": "/api/users?sub=role-permissions" },
     { "source": "/api/quizzes/:sub+",          "destination": "/api/quizzes?sub=:sub" },
     { "source": "/api/results/:sub+",           "destination": "/api/results?sub=:sub" },
     { "source": "/api/users/:sub+",             "destination": "/api/users?sub=:sub" },
