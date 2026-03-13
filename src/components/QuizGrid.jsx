@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, LayoutGrid, AlertCircle } from 'lucide-react'
+import { Plus, LayoutGrid, AlertCircle, Upload } from 'lucide-react'
 import VersionHistory from './VersionHistory'
 import QuizCard, { SkeletonCard } from './QuizCard'
 import { QuizListCard, QuizCompactView } from './QuizListViews'
@@ -12,8 +12,10 @@ import Pagination from './Pagination'
 import { ToastContainer } from './Toast'
 import DuplicateModal from './DuplicateModal'
 import SyncButton from './SyncButton'
+import UniversalImporter from './UniversalImporter'
 import { useQuizzes } from '../hooks/useQuizzes'
 import { useDebounce } from '../hooks/useDebounce'
+import { useAuth } from '../contexts/AuthContext'
 
 const DEFAULT_FILTERS = {
   status: 'all', category: 'all',
@@ -118,6 +120,9 @@ export default function QuizGrid() {
   const [historyQuiz,     setHistoryQuiz]     = useState(null)
   const [previewQuiz,     setPreviewQuiz]     = useState(null)
   const [isCreating,      setIsCreating]      = useState(false)
+  const [showImporter,    setShowImporter]    = useState(false)
+
+  const { role } = useAuth()
 
   const debouncedSearch = useDebounce(searchInput, 300)
 
@@ -346,6 +351,15 @@ export default function QuizGrid() {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <SyncButton lastSynced={lastSynced} syncing={syncing} onSync={refetch} />
+            {['super_admin', 'admin'].includes(role) && (
+              <button
+                onClick={() => setShowImporter(true)}
+                className="flex items-center gap-2 border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 bg-white hover:bg-slate-50 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                Import
+              </button>
+            )}
             <button
               onClick={handleCreateQuiz}
               disabled={isCreating}
@@ -505,6 +519,8 @@ export default function QuizGrid() {
       {previewQuiz && (
         <QuizPreview quiz={previewQuiz} onClose={() => setPreviewQuiz(null)} />
       )}
+
+      <UniversalImporter isOpen={showImporter} onClose={() => setShowImporter(false)} />
     </div>
   )
 }
