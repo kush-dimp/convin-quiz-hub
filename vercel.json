@@ -10,7 +10,6 @@
     { "source": "/api/notifications/:sub+",     "destination": "/api/notifications?sub=:sub" },
     { "source": "/api/questions/:sub+",         "destination": "/api/questions?sub=:sub" },
     { "source": "/api/certificates/:sub+",      "destination": "/api/certificates?sub=:sub" },
-    { "source": "/api/reports/:sub*",           "destination": "/api/results?sub=export&:sub*" },
     { "source": "/((?!api(?:/|$)).*)",          "destination": "/index.html" }
   ]
 }

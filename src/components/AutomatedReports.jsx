@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import { FileText, Plus, Play, Pause, Trash2, Mail, Calendar, Check, Download, AlertCircle } from 'lucide-react'
+import { FileText, Plus, Play, Pause, Trash2, Mail, Calendar, Check } from 'lucide-react'
 import { useResults } from '../hooks/useResults'
 import { useQuizzes } from '../hooks/useQuizzes'
 import { useAuth } from '../contexts/AuthContext'
@@ -19,8 +19,6 @@ export default function AutomatedReports() {
   const [showBuilder, setShowBuilder] = useState(false)
   const [builder, setBuilder] = useState({ name: '', frequency: 'Weekly', recipients: '', format: 'PDF', metrics: [], quiz: 'All Quizzes' })
   const [saved, setSaved] = useState(false)
-  const [downloading, setDownloading] = useState(null)
-  const [downloadError, setDownloadError] = useState('')
 
   const { results, loading: resultsLoading } = useResults()
   const { quizzes, loading: quizzesLoading } = useQuizzes()
@@ -47,51 +45,6 @@ export default function AutomatedReports() {
 
   function toggleMetric(m) {
     setBuilder(p => ({ ...p, metrics: p.metrics.includes(m) ? p.metrics.filter(x=>x!==m) : [...p.metrics, m] }))
-  }
-
-  // Download report in specified format from backend API
-  async function downloadReport(format) {
-    setDownloading(format)
-    setDownloadError('')
-    try {
-      // Build query params - merged with results endpoint
-      const params = new URLSearchParams({ format })
-      const response = await fetch(`/api/results/export?${params}`, {
-        credentials: 'include'
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        setDownloadError(data.message || `Failed to download ${format.toUpperCase()}`)
-        setDownloading(null)
-        return
-      }
-
-      // Get the file blob
-      const blob = await response.blob()
-
-      // Determine filename and MIME type
-      const timestamp = new Date().toISOString().slice(0, 10)
-      const filename = format === 'csv'
-        ? `quiz-report-${timestamp}.csv`
-        : `quiz-report-${timestamp}.html`
-
-      // Create download link and trigger
-      const url = URL.createObjectURL(blob)
-      const link = Object.assign(document.createElement('a'), {
-        href: url,
-        download: filename
-      })
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-    } catch (err) {
-      console.error('Download error:', err)
-      setDownloadError('Network error: ' + err.message)
-    } finally {
-      setDownloading(null)
-    }
   }
 
   function generateReport() {
@@ -134,48 +87,10 @@ export default function AutomatedReports() {
               <p className="text-[11px] text-slate-400 mt-0.5">Schedule and automate report delivery</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {/* Download buttons - available to all roles */}
-            <button
-              onClick={() => downloadReport('csv')}
-              disabled={downloading === 'csv'}
-              title="Download all reports as CSV"
-              className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Download className="w-4 h-4" />
-              {downloading === 'csv' ? 'Downloading...' : 'CSV'}
-            </button>
-            <button
-              onClick={() => downloadReport('pdf')}
-              disabled={downloading === 'pdf'}
-              title="Download all reports as PDF"
-              className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Download className="w-4 h-4" />
-              {downloading === 'pdf' ? 'Downloading...' : 'PDF'}
-            </button>
-            <button onClick={() => setShowBuilder(true)} className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all"><Plus className="w-4 h-4" /> New Report</button>
-          </div>
+          <button onClick={() => setShowBuilder(true)} className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all"><Plus className="w-4 h-4" /> New Report</button>
         </div>
       </header>
       <main className="max-w-5xl mx-auto px-6 py-6 space-y-5">
-        {/* Download error alert */}
-        {downloadError && (
-          <div className="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 rounded-2xl p-4">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-red-900">{downloadError}</p>
-              <p className="text-xs text-red-700 mt-1">Check that you have permission to access reports.</p>
-            </div>
-            <button
-              onClick={() => setDownloadError('')}
-              className="text-red-600 hover:text-red-700 font-bold text-lg flex-shrink-0"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-
         {/* Live stats preview */}
         <div className="glass-card rounded-2xl p-4">
           <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Live Stats Preview</h2>
