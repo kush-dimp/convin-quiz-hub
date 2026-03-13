@@ -322,13 +322,21 @@ export default async function handler(req, res) {
 
   // GET /api/results/export?format=csv|pdf - Export reports (strip query string from path)
   if (path.split('?')[0] === '/api/results/export' && req.method === 'GET') {
+    console.log('Export endpoint called', { path, method: req.method, query: req.query })
+
     const auth = authenticateRequest(req, res)
-    if (auth) return auth
+    if (auth) {
+      console.log('Auth failed:', auth)
+      return auth
+    }
 
     // Check user is authenticated
     if (!req.user) {
+      console.log('No req.user found')
       return res.status(401).json({ success: false, message: 'User not authenticated' })
     }
+
+    console.log('User authenticated:', { userId: req.user.id, role: req.user.role })
 
     const { format, quizId } = req.query
     const isAdmin = ['super_admin', 'admin'].includes(req.user.role)
