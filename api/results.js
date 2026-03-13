@@ -325,6 +325,11 @@ export default async function handler(req, res) {
     const auth = authenticateRequest(req, res)
     if (auth) return auth
 
+    // Check user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' })
+    }
+
     const { format, quizId } = req.query
     const isAdmin = ['super_admin', 'admin'].includes(req.user.role)
     const userId = req.user.id
@@ -358,7 +363,14 @@ export default async function handler(req, res) {
 
     query += ` ORDER BY qa.created_at DESC`
 
-    const rows = params.length > 0 ? await sql(query, params) : await sql(query)
+    // Execute query with error handling
+    let rows
+    try {
+      rows = params.length > 0 ? await sql(query, params) : await sql(query)
+    } catch (dbErr) {
+      console.error('Export query error:', dbErr)
+      return res.status(500).json({ success: false, message: 'Database error: ' + dbErr.message })
+    }
 
     if (!rows || rows.length === 0) {
       return res.status(200).json({ success: false, message: 'No report data available' })
