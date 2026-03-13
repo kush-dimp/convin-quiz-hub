@@ -20,6 +20,7 @@ import UserProgressPage from './components/UserProgressPage'
 import ReportsDashboard from './components/ReportsDashboard'
 import CheatDetection from './components/CheatDetection'
 import RoleManagement from './components/RoleManagement'
+import ProProfsImporter from './components/ProProfsImporter'
 import BulkUsers from './components/BulkUsers'
 import AssignmentSystem from './components/AssignmentSystem'
 import NotificationCenter from './components/NotificationCenter'
@@ -90,6 +91,7 @@ function AppRoutes() {
       >
         <Route index element={<QuizGrid />} />
         <Route path="templates" element={<ProtectedRoute roles={['super_admin', 'admin']}><TemplateLibrary /></ProtectedRoute>} />
+        <Route path="import" element={<ProtectedRoute roles={['super_admin', 'admin']}><ProProfsImporter /></ProtectedRoute>} />
         <Route path="question-bank" element={<ProtectedRoute roles={['super_admin', 'admin']}><QuestionBank /></ProtectedRoute>} />
         <Route path="quizzes/:id/editor" element={<ProtectedRoute roles={['super_admin', 'admin']}><QuizEditor /></ProtectedRoute>} />
         <Route path="quizzes/:id/settings" element={<ProtectedRoute roles={['super_admin', 'admin']}><QuizSettings /></ProtectedRoute>} />

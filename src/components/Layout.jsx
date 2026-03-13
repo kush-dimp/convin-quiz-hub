@@ -4,7 +4,7 @@ import {
   LayoutGrid, Layers, Database, BarChart2, TrendingUp,
   BookOpen, Award, FileText, Users, Calendar,
   Bell, Key, LogOut, Activity, LayoutDashboard, ClipboardList,
-  Zap, GraduationCap, PanelLeftClose, PanelLeftOpen, Radio, ChevronDown,
+  Zap, GraduationCap, PanelLeftClose, PanelLeftOpen, Radio, ChevronDown, Upload,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import LogoutConfirmModal from './LogoutConfirmModal'
@@ -16,6 +16,7 @@ const NAV = [
     items: [
       { to: '/',              icon: LayoutGrid,    label: 'My Quizzes',     exact: true, roles: ['super_admin', 'admin', 'student'] },
       { to: '/templates',     icon: Layers,        label: 'Templates',                  roles: ['super_admin', 'admin'] },
+      { to: '/import',        icon: Upload,        label: 'Import Quiz',                roles: ['super_admin', 'admin'] },
       { to: '/question-bank', icon: Database,      label: 'Question Bank',              roles: ['super_admin', 'admin'] },
     ],
   },
