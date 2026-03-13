@@ -1,6 +1,6 @@
 /**
  * Wrapper to convert Vercel-style handlers to Netlify Functions
- * Netlify uses { statusCode, headers, body } format
+ * Netlify (v2+) uses Web API Response object
  * Our handlers use Vercel's res.setHeader(), res.status(), res.json() format
  */
 
@@ -11,7 +11,7 @@ export function createNetlifyHandler(vercelHandler) {
       method: event.httpMethod,
       url: event.path + (event.queryStringParameters ? '?' + new URLSearchParams(event.queryStringParameters).toString() : ''),
       headers: event.headers,
-      body: event.body ? JSON.parse(event.body) : null,
+      body: event.body ? (typeof event.body === 'string' ? JSON.parse(event.body) : event.body) : null,
       query: event.queryStringParameters || {},
     }
 
@@ -46,11 +46,10 @@ export function createNetlifyHandler(vercelHandler) {
     // Call the Vercel-style handler
     await vercelHandler(req, res)
 
-    // Return Netlify format
-    return {
-      statusCode,
-      headers,
-      body: body || '',
-    }
+    // Return Web API Response object (Netlify v2+ format)
+    return new Response(body || '', {
+      status: statusCode,
+      headers: headers,
+    })
   }
 }
