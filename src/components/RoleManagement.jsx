@@ -112,7 +112,7 @@ export default function RoleManagement() {
             </div>
           </div>
           <div className="flex gap-2">
-            <button disabled title="Coming soon" className="flex items-center gap-1.5 border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed px-3.5 py-2 rounded-xl text-[13px] font-medium opacity-60"><Plus className="w-4 h-4" /> Custom Role</button>
+            <button onClick={() => setShowNew(true)} className="flex items-center gap-1.5 border border-slate-200 text-[#FF6B9D] bg-white hover:bg-slate-50 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-colors"><Plus className="w-4 h-4" /> Custom Role</button>
             <button onClick={saveChanges} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-[#FF6B9D] to-[#E63E6D] hover:from-[#E63E6D] hover:to-[#C41E5C] text-white px-4 py-2 rounded-xl text-[13px] font-semibold shadow-sm shadow-[#FFB3C6] transition-all disabled:opacity-60">
               {saving ? 'Saving…' : saved ? <><Check className="w-4 h-4" /> Saved!</> : saveError ? '⚠ Error' : 'Save Changes'}
             </button>
